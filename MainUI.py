@@ -17,6 +17,8 @@ class MainWindow(QMainWindow):
         self.LoadButton.clicked.connect(self.loadFile)
         self.SaveButton.clicked.connect(self.saveFile)
         self.addToolBar(NavigationToolbar(self.MplWidget.canvas, self))
+        self.spinBox.valueChanged.connect(self.show_result)
+        self.setButton.clicked.connect(self.display_force)
 
 
     def updateGraph(self):
@@ -41,6 +43,7 @@ class MainWindow(QMainWindow):
         self.MplWidget.canvas.axes.legend(('cosine', 'sine'),loc='upper right')
         self.MplWidget.canvas.axes.set_title('Cosine - Sine Signal')
         self.MplWidget.canvas.draw()
+        self.forceTextEdit.setText('Cleared graph')
 
 
     def saveFile(self):
@@ -58,3 +61,9 @@ class MainWindow(QMainWindow):
         if fileName:
             print(fileName)
 
+    def show_result(self):
+        value = self.spinBox.value()
+        
+    def display_force(self):
+        self.forceTextEdit.setText('Applying force of: ' + str(self.spinBox.value()) + ' N')
+    
