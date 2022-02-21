@@ -7,6 +7,8 @@ import numpy as np
 import random
 import time
 
+import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
+
 class MainWindow(QMainWindow):
     
     def __init__(self, UIFileName):
@@ -26,15 +28,20 @@ class MainWindow(QMainWindow):
         # setting auto repeat
         self.forwardButton.setAutoRepeat(True)
         # setting interval time 500 milliseconds
-        self.forwardButton.setAutoRepeatInterval(500)
+        self.forwardButton.setAutoRepeatInterval(1)
         
         self.backwardButton.clicked.connect(self.jogBack)
         # setting auto repeat
         self.backwardButton.setAutoRepeat(True)
         # setting interval time 500 milliseconds
-        self.backwardButton.setAutoRepeatInterval(500)
+        self.backwardButton.setAutoRepeatInterval(1)
         self.backwardButton.toggle()
 
+
+        GPIO.setwarnings(False) # Ignore warning for now
+        GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
+        GPIO.setup(8, GPIO.OUT, initial=GPIO.LOW) # Set pin 8 to be an output pin and set initial value to low (off)
+        GPIO.setup(10, GPIO.OUT, initial=GPIO.LOW)
 
 
 
@@ -86,10 +93,19 @@ class MainWindow(QMainWindow):
     
     def jogForward(self):
         print("being moved forward")
-        
+        GPIO.setup(10, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.output(8, GPIO.HIGH) # Turn on
+        time.sleep(.001) # Sleep for 1 second
+        GPIO.output(8, GPIO.LOW) # Turn off
+        time.sleep(.001) # Sleep for 1 second
 
     def jogBack(self):  
         print("being moved backward")
+        GPIO.setup(10, GPIO.OUT, initial=GPIO.HIGH)
+        GPIO.output(8, GPIO.HIGH) # Turn on
+        time.sleep(.001) # Sleep for 1 second
+        GPIO.output(8, GPIO.LOW) # Turn off
+        time.sleep(.001) # Sleep for 1 second
 
     
 
