@@ -5,6 +5,7 @@ from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as Navigati
 
 import numpy as np
 import random
+import time
 
 class MainWindow(QMainWindow):
     
@@ -19,6 +20,22 @@ class MainWindow(QMainWindow):
         self.addToolBar(NavigationToolbar(self.MplWidget.canvas, self))
         self.spinBox.valueChanged.connect(self.show_result)
         self.setButton.clicked.connect(self.display_force)
+        
+        self.forwardButton.clicked.connect(self.jogForward)
+        self.forwardButton.toggle()
+        # setting auto repeat
+        self.forwardButton.setAutoRepeat(True)
+        # setting interval time 500 milliseconds
+        self.forwardButton.setAutoRepeatInterval(500)
+        
+        self.backwardButton.clicked.connect(self.jogBack)
+        # setting auto repeat
+        self.backwardButton.setAutoRepeat(True)
+        # setting interval time 500 milliseconds
+        self.backwardButton.setAutoRepeatInterval(500)
+        self.backwardButton.toggle()
+
+
 
 
     def updateGraph(self):
@@ -67,3 +84,16 @@ class MainWindow(QMainWindow):
     def display_force(self):
         self.forceTextEdit.setText('Applying force of: ' + str(self.spinBox.value()) + ' N')
     
+    def jogForward(self):
+        print("being moved forward")
+        
+
+    def jogBack(self):  
+        print("being moved backward")
+
+    
+
+        
+        
+
+        
