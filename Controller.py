@@ -6,32 +6,37 @@ import time
 DEFAULT_STEP_RATE = .001
 stepRate = DEFAULT_STEP_RATE
 moving = False
+directionPin = None
+stepPin = None
 
 
 def moveAsync(direction):
     pulseDelay = 1/(2*stepRate)
 
     if direction == 1:
-        GPIO.setup(10, GPIO.OUT, initial=GPIO.HIGH)
+        GPIO.setup(directionPin, GPIO.OUT, initial=GPIO.HIGH)
     else:
-        GPIO.setup(10, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(directionPin, GPIO.OUT, initial=GPIO.LOW)
 
     while moving == True:
-        GPIO.output(8, GPIO.HIGH) # Turn on
+        GPIO.output(stepPin, GPIO.HIGH) # Turn on
         time.sleep(pulseDelay)
-        GPIO.output(8, GPIO.LOW) # Turn off
+        GPIO.output(stepPin, GPIO.LOW) # Turn off
         time.sleep(pulseDelay)
 
 
 class Controller():
     
-    def __init__(self, stepPin, directionPin):
+    def __init__(self, stepPinNumber, directionPinNumber):
+        global stepPin, directionPin
+        stepPin = stepPinNumber
+        directionPin = directionPinNumber
+        
         GPIO.setwarnings(False) # Ignore warning for now
         GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
         GPIO.setup(stepPin, GPIO.OUT, initial=GPIO.LOW) # Set pin 8 to be an output pin and set initial value to low (off)
         GPIO.setup(directionPin, GPIO.OUT, initial=GPIO.LOW)
-        self.stepPin = stepPin
-        self.directionPin = directionPin
+
 
 
     def startMovingDown(self, stepFreq = DEFAULT_STEP_RATE):
