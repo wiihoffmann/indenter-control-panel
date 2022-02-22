@@ -26,7 +26,7 @@ def moveAsync(direction):
         time.sleep(pulseDelay)
 
 
-class Controller():
+class StepperController():
 
     def __init__(self, stepPinNumber, directionPinNumber):
         global stepPin, directionPin

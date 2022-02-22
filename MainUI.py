@@ -8,7 +8,7 @@ import numpy as np
 import random
 
 
-from Controller import *
+from StepperController import *
 
 
 class MainWindow(QMainWindow):
@@ -46,8 +46,8 @@ class MainWindow(QMainWindow):
         self.downButton.pressed.connect(self.startMovingDown)
         self.downButton.released.connect(self.stopMovingDown)
 
-        # set up the motor and ADC controller
-        self.controller = Controller(12, 16)
+        # set up the motor controller and ADC controller
+        self.StepperController = StepperStepperController(12, 16)
 
     def updateGraph(self):
         f = random.randint(1, 50)
@@ -99,16 +99,16 @@ class MainWindow(QMainWindow):
             self.forceText.setText('0')
 
     def startMovingUp(self):
-        self.controller.startMovingUp(1000)
+        self.StepperController.startMovingUp(1000)
 
     def stopMovingUp(self):
-        self.controller.stopMovingUp()
+        self.StepperController.stopMovingUp()
 
     def startMovingDown(self):
-        self.controller.startMovingDown(1000)
+        self.StepperController.startMovingDown(1000)
 
     def stopMovingDown(self):
-        self.controller.stopMovingDown()
+        self.StepperController.stopMovingDown()
 
     def startProgram(self):
         print("started")
