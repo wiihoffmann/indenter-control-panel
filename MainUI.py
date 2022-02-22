@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
         self.downButton.released.connect(self.stopMovingDown)
 
         # set up the motor and ADC controller
-        self.controller = Controller(8,10)
+        self.controller = Controller(18,23)
 
 
     def updateGraph(self):
