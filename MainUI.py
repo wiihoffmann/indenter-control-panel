@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import*
 from PyQt5.uic import loadUi
-
+import sys
 from matplotlib.backends.backend_qt5agg import (
     NavigationToolbar2QT as NavigationToolbar)
 
@@ -34,6 +34,8 @@ class MainWindow(QMainWindow):
             lambda: self.update_force('increment'))
         self.decrementButton.pressed.connect(
             lambda: self.update_force('decrement'))
+
+        self.exitButton.clicked.connect(self.exitProgram)
 
         self.startButton.clicked.connect(self.startProgram)
         self.stopButton.clicked.connect(self.stopProgram)
@@ -113,3 +115,7 @@ class MainWindow(QMainWindow):
 
     def stopProgram(self):
         print("stopped")
+
+    def exitProgram(self):
+        print("stopped")
+        sys.exit()
