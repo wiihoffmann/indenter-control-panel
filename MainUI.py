@@ -47,7 +47,7 @@ class MainWindow(QMainWindow):
         self.downButton.released.connect(self.stopMovingDown)
 
         # set up the motor controller and ADC controller
-        self.StepperController = StepperStepperController(12, 16)
+        self.StepperController = StepperController(12, 16)
 
     def updateGraph(self):
         f = random.randint(1, 50)
