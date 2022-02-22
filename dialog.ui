@@ -40,8 +40,8 @@
    <widget class="QPushButton" name="pushButton_clear_graph">
     <property name="geometry">
      <rect>
-      <x>18</x>
-      <y>404</y>
+      <x>20</x>
+      <y>400</y>
       <width>91</width>
       <height>51</height>
      </rect>
@@ -53,8 +53,8 @@
    <widget class="QPushButton" name="SaveButton">
     <property name="geometry">
      <rect>
-      <x>908</x>
-      <y>444</y>
+      <x>910</x>
+      <y>450</y>
       <width>91</width>
       <height>51</height>
      </rect>
@@ -66,8 +66,8 @@
    <widget class="QPushButton" name="LoadButton">
     <property name="geometry">
      <rect>
-      <x>908</x>
-      <y>394</y>
+      <x>910</x>
+      <y>400</y>
       <width>91</width>
       <height>51</height>
      </rect>
@@ -80,7 +80,7 @@
     <property name="geometry">
      <rect>
       <x>350</x>
-      <y>390</y>
+      <y>410</y>
       <width>48</width>
       <height>26</height>
      </rect>
@@ -90,7 +90,7 @@
     <property name="geometry">
      <rect>
       <x>420</x>
-      <y>378</y>
+      <y>390</y>
       <width>321</width>
       <height>51</height>
      </rect>
@@ -99,8 +99,8 @@
    <widget class="QPushButton" name="setButton">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>430</y>
+      <x>510</x>
+      <y>440</y>
       <width>141</width>
       <height>51</height>
      </rect>
@@ -129,30 +129,30 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.AppleSystemUIFont'; font-size:36pt;&quot;&gt;Spinal Stiffness Indenter&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="forwardButton">
+   <widget class="QPushButton" name="upButton">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>430</y>
+      <x>130</x>
+      <y>400</y>
       <width>141</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>Set Forward</string>
+     <string> Move Up</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="backwardButton">
+   <widget class="QPushButton" name="downButton">
     <property name="geometry">
      <rect>
-      <x>610</x>
-      <y>430</y>
+      <x>130</x>
+      <y>450</y>
       <width>141</width>
       <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>Set Backward</string>
+     <string>Move Down</string>
     </property>
    </widget>
   </widget>

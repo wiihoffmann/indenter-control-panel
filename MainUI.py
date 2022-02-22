@@ -25,13 +25,11 @@ class MainWindow(QMainWindow):
         self.spinBox.valueChanged.connect(self.show_result)
         self.setButton.clicked.connect(self.display_force)
         
-        self.forwardButton.pressed.connect(self.startMovingUp)
-        self.forwardButton.released.connect(self.stopMovingUp)
-        self.forwardButton.toggle()
+        self.upButton.pressed.connect(self.startMovingUp)
+        self.upButton.released.connect(self.stopMovingUp)
         
-        self.backwardButton.pressed.connect(self.startMovingDown)
-        self.backwardButton.released.connect(self.stopMovingDown)
-        self.backwardButton.toggle()
+        self.downButton.pressed.connect(self.startMovingDown)
+        self.downButton.released.connect(self.stopMovingDown)
 
         # set up the motor and ADC controller
         self.controller = Controller(8,10)
@@ -84,13 +82,13 @@ class MainWindow(QMainWindow):
         self.forceTextEdit.setText('Applying force of: ' + str(self.spinBox.value()) + ' N')
     
     def startMovingUp(self):
-        self.controller.startMovingUp()
+        self.controller.startMovingUp(1000)
 
     def stopMovingUp(self):
         self.controller.stopMovingUp() 
 
     def startMovingDown(self):
-        self.controller.startMovingDown()
+        self.controller.startMovingDown(1000)
 
     def stopMovingDown(self):
         self.controller.stopMovingDown()

@@ -1,12 +1,16 @@
 import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
-import time
 import threading
+import time
 
-pulseDelay = .00001
+
+DEFAULT_STEP_RATE = .001
+stepRate = DEFAULT_STEP_RATE
 moving = False
 
 
 def moveAsync(direction):
+    pulseDelay = 1/(2*stepRate)
+
     if direction == 1:
         GPIO.setup(10, GPIO.OUT, initial=GPIO.HIGH)
     else:
@@ -14,9 +18,9 @@ def moveAsync(direction):
 
     while moving == True:
         GPIO.output(8, GPIO.HIGH) # Turn on
-        time.sleep(pulseDelay) # Sleep for 1 second
+        time.sleep(pulseDelay)
         GPIO.output(8, GPIO.LOW) # Turn off
-        time.sleep(pulseDelay) # Sleep for 1 second
+        time.sleep(pulseDelay)
 
 
 class Controller():
@@ -30,9 +34,10 @@ class Controller():
         self.directionPin = directionPin
 
 
-    def startMovingDown(self):
-        global moving
+    def startMovingDown(self, stepFreq = DEFAULT_STEP_RATE):
+        global moving, stepRate
         moving = True
+        stepRate = stepFreq
         # direction 1 for down
         threading.Thread(target=moveAsync, args=(1,)).start()
 
@@ -42,9 +47,10 @@ class Controller():
         moving = False
 
 
-    def startMovingUp(self):
-        global moving
+    def startMovingUp(self, stepFreq = DEFAULT_STEP_RATE):
+        global moving, stepRate
         moving = True
+        stepRate = stepFreq
         # direction 0 for up
         threading.Thread(target=moveAsync, args=(0,)).start()
 
