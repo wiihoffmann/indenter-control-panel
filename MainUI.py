@@ -5,16 +5,18 @@ from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as Navigati
 
 import numpy as np
 import random
-import time
 
-import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
+
+from Controller import *
 
 class MainWindow(QMainWindow):
     
     def __init__(self, UIFileName):
+        # initialize Qt for the GUI
         QMainWindow.__init__(self)
         loadUi(UIFileName,self)
         self.setWindowTitle("Indenter Control Panel")
+        # set up bindings for the buttons and widgets
         self.pushButton_generate_random_signal.clicked.connect(self.updateGraph)
         self.pushButton_clear_graph.clicked.connect(self.clearGraph)
         self.LoadButton.clicked.connect(self.loadFile)
@@ -23,26 +25,16 @@ class MainWindow(QMainWindow):
         self.spinBox.valueChanged.connect(self.show_result)
         self.setButton.clicked.connect(self.display_force)
         
-        self.forwardButton.clicked.connect(self.jogForward)
+        self.forwardButton.pressed.connect(self.startMovingUp)
+        self.forwardButton.released.connect(self.stopMovingUp)
         self.forwardButton.toggle()
-        # setting auto repeat
-        self.forwardButton.setAutoRepeat(True)
-        # setting interval time 500 milliseconds
-        self.forwardButton.setAutoRepeatInterval(1)
         
-        self.backwardButton.clicked.connect(self.jogBack)
-        # setting auto repeat
-        self.backwardButton.setAutoRepeat(True)
-        # setting interval time 500 milliseconds
-        self.backwardButton.setAutoRepeatInterval(1)
+        self.backwardButton.pressed.connect(self.startMovingDown)
+        self.backwardButton.released.connect(self.stopMovingDown)
         self.backwardButton.toggle()
 
-
-        GPIO.setwarnings(False) # Ignore warning for now
-        GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
-        GPIO.setup(8, GPIO.OUT, initial=GPIO.LOW) # Set pin 8 to be an output pin and set initial value to low (off)
-        GPIO.setup(10, GPIO.OUT, initial=GPIO.LOW)
-
+        # set up the motor and ADC controller
+        self.controller = Controller(8,10)
 
 
     def updateGraph(self):
@@ -91,25 +83,14 @@ class MainWindow(QMainWindow):
     def display_force(self):
         self.forceTextEdit.setText('Applying force of: ' + str(self.spinBox.value()) + ' N')
     
-    def jogForward(self):
-        print("being moved forward")
-        GPIO.setup(10, GPIO.OUT, initial=GPIO.LOW)
-        GPIO.output(8, GPIO.HIGH) # Turn on
-        time.sleep(.001) # Sleep for 1 second
-        GPIO.output(8, GPIO.LOW) # Turn off
-        time.sleep(.001) # Sleep for 1 second
+    def startMovingUp(self):
+        self.controller.startMovingUp()
 
-    def jogBack(self):  
-        print("being moved backward")
-        GPIO.setup(10, GPIO.OUT, initial=GPIO.HIGH)
-        GPIO.output(8, GPIO.HIGH) # Turn on
-        time.sleep(.001) # Sleep for 1 second
-        GPIO.output(8, GPIO.LOW) # Turn off
-        time.sleep(.001) # Sleep for 1 second
+    def stopMovingUp(self):
+        self.controller.stopMovingUp() 
 
-    
+    def startMovingDown(self):
+        self.controller.startMovingDown()
 
-        
-        
-
-        
+    def stopMovingDown(self):
+        self.controller.stopMovingDown()
