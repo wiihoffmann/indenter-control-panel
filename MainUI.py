@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import*
 from PyQt5.uic import loadUi
 import sys
+import csv
 from matplotlib.backends.backend_qt5agg import (
     NavigationToolbar2QT as NavigationToolbar)
 
@@ -81,13 +82,40 @@ class MainWindow(QMainWindow):
         if fileName:
             print(fileName)
 
+    def generateGraph(self, filename):
+        x = []
+        step = []
+        load = []
+
+        with open(filename, 'r') as csvfile:
+            lines = csv.reader(csvfile, delimiter=',')
+            next(lines, None)  # skip the header
+            next(lines, None)  # skip the header
+
+            for index, row in enumerate(lines):
+                x.append(index)
+                step.append(float(row[0]))
+                load.append(float(row[1]))
+
+        self.MplWidget.canvas.axes.clear()
+        self.MplWidget.canvas.axes.plot(x, step)
+        self.MplWidget.canvas.axes.plot(x, load)
+        self.MplWidget.canvas.axes.legend(
+            ('Step', 'Load'), loc='upper right')
+        self.MplWidget.canvas.axes.set_title('Results')
+        self.MplWidget.canvas.axes.set_ylabel("y axis")
+        self.MplWidget.canvas.axes.set_xlabel("x axis")
+
+        self.MplWidget.canvas.figure.tight_layout()
+        self.MplWidget.canvas.draw()
+
     def loadFile(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(
+        filename, _ = QFileDialog.getOpenFileName(
             self, "QFileDialog.getOpenFileName()", "", "All Files (*);;CSV Files (*.csv)", options=options)
-        if fileName:
-            print(fileName)
+        if filename:
+            self.generateGraph(filename)
 
     def update_force(self, _str):
         init_force = int(self.forceText.toPlainText())
