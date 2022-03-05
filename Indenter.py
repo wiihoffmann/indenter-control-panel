@@ -4,6 +4,8 @@ from StepperController import *
 from ADCController import *
 from Logger import *
 
+import random
+
 class Indenter():
 
     def __init__(self, mplWidget):
@@ -50,6 +52,9 @@ class Indenter():
 
     def takeStiffnessMeasurement(self, load):
         print("started")
+        for i in range(100):
+            self.MPLWidget.addDataPoint(i-1, random.randint(1, 50), random.randint(1, 50))
+        print("done updating")
 
     def emergencyStop(self):
         print("stopped")
