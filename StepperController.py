@@ -1,5 +1,4 @@
 import RPi.GPIO as GPIO  # Import Raspberry Pi GPIO library
-# import gpiozero as GPIO  # Import Raspberry Pi GPIO library
 import threading
 import time
 

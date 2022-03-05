@@ -27,7 +27,7 @@
      <string>randomize</string>
     </property>
    </widget>
-   <widget class="MplWidget" name="MplWidget" native="true">
+   <widget class="MPLWidget" name="MplWidget" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -192,9 +192,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MplWidget</class>
+   <class>MPLWidget</class>
    <extends>QWidget</extends>
-   <header>mplwidget.h</header>
+   <header>MPLWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
