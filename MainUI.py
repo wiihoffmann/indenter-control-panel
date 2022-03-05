@@ -1,15 +1,18 @@
+
+# UI imports
 from PyQt5.QtWidgets import*
 from PyQt5.uic import loadUi
-import sys
-import csv
-from matplotlib.backends.backend_qt5agg import (
-    NavigationToolbar2QT as NavigationToolbar)
+from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
 
+# data management imports
+import sys
+
+#custom  class imports
+from Indenter import *
+
+# delete these later
 import numpy as np
 import random
-
-
-from StepperController import *
 
 
 class MainWindow(QMainWindow):
@@ -19,37 +22,71 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         loadUi(UIFileName, self)
         self.setWindowTitle("Indenter Control Panel")
-        # set up bindings for the buttons and widgets
-        self.pushButton_generate_random_signal.clicked.connect(
-            self.updateGraph)
-        self.pushButton_clear_graph.clicked.connect(self.clearGraph)
-        self.LoadButton.clicked.connect(self.loadFile)
-        self.SaveButton.clicked.connect(self.saveFile)
-        self.addToolBar(NavigationToolbar(self.MplWidget.canvas, self))
-        self.forceText.insertPlainText("10")
+        
+        self.Indenter = Indenter(self.MplWidget)
 
+        # set up bindings for the buttons and plot widgets
+        self.pushButton_generate_random_signal.clicked.connect(self.updateGraph) # random button
+        self.pushButton_clear_graph.clicked.connect(self.MplWidget.clear)        # clear button
+        self.LoadButton.clicked.connect(self.loadFile)                           # load button
+        self.SaveButton.clicked.connect(self.saveFile)                           # save button
+        self.exitButton.clicked.connect(self.exitProgram)                        # exit button
+        
+        self.startButton.clicked.connect(self.Indenter.takeStiffnessMeasurement) # start button
+        self.stopButton.clicked.connect(self.Indenter.emergencyStop)             # stop button
+
+        self.upButton.pressed.connect(self.Indenter.startJogUp)                  # jog up button pressed
+        self.upButton.released.connect(self.Indenter.stopJogUp)                  # jog up button released
+
+        self.downButton.pressed.connect(self.Indenter.startJogDown)              # jog down button pressed
+        self.downButton.released.connect(self.Indenter.stopJogDown)              # jog down button released
+        
+        self.addToolBar(NavigationToolbar(self.MplWidget.canvas, self))          # MPL nav bar
+        
+        # set up the force application buttons / readout
         self.incrementButton.setAutoRepeat(True)
         self.decrementButton.setAutoRepeat(True)
-
+        self.forceText.insertPlainText("10")
         self.incrementButton.pressed.connect(
             lambda: self.update_force('increment'))
         self.decrementButton.pressed.connect(
             lambda: self.update_force('decrement'))
 
-        self.exitButton.clicked.connect(self.exitProgram)
 
-        self.startButton.clicked.connect(self.startProgram)
-        self.stopButton.clicked.connect(self.stopProgram)
+    def saveFile(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        filename, _ = QFileDialog.getSaveFileName(
+            self, "QFileDialog.getSaveFileName()", "", "CSV File (*.csv)", options=options)
+        if filename:
+            self.Indenter.saveResults(filename)
 
-        self.upButton.pressed.connect(self.startMovingUp)
-        self.upButton.released.connect(self.stopMovingUp)
 
-        self.downButton.pressed.connect(self.startMovingDown)
-        self.downButton.released.connect(self.stopMovingDown)
+    def loadFile(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        filename, _ = QFileDialog.getOpenFileName(
+            self, "QFileDialog.getOpenFileName()", "", "All Files (*);;CSV Files (*.csv)", options=options)
+        if filename:
+            self.Indenter.loadAndShowResults(filename)
 
-        # set up the motor controller and ADC controller
-        self.StepperController = StepperController(12, 16)
 
+    def update_force(self, _str):
+        init_force = int(self.forceText.toPlainText())
+        new_force = (init_force+5) if _str == 'increment' else (init_force-5)
+
+        if(0 <= new_force <= 100):
+            self.forceText.setText(str(new_force))
+        else:
+            self.forceText.setText('0')
+
+
+    def exitProgram(self):
+        print("stopped")
+        sys.exit()
+
+
+    # remove me in the future
     def updateGraph(self):
         f = random.randint(1, 50)
         length_of_signal = 10000
@@ -61,89 +98,7 @@ class MainWindow(QMainWindow):
         self.MplWidget.canvas.axes.clear()
         self.MplWidget.canvas.axes.plot(t, cosinus_signal)
         self.MplWidget.canvas.axes.plot(t, sinus_signal)
-        self.MplWidget.canvas.axes.legend(
-            ('cosine', 'sine'), loc='upper right')
+        self.MplWidget.canvas.axes.legend(('cosine', 'sine'), loc='upper right')
         self.MplWidget.canvas.axes.set_title('Cosine - Sine Signal')
         self.MplWidget.canvas.figure.tight_layout()
-        self.MplWidget.canvas.draw()
-
-    def clearGraph(self):
-        self.MplWidget.canvas.axes.clear()
-        self.MplWidget.canvas.axes.legend(
-            ('cosine', 'sine'), loc='upper right')
-        self.MplWidget.canvas.axes.set_title('Cosine - Sine Signal')
-        self.MplWidget.canvas.draw()
-
-    def saveFile(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(
-            self, "QFileDialog.getSaveFileName()", "", "CSV File (*.csv)", options=options)
-        if fileName:
-            print(fileName)
-
-    def generateGraph(self, filename):
-        x = []
-        step = []
-        load = []
-
-        with open(filename, 'r') as csvfile:
-            lines = csv.reader(csvfile, delimiter=',')
-            next(lines, None)  # skip the header
-            next(lines, None)  # skip the header
-
-            for index, row in enumerate(lines):
-                x.append(index)
-                step.append(float(row[0]))
-                load.append(float(row[1]))
-
-        self.MplWidget.canvas.axes.clear()
-        self.MplWidget.canvas.axes.plot(x, step)
-        self.MplWidget.canvas.axes.plot(x, load)
-        self.MplWidget.canvas.axes.legend(
-            ('Step', 'Load'), loc='upper right')
-        self.MplWidget.canvas.axes.set_title('Results')
-        self.MplWidget.canvas.axes.set_ylabel("y axis")
-        self.MplWidget.canvas.axes.set_xlabel("x axis")
-
-        self.MplWidget.canvas.figure.tight_layout()
-        self.MplWidget.canvas.draw()
-
-    def loadFile(self):
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        filename, _ = QFileDialog.getOpenFileName(
-            self, "QFileDialog.getOpenFileName()", "", "All Files (*);;CSV Files (*.csv)", options=options)
-        if filename:
-            self.generateGraph(filename)
-
-    def update_force(self, _str):
-        init_force = int(self.forceText.toPlainText())
-        new_force = (init_force+5) if _str == 'increment' else (init_force-5)
-
-        if(0 <= new_force <= 100):
-            self.forceText.setText(str(new_force))
-        else:
-            self.forceText.setText('0')
-
-    def startMovingUp(self):
-        self.StepperController.startMovingUp(1000)
-
-    def stopMovingUp(self):
-        self.StepperController.stopMovingUp()
-
-    def startMovingDown(self):
-        self.StepperController.startMovingDown(1000)
-
-    def stopMovingDown(self):
-        self.StepperController.stopMovingDown()
-
-    def startProgram(self):
-        print("started")
-
-    def stopProgram(self):
-        print("stopped")
-
-    def exitProgram(self):
-        print("stopped")
-        sys.exit()
+        self.MplWidget.canvas.draw() 
