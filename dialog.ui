@@ -27,16 +27,6 @@
      <string>randomize</string>
     </property>
    </widget>
-   <widget class="MPLWidget" name="MplWidget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>1001</width>
-      <height>371</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton_clear_graph">
     <property name="geometry">
      <rect>
@@ -177,6 +167,22 @@
      <string>EXIT</string>
     </property>
    </widget>
+   <widget class="QFrame" name="MPLFrame">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>1001</width>
+      <height>371</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Plain</enum>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -185,19 +191,11 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>MPLWidget</class>
-   <extends>QWidget</extends>
-   <header>MPLWidget.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

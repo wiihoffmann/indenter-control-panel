@@ -9,6 +9,7 @@ import sys
 
 #custom  class imports
 from Indenter import *
+from MPLWidget import *
 
 # delete these later
 import numpy as np
@@ -22,12 +23,20 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         loadUi(UIFileName, self)
         self.setWindowTitle("Indenter Control Panel")
-        
-        self.Indenter = Indenter(self.MplWidget)
+
+        # Create FRAME_A
+        self.LAYOUT_A = QVBoxLayout()
+        self.MPLFrame.setLayout(self.LAYOUT_A)
+        # Place the matplotlib figure
+        self.myFig = CustomFigCanvas()
+        self.LAYOUT_A.addWidget(self.myFig)
+        self.addToolBar(NavigationToolbar(self.myFig, self))          # MPL nav bar
+
+        self.Indenter = Indenter(self.myFig)
 
         # set up bindings for the buttons and plot widgets
         self.pushButton_generate_random_signal.clicked.connect(self.updateGraph) # random button
-        self.pushButton_clear_graph.clicked.connect(self.MplWidget.clear)        # clear button
+        self.pushButton_clear_graph.clicked.connect(self.myFig.clear)        # clear button
         self.LoadButton.clicked.connect(self.loadFile)                           # load button
         self.SaveButton.clicked.connect(self.saveFile)                           # save button
         self.exitButton.clicked.connect(self.exitProgram)                        # exit button
@@ -41,7 +50,7 @@ class MainWindow(QMainWindow):
         self.downButton.pressed.connect(self.Indenter.startJogDown)              # jog down button pressed
         self.downButton.released.connect(self.Indenter.stopJogDown)              # jog down button released
         
-        self.addToolBar(NavigationToolbar(self.MplWidget.canvas, self))          # MPL nav bar
+
         
         # set up the force application buttons / readout
         self.incrementButton.setAutoRepeat(True)
@@ -51,7 +60,15 @@ class MainWindow(QMainWindow):
             lambda: self.update_force('increment'))
         self.decrementButton.pressed.connect(
             lambda: self.update_force('decrement'))
+        
+        #Add the callbackfunc to ..
+        myDataLoop = threading.Thread(name = 'myDataLoop', target = dataSendLoop, daemon = True, args = (self.addData_callbackFunc,))
+        myDataLoop.start()
 
+    def addData_callbackFunc(self, value):
+        # print("Add data: " + str(value))
+        self.myFig.addData(value)
+        return
 
     def saveFile(self):
         options = QFileDialog.Options()
@@ -102,3 +119,20 @@ class MainWindow(QMainWindow):
         self.MplWidget.canvas.axes.set_title('Cosine - Sine Signal')
         self.MplWidget.canvas.figure.tight_layout()
         self.MplWidget.canvas.draw() 
+
+def dataSendLoop(addData_callbackFunc):
+    # Setup the signal-slot mechanism.
+    mySrc = CustomFigCanvas.Communicate()
+    mySrc.data_signal.connect(addData_callbackFunc)
+
+    # Simulate some data
+    n = np.linspace(0, 499, 500)
+    y = 50 + 25*(np.sin(n / 8.3)) + 10*(np.sin(n / 7.5)) - 5*(np.sin(n / 1.5))
+    i = 0
+
+    while(True):
+        if(i > 499):
+            i = 0
+        time.sleep(0.001)
+        mySrc.data_signal.emit(y[i]) # <- Here you emit a signal!
+        i += 1
