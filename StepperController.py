@@ -45,7 +45,7 @@ class StepperController():
         # direction 1 for down
         threading.Thread(target=moveAsync, args=(1,)).start()
 
-    def stopMovingDown(self):
+    def stopMoving(self):
         global moving
         moving = False
 
@@ -55,7 +55,3 @@ class StepperController():
         stepRate = stepFreq
         # direction 0 for up
         threading.Thread(target=moveAsync, args=(0,)).start()
-
-    def stopMovingUp(self):
-        global moving
-        moving = False
