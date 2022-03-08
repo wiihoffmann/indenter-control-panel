@@ -19,7 +19,7 @@ class MPLGrapher(FigureCanvas, TimedAnimation):
         self.stepData = []
 
         # TODO: probably dont need this stuff... but I'm scared to remove it right now
-        self.xlim = 300
+        self.xlim = len(self.loadData)
         self.n = numpy.linspace(0, self.xlim - 1, self.xlim)
         self.y = (self.n * 0.0) + 50
         
@@ -43,18 +43,18 @@ class MPLGrapher(FigureCanvas, TimedAnimation):
         self.ax2.set_ylabel('steps')
         self.ax1.legend(('load', 'steps'), loc='upper right')
         self.ax1.set_title('load - displacement graph')
-        self.ax1.set_xlim(0, self.xlim - 1)
+        self.ax1.set_xlim(0, 50)
         self.ax1.set_ylim(0, 100)
 
         # finish configuring the graph area
         self.fig.tight_layout()
         FigureCanvas.__init__(self, self.fig)
-        TimedAnimation.__init__(self, self.fig, interval = 50, blit = True)
+        TimedAnimation.__init__(self, self.fig, interval = 1000, blit = True)
         return
 
 
     def new_frame_seq(self):
-        return iter(range(self.n.size))
+        return iter(range(12))
 
 
     def _init_draw(self):
@@ -72,13 +72,19 @@ class MPLGrapher(FigureCanvas, TimedAnimation):
 
     def _draw_frame(self, framedata):
         margin = 2
-        while(len(self.loadData) > 0):
-            self.y = numpy.roll(self.y, -1)
-            self.y[-1] = self.loadData[0]
-            del(self.loadData[0])
+        # while(len(self.loadData) > 0):
+        #     self.y = numpy.roll(self.y, -1)
+        #     self.y[-1] = self.loadData[0]
+        #     del(self.loadData[0])
 
-        self.line1.set_data(self.n[ 0 : self.n.size - margin ], self.y[ 0 : self.n.size - margin ])
-        self.line2.set_data(self.n[ 0 : self.n.size - margin ], self.y[ 0 : self.n.size - margin ])
+        # self.line1.set_data(self.n[ 0 : self.n.size - margin ], self.y[ 0 : self.n.size - margin ])
+        # self.line2.set_data(self.n[ 0 : self.n.size - margin ], self.y[ 0 : self.n.size - margin ])
+
+        print(list(range(1, 1+len(self.loadData))))
+        print("\n")
+
+        self.line1.set_data(list(range(1, 1+len(self.loadData))), self.loadData)
+        self.line2.set_data(list(range(1, 1+len(self.stepData))), self.stepData)
 
         self._drawn_artists = [self.line1, self.line2]
         for l in self._drawn_artists:
@@ -108,26 +114,26 @@ class MPLGrapher(FigureCanvas, TimedAnimation):
 
 
     # TODO: fix me
-    def plotData(self, x, step, load):
-        self.ax1.clear()
-        self.stepPlot = self.ax1.plot(x, step)[0]
-        self.loadPlot = self.ax1.plot(x, load)[0]
-        self.ax1.legend(('Step', 'Load'), loc='upper right')
-        self.ax1.set_title('Results')
-        self.ax1.set_ylabel("y axis")
-        self.ax1.set_xlabel("x axis")
+    # def plotData(self, x, step, load):
+    #     self.ax1.clear()
+    #     self.stepPlot = self.ax1.plot(x, step)[0]
+    #     self.loadPlot = self.ax1.plot(x, load)[0]
+    #     self.ax1.legend(('Step', 'Load'), loc='upper right')
+    #     self.ax1.set_title('Results')
+    #     self.ax1.set_ylabel("y axis")
+    #     self.ax1.set_xlabel("x axis")
 
-        self.fig.tight_layout()
-        self.canvas.draw()
+    #     self.fig.tight_layout()
+    #     self.canvas.draw()
 
 
     # TODO: fix me
-    def addDataPoint(self, x, step, load):
-        self.loadPlot.set_xdata(numpy.append(self.loadPlot.get_xdata(), x))
-        self.loadPlot.set_ydata(numpy.append(self.loadPlot.get_ydata(), load))
-        self.canvas.figure.tight_layout()
-        self.canvas.draw()
-        self.canvas.flush_events()
+    # def addDataPoint(self, x, step, load):
+    #     self.loadPlot.set_xdata(numpy.append(self.loadPlot.get_xdata(), x))
+    #     self.loadPlot.set_ydata(numpy.append(self.loadPlot.get_ydata(), load))
+    #     self.canvas.figure.tight_layout()
+    #     self.canvas.draw()
+    #     self.canvas.flush_events()
 
 
     # You need to setup a signal slot mechanism, to

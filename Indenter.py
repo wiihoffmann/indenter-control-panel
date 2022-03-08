@@ -90,7 +90,7 @@ def measurementLoop(addData_callbackFunc):
     while(not killMeasurement):
         if(i > 499):
             i = 0
-        time.sleep(0.001)
+        time.sleep(0.1)
         mySrc.data_signal.emit(12, y[i]) # <- Here you emit a signal!
         i += 1
     return
