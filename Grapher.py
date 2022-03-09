@@ -6,7 +6,7 @@ class Grapher():
     
     def __init__(self, graphHandle):
         self.graph = graphHandle
-        self.x = []
+        self.xData = []
         self.stepData = []
         self.loadData = []
         
@@ -31,18 +31,18 @@ class Grapher():
 
     def refreshPlot(self):
         self.lock.acquire()
-        self.loadLine.setData(self.x, self.loadData)
-        self.stepLine.setData(self.x, self.stepData)
+        self.loadLine.setData(self.xData, self.loadData)
+        self.stepLine.setData(self.xData, self.stepData)
         self.lock.release()
         return
 
 
     def addDataPoint(self, step, load):
         self.lock.acquire()
-        if self.x == []:
-            self.x.append(1)
+        if self.xData == []:
+            self.xData.append(1)
         else:
-            self.x.append(self.x[-1]+1)
+            self.xData.append(self.xData[-1]+1)
         self.stepData.append(step)
         self.loadData.append(load)
         self.lock.release()
