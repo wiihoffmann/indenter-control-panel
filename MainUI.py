@@ -48,10 +48,10 @@ class MainWindow(QMainWindow):
         self.stopButton.clicked.connect(self.Indenter.emergencyStop)             # stop button
 
         self.upButton.pressed.connect(self.Indenter.startJogUp)                  # jog up button pressed
-        self.upButton.released.connect(self.Indenter.stopJogUp)                  # jog up button released
+        self.upButton.released.connect(self.Indenter.stopJogging)                  # jog up button released
 
         self.downButton.pressed.connect(self.Indenter.startJogDown)              # jog down button pressed
-        self.downButton.released.connect(self.Indenter.stopJogDown)              # jog down button released
+        self.downButton.released.connect(self.Indenter.stopJogging)              # jog down button released
         
         # set up the force application buttons / readout
         self.incrementButton.setAutoRepeat(True)

@@ -1,4 +1,7 @@
 
+import threading
+import time
+
 #custom  class imports
 from StepperController import *
 from ADCController import *
@@ -14,7 +17,7 @@ class Indenter():
         self.graph = MPLgraph
         
         # set up the motor controller and ADC controller
-        self.Stepper = StepperController(12,16)
+        self.Stepper = StepperController(16)
         self.ADC = ADCController()
         self.Logger = Logger()
 
@@ -42,16 +45,12 @@ class Indenter():
         self.Stepper.startMovingUp(1000)
 
 
-    def stopJogUp(self):
-        self.Stepper.stopMovingUp()
+    def stopJogging(self):
+        self.Stepper.stopMoving()
 
 
     def startJogDown(self):
         self.Stepper.startMovingDown(1000)
-
-
-    def stopJogDown(self):
-        self.Stepper.stopMovingDown()
 
 
     def takeStiffnessMeasurement(self, load):
