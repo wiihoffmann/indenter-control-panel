@@ -6,7 +6,7 @@ The codebase for the spinal stiffness indenter done as a computer engineering ca
    ```
    dtoverlay=pwm-2chan
    ```
-2. First make sure that everything is up to date and reboot:
+2. Make sure that everything is up to date and reboot:
    ```
    sudo apt update
    sudo apt full-upgrade
