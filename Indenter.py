@@ -1,4 +1,7 @@
 
+import threading
+import time
+
 #custom  class imports
 from StepperController import *
 from ADCController import *
@@ -35,7 +38,7 @@ class Indenter():
 
 
     def startJogUp(self):
-        self.Stepper.startMovingUp(1000)
+        self.Stepper.startMovingUp(2000)
 
 
     def stopJogging(self):
@@ -43,7 +46,7 @@ class Indenter():
 
 
     def startJogDown(self):
-        self.Stepper.startMovingDown(1000)
+        self.Stepper.startMovingDown(2000)
 
 
     def takeStiffnessMeasurement(self, load):
@@ -81,22 +84,32 @@ def measurementLoop():
 
     killMeasurement = False
     try:
+        stepper = StepperController(16)
+        
         # move down until the target load is achieved
-        stepper = StepperController(12,16)
-        stepper.startMovingDown(1000)
-        while(hx.get_grams() < 1000 and not killMeasurement):
+        stepper.startMovingDown(1500)
+        start = time.time()
+        while(hx.get_grams() < 2000 and not killMeasurement):
             hx.power_down()
             time.sleep(.001)
             hx.power_up()
+        travelTime = time.time() - start
         
         # once the target load is achieved, dwell at the target load for some time
         # TODO: make sure load is maintained for the dwell time by moving the indenter up and down
         stepper.stopMoving()
-        time.sleep(5)
+        time.sleep(2)
 
 
         # move the indenter up by the number of steps we moved it down
         # TODO: implement the above comment
+        retractTime = time.time()
+        stepper.startMovingUp(1500)
+        while(time.time() < retractTime + travelTime and not killMeasurement):
+            hx.power_down()
+            time.sleep(.001)
+            hx.power_up()
+        stepper.stopMoving()
         
     except (KeyboardInterrupt, SystemExit):
         cleanAndExit()
