@@ -2,39 +2,38 @@
 import threading
 import time
 
-#custom  class imports
+#custom class imports
 from StepperController import *
 from ADCController import *
 from Logger import *
-from MPLGrapher import *
+from Grapher import *
 
 #TODO: remove
 import numpy as np
 
 class Indenter():
 
-    def __init__(self, MPLgraph):
-        self.graph = MPLgraph
+    def __init__(self, graph):
+        self.graph = Grapher(graph)
         
         # set up the motor controller and ADC controller
         self.Stepper = StepperController(16)
         self.ADC = ADCController()
         self.Logger = Logger()
 
-        self.x = []
-        self.step = []
-        self.load = []
-        self.graph.setBackground('w')
-        self.data_line =  self.graph.plot([], [])
 
     def loadAndShowResults(self, filename):
-        self.x, self.step, self.load = self.Logger.loadFile(filename)
-        self.graph.plotData(self.x, self.step, self.load)
+        x, step, load = self.Logger.loadFile(filename)
+        self.graph.setData(x, step, load)
 
 
     def saveResults(self, filename):
-        self.Logger.saveFile(filename, self.x, self.step, self.load)
+        x, step, load = self.graph.getData()
+        self.Logger.saveFile(filename, x, step, load)
 
+
+    def clearResults(self):
+        self.graph.clear()
 
     def compareResults(self, filename):
         # TODO: load data from another CSV and overlay it on the current graph
@@ -55,8 +54,10 @@ class Indenter():
 
     def takeStiffnessMeasurement(self, load):
         global terminate
+        self.graph.clear()
+        time.sleep(1)
         # launch a thread to handle taking the stiffness measurement
-        self.measurementLoop = threading.Thread(name = 'myDataLoop', target = measurementLoop, daemon = True, args = (self.addData_callbackFunc,))
+        self.measurementLoop = threading.Thread(name = 'myDataLoop', target = measurementLoop, daemon = True, args = (self.graph,))
         self.measurementLoop.start()
 
 
@@ -70,29 +71,19 @@ class Indenter():
         print("stopped")
 
 
-    def addData_callbackFunc(self, step, load):
-        # self.graph.addData(step, load)
-        self.load.append(load)
-        self.data_line.setData(list(range(1, 1+len(self.load))), self.load)
-        return
-
-
 killMeasurement = False
-def measurementLoop(addData_callbackFunc):
+def measurementLoop(graph):
     global killMeasurement
-    # Setup the signal-slot mechanism.
-    mySrc = MPLGrapher.Communicate()
-    mySrc.data_signal.connect(addData_callbackFunc)
 
-    # Simulate some data
-    n = np.linspace(0, 499, 500)
-    y = 50 + 25*(np.sin(n / 8.3)) + 10*(np.sin(n / 7.5)) - 5*(np.sin(n / 1.5))
-    i = 0
+    logger = Logger()
+    x, step, load = logger.loadFile("./samples/2021-12-5-15-19-34.csv")
+
     killMeasurement = False
+    i=0
     while(not killMeasurement):
-        if(i > 499):
-            i = 0
-        time.sleep(0.1)
-        mySrc.data_signal.emit(12, y[i]) # <- Here you emit a signal!
+        if(i >= x[-1]):
+            killMeasurement = True
+        graph.addDataPoint(step[i], load[i])
+        time.sleep(0.001)
         i += 1
     return
