@@ -3,6 +3,10 @@
 from PyQt5.uic import loadUi
 from matplotlib.backends.backend_qt5agg import (NavigationToolbar2QT as NavigationToolbar)
 
+from PyQt5 import QtWidgets
+from pyqtgraph import PlotWidget, plot
+import pyqtgraph as pg
+
 # data management imports
 import sys
 
@@ -23,19 +27,19 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Indenter Control Panel")
 
         # populate the graph area with the output graph and toolbar
-        self.graph = MPLGrapher()
-        self.graphLayout = QVBoxLayout()
-        self.graphLayout.addWidget(self.graph)
-        self.MPLFrame.setLayout(self.graphLayout)
-        # add the toolbar        
-        self.addToolBar(NavigationToolbar(self.graph, self))
+        # self.graph = MPLGrapher()
+        # self.graphLayout = QVBoxLayout()
+        # self.graphLayout.addWidget(self.graph)
+        # self.MPLFrame.setLayout(self.graphLayout)
+        # # add the toolbar        
+        # self.addToolBar(NavigationToolbar(self.graph, self))
 
         # initialize the firmware/back end functionality
-        self.Indenter = Indenter(self.graph)
+        self.Indenter = Indenter(self.plotWidget)
 
         # set up bindings for the buttons
         self.pushButton_generate_random_signal.clicked.connect(self.updateGraph) # random button
-        self.pushButton_clear_graph.clicked.connect(self.graph.clear)        # clear button
+        #self.pushButton_clear_graph.clicked.connect(self.graph.clear)        # clear button
         self.LoadButton.clicked.connect(self.loadFile)                           # load button
         self.SaveButton.clicked.connect(self.saveFile)                           # save button
         self.exitButton.clicked.connect(self.exitProgram)                        # exit button

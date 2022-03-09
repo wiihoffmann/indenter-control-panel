@@ -21,7 +21,8 @@ class Indenter():
         self.x = []
         self.step = []
         self.load = []
-
+        self.graph.setBackground('w')
+        self.data_line =  self.graph.plot([], [])
 
     def loadAndShowResults(self, filename):
         self.x, self.step, self.load = self.Logger.loadFile(filename)
@@ -71,7 +72,9 @@ class Indenter():
 
 
     def addData_callbackFunc(self, step, load):
-        self.graph.addData(step, load)
+        # self.graph.addData(step, load)
+        self.load.append(load)
+        self.data_line.setData(list(range(1, 1+len(self.load))), self.load)
         return
 
 

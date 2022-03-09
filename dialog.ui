@@ -167,7 +167,7 @@
      <string>EXIT</string>
     </property>
    </widget>
-   <widget class="QFrame" name="MPLFrame">
+   <widget class="PlotWidget" name="plotWidget" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -175,12 +175,6 @@
       <width>1001</width>
       <height>371</height>
      </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::NoFrame</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Plain</enum>
     </property>
    </widget>
   </widget>
@@ -196,6 +190,14 @@
    </property>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlotWidget</class>
+   <extends>QWidget</extends>
+   <header>pyqtgraph</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -1,27 +1,20 @@
 from PyQt5.QtWidgets import*
 from matplotlib.backends.backend_qt5agg import FigureCanvas
 from matplotlib.figure import Figure
-import numpy
     
-from matplotlib.figure import Figure
-from matplotlib.animation import TimedAnimation
+
+import matplotlib.animation as animation
 from matplotlib.lines import Line2D
-from matplotlib.backends.backend_qt5agg import FigureCanvas
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
 
-class MPLGrapher(FigureCanvas, TimedAnimation):
+class MPLGrapher(FigureCanvas):
     
     def __init__(self):
         self.loadData = []
         self.stepData = []
-
-        # TODO: probably dont need this stuff... but I'm scared to remove it right now
-        self.xlim = len(self.loadData)
-        self.n = numpy.linspace(0, self.xlim - 1, self.xlim)
-        self.y = (self.n * 0.0) + 50
         
         # Setup the graph area
         self.fig = Figure()
@@ -49,57 +42,25 @@ class MPLGrapher(FigureCanvas, TimedAnimation):
         # finish configuring the graph area
         self.fig.tight_layout()
         FigureCanvas.__init__(self, self.fig)
-        TimedAnimation.__init__(self, self.fig, interval = 1000, blit = True)
+        self.ani = animation.FuncAnimation(self.fig, self.animate, interval=100, blit=True)
         return
 
+    def init():
+        line.set_data([], [])
+        return line,
 
-    def new_frame_seq(self):
-        return iter(range(12))
+    def animate(self, i):
+        self.ax1.clear()
+        self.ax1.plot(list(range(1, 1+len(self.loadData))), self.loadData)
 
-
-    def _init_draw(self):
-        lines = [self.line1, self.line2]
-        for l in lines:
-            l.set_data([], [])
-        return
+        return [self.ax1]
+    
 
 
     def addData(self, step, load):
         self.stepData.append(step)
         self.loadData.append(load)
         return
-
-
-    def _draw_frame(self, framedata):
-        margin = 2
-        # while(len(self.loadData) > 0):
-        #     self.y = numpy.roll(self.y, -1)
-        #     self.y[-1] = self.loadData[0]
-        #     del(self.loadData[0])
-
-        # self.line1.set_data(self.n[ 0 : self.n.size - margin ], self.y[ 0 : self.n.size - margin ])
-        # self.line2.set_data(self.n[ 0 : self.n.size - margin ], self.y[ 0 : self.n.size - margin ])
-
-        print(list(range(1, 1+len(self.loadData))))
-        print("\n")
-
-        self.line1.set_data(list(range(1, 1+len(self.loadData))), self.loadData)
-        self.line2.set_data(list(range(1, 1+len(self.stepData))), self.stepData)
-
-        self._drawn_artists = [self.line1, self.line2]
-        for l in self._drawn_artists:
-            l.set_animated(True)
-        return
-
-
-    # def _step(self, *args):
-    #     # Extends the _step() method for the TimedAnimation class.
-    #     try:
-    #         TimedAnimation._step(self, *args)
-    #     except Exception as e:
-    #         TimedAnimation._stop(self)
-    #         pass
-    #     return
 
 
     # TODO: fix me
