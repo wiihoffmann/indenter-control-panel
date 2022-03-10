@@ -13,6 +13,8 @@ class Grapher():
         self.orangePen = pg.mkPen('r', width=3)
         self.bluePen = pg.mkPen('b', width=3)
 
+
+
         self.graph.setBackground('w')
         self.graph.setLabel('left', 'Displacement', units ='steps')
         self.graph.setLabel('right', 'Force', units ='N')
@@ -20,7 +22,7 @@ class Grapher():
 
         self.loadLine =  self.graph.plot([], [], pen=self.orangePen)
         self.stepLine =  self.graph.plot([], [], pen=self.bluePen)
-        
+
         self.lock = threading.Lock()
         self.timer = QtCore.QTimer()
         self.timer.setInterval(250)
@@ -54,8 +56,8 @@ class Grapher():
         self.xData = x
         self.stepData = step
         self.loadData = load
-        self.loadLine =  self.graph.plot(self.xData, self.loadData, pen=self.orangePen)
-        self.stepLine =  self.graph.plot(self.xData, self.stepData, pen=self.bluePen)
+        self.loadLine.setData(self.xData, self.loadData, pen=self.orangePen)
+        self.stepLine.setData(self.xData, self.stepData, pen=self.bluePen)
         self.lock.release()
         return
 
