@@ -97,8 +97,29 @@ def measurementLoop(targetLoad, stepRate):
 
         # once the target load is achieved, dwell at the target load for some time
         # TODO: make sure load is maintained for the dwell time by moving the indenter up and down
-        time.sleep(2)
+        startTime = time.time()
+        while time.time() < startTime + 2:
+            hx.power_down()
+            time.sleep(.001)
+            hx.power_up()
+            load = hx.get_grams()
+            
+            if load > (largetLoad + TOLERANCE):
+                # move up
+                displacement += stepper.stopMoving()
+                stepper.startMovingUp(stepRate)
 
+            elif load < (largetLoad + TOLERANCE):
+                # move down
+                displacement += stepper.stopMoving()
+                stepper.startMovingDown(stepRate)
+                
+            else:
+                # stop moving
+                displacement += stepper.stopMoving()
+            
+            # TODO: log new data point here
+            print(stepper.getDisplacement())
 
         # move the indenter up by the number of steps we moved it down
         # TODO: implement the above comment
