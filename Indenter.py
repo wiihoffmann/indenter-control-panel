@@ -109,11 +109,11 @@ def measurementLoop(targetLoad, stepRate):
                 displacement += stepper.stopMoving()
                 stepper.startMovingUp(stepRate)
 
-            elif load < (largetLoad + TOLERANCE):
+            elif load < (largetLoad - TOLERANCE):
                 # move down
                 displacement += stepper.stopMoving()
                 stepper.startMovingDown(stepRate)
-                
+
             else:
                 # stop moving
                 displacement += stepper.stopMoving()
