@@ -82,14 +82,15 @@ class MainWindow(QMainWindow):
 
 
     def startMeasurement(self):
-        loadGrams = int(self.forceText.toPlainText())/9.81 # convert force to mass
+        loadGrams = int(self.forceText.toPlainText())/9.81*1000 # convert force to mass
         self.Indenter.takeStiffnessMeasurement(int(loadGrams))
 
 
     def exitProgram(self):
         print("stopped")
+        Indenter.shutdown()
         sys.exit()
-
+        
 
     # remove me in the future
     def updateGraph(self):

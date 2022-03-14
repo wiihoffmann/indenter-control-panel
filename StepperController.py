@@ -32,9 +32,9 @@ class StepperController():
 
         # set the direction pin high to move downwards and start PWM at stepFreq
         GPIO.setup(self.directionPin, GPIO.OUT, initial=GPIO.HIGH)
+        self.startTime = time.time_ns()
         self.pwm.change_frequency(stepFreq)
         self.pwm.change_duty_cycle(50)
-        self.startTime = time.time_ns()
         return
 
 
@@ -45,9 +45,9 @@ class StepperController():
 
         # set the direction pin low to move upwards and start PWM at stepFreq
         GPIO.setup(self.directionPin, GPIO.OUT, initial=GPIO.LOW)
+        self.startTime = time.time_ns()
         self.pwm.change_frequency(stepFreq)
         self.pwm.change_duty_cycle(50)
-        self.startTime = time.time_ns()
         return
 
 

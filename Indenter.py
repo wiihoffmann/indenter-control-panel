@@ -67,6 +67,10 @@ class Indenter():
         print("stopped")
 
 
+    def shutdown(self):
+        Stepper.stopMoving()
+
+
 killMeasurement = False
 displacement = 0
 TOLERANCE = 50
@@ -92,44 +96,45 @@ def measurementLoop(targetLoad, stepRate):
             hx.power_up()
             load = hx.get_grams()
             # TODO: log new data point here
-            print(stepper.getDisplacement())
+            #print(stepper.getDisplacement())
         displacement = stepper.stopMoving()
-
+        
+        # TODO: delete me once next section works properly
+        time.sleep(2)
+        
         # once the target load is achieved, dwell at the target load for some time
         # TODO: make sure load is maintained for the dwell time by moving the indenter up and down
-        startTime = time.time()
-        while time.time() < startTime + 2:
-            hx.power_down()
-            time.sleep(.001)
-            hx.power_up()
-            load = hx.get_grams()
+        # startTime = time.time()
+        # while time.time() < startTime + 2:
+        #     hx.power_down()
+        #     hx.power_up()
+        #     load = hx.get_grams()
             
-            if load > (largetLoad + TOLERANCE):
-                # move up
-                displacement += stepper.stopMoving()
-                stepper.startMovingUp(stepRate)
+        #     if load > (targetLoad + TOLERANCE):
+        #         # move up
+        #         displacement += stepper.stopMoving()
+        #         stepper.startMovingUp(stepRate)
 
-            elif load < (largetLoad - TOLERANCE):
-                # move down
-                displacement += stepper.stopMoving()
-                stepper.startMovingDown(stepRate)
+        #     elif load < (targetLoad - TOLERANCE):
+        #         # move down
+        #         displacement += stepper.stopMoving()
+        #         stepper.startMovingDown(stepRate)
 
-            else:
-                # stop moving
-                displacement += stepper.stopMoving()
+        #     else:
+        #         # stop moving
+        #         displacement += stepper.stopMoving()
             
-            # TODO: log new data point here
-            print(stepper.getDisplacement())
+        #     # TODO: log new data point here
+        #     #print(stepper.getDisplacement())
 
         # move the indenter up by the number of steps we moved it down
         # TODO: implement the above comment
         stepper.startMovingUp(stepRate)
-        while(displacement > 0 and not killMeasurement):
+        while(abs(displacement) > abs(stepper.getDisplacement()) and not killMeasurement):
             hx.power_down()
             time.sleep(.001)
             hx.power_up()
             load = hx.get_grams()
-            displacement += stepper.getDisplacement()
             
             #TODO: log data here
             
