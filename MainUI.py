@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
         self.SaveButton.clicked.connect(self.saveFile)                           # save button
         self.exitButton.clicked.connect(self.exitProgram)                        # exit button
         
-        self.startButton.clicked.connect(self.Indenter.takeStiffnessMeasurement) # start button
+        self.startButton.clicked.connect(self.startMeasurement)                  # start button
         self.stopButton.clicked.connect(self.Indenter.emergencyStop)             # stop button
 
         self.upButton.pressed.connect(self.Indenter.startJogUp)                  # jog up button pressed
@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
         # set up the force application buttons / readout
         self.incrementButton.setAutoRepeat(True)
         self.decrementButton.setAutoRepeat(True)
-        self.forceText.insertPlainText("10")
+        self.forceText.insertPlainText("20")
         self.incrementButton.pressed.connect(
             lambda: self.update_force('increment'))
         self.decrementButton.pressed.connect(
@@ -79,6 +79,11 @@ class MainWindow(QMainWindow):
             self.forceText.setText(str(new_force))
         else:
             self.forceText.setText('0')
+
+
+    def startMeasurement(self):
+        loadGrams = int(self.forceText.toPlainText())/9.81 # convert force to mass
+        self.Indenter.takeStiffnessMeasurement(int(loadGrams))
 
 
     def exitProgram(self):

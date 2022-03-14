@@ -52,9 +52,8 @@ class Indenter():
     def takeStiffnessMeasurement(self, load):
         # launch a thread to handle taking the stiffness measurement
         #TODO: make sure that only one instance of this thread runs at a time!!!
-
-        self.measurementLoop = threading.Thread(name = 'measurementLoop', target = measurementLoop)
-        self.measurementLoop.start()
+        self.measurementLoopHandle = threading.Thread(name = 'measurementLoop', target = measurementLoop, args=(load, 1500 ))
+        self.measurementLoopHandle.start()
 
 
     def emergencyStop(self):
@@ -68,50 +67,55 @@ class Indenter():
         print("stopped")
 
 
-def updateStepCallback():
-    self.stepcount += 1
-
-
 killMeasurement = False
-def measurementLoop():
-    global killMeasurement
+displacement = 0
+TOLERANCE = 50
+def measurementLoop(targetLoad, stepRate):
+    global killMeasurement, displacement
     
     # set up the HX711
     #hx = HX711(5, 6)
     hx = HX711(29, 31)
     hx.set_offset(8214368.3125)
     hx.set_scale(243.8564841498559)
-
+    stepper = StepperController(16)
+    displacement = 0
     killMeasurement = False
+    
     try:
-        stepper = StepperController(16)
-        
         # move down until the target load is achieved
-        stepper.startMovingDown(1500)
-        start = time.time()
-        while(hx.get_grams() < 2000 and not killMeasurement):
+        load = hx.get_grams()
+        stepper.startMovingDown(stepRate)
+        while(load < targetLoad and not killMeasurement):
             hx.power_down()
             time.sleep(.001)
             hx.power_up()
-        travelTime = time.time() - start
-        
+            load = hx.get_grams()
+            # TODO: log new data point here
+            print(stepper.getDisplacement())
+        displacement = stepper.stopMoving()
+
         # once the target load is achieved, dwell at the target load for some time
         # TODO: make sure load is maintained for the dwell time by moving the indenter up and down
-        stepper.stopMoving()
         time.sleep(2)
 
 
         # move the indenter up by the number of steps we moved it down
         # TODO: implement the above comment
-        retractTime = time.time()
-        stepper.startMovingUp(1500)
-        while(time.time() < retractTime + travelTime and not killMeasurement):
+        stepper.startMovingUp(stepRate)
+        while(displacement > 0 and not killMeasurement):
             hx.power_down()
             time.sleep(.001)
             hx.power_up()
+            load = hx.get_grams()
+            displacement += stepper.getDisplacement()
+            
+            #TODO: log data here
+            
         stepper.stopMoving()
         
     except (KeyboardInterrupt, SystemExit):
+        stepper.stopMoving()
         cleanAndExit()
 
     return
