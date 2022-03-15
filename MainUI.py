@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
         loadUi(UIFileName, self)
         self.setWindowTitle("Indenter Control Panel")
         
-        self.Indenter = Indenter(self.MplWidget)
+        self.indenter = Indenter(self.MplWidget)
 
         # set up bindings for the buttons and plot widgets
         self.pushButton_generate_random_signal.clicked.connect(self.updateGraph) # random button
@@ -33,13 +33,13 @@ class MainWindow(QMainWindow):
         self.exitButton.clicked.connect(self.exitProgram)                        # exit button
         
         self.startButton.clicked.connect(self.startMeasurement)                  # start button
-        self.stopButton.clicked.connect(self.Indenter.emergencyStop)             # stop button
+        self.stopButton.clicked.connect(self.indenter.emergencyStop)             # stop button
 
-        self.upButton.pressed.connect(self.Indenter.startJogUp)                  # jog up button pressed
-        self.upButton.released.connect(self.Indenter.stopJogging)                  # jog up button released
+        self.upButton.pressed.connect(self.indenter.startJogUp)                  # jog up button pressed
+        self.upButton.released.connect(self.indenter.stopJogging)                  # jog up button released
 
-        self.downButton.pressed.connect(self.Indenter.startJogDown)              # jog down button pressed
-        self.downButton.released.connect(self.Indenter.stopJogging)              # jog down button released
+        self.downButton.pressed.connect(self.indenter.startJogDown)              # jog down button pressed
+        self.downButton.released.connect(self.indenter.stopJogging)              # jog down button released
         
         self.addToolBar(NavigationToolbar(self.MplWidget.canvas, self))          # MPL nav bar
         
@@ -59,16 +59,16 @@ class MainWindow(QMainWindow):
         filename, _ = QFileDialog.getSaveFileName(
             self, "QFileDialog.getSaveFileName()", "", "CSV File (*.csv)", options=options)
         if filename:
-            self.Indenter.saveResults(filename)
+            self.indenter.saveResults(filename)
 
 
     def loadFile(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getOpenFileName(
-            self, "QFileDialog.getOpenFileName()", "", "All Files (*);;CSV Files (*.csv)", options=options)
+            self, "QFileDialog.getOpenFileName()", "", "CSV Files (*.csv);;All Files (*)", options=options)
         if filename:
-            self.Indenter.loadAndShowResults(filename)
+            self.indenter.loadAndShowResults(filename)
 
 
     def update_force(self, _str):
@@ -83,12 +83,12 @@ class MainWindow(QMainWindow):
 
     def startMeasurement(self):
         loadGrams = int(self.forceText.toPlainText())/9.81*1000 # convert force to mass
-        self.Indenter.takeStiffnessMeasurement(int(loadGrams))
+        self.indenter.takeStiffnessMeasurement(int(loadGrams))
 
 
     def exitProgram(self):
         print("stopped")
-        Indenter.shutdown()
+        self.indenter.shutdown()
         sys.exit()
         
 
