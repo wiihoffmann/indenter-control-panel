@@ -68,7 +68,7 @@ class Indenter():
 
 
     def shutdown(self):
-        Stepper.stopMoving()
+        self.Stepper.stopMoving()
 
 
 killMeasurement = False
@@ -78,7 +78,6 @@ def measurementLoop(targetLoad, stepRate):
     global killMeasurement, displacement
     
     # set up the HX711
-    #hx = HX711(5, 6)
     hx = HX711(29, 31)
     hx.set_offset(8214368.3125)
     hx.set_scale(243.8564841498559)
