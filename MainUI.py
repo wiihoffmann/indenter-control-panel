@@ -26,7 +26,7 @@ class MainWindow(QMainWindow):
         self.SaveButton.clicked.connect(self.saveFile)                           # save button
         self.exitButton.clicked.connect(self.exitProgram)                        # exit button
         
-        self.startButton.clicked.connect(self.startMeasurement) # start button
+        self.startButton.clicked.connect(self.startMeasurement)                  # start button
         self.stopButton.clicked.connect(self.indenter.emergencyStop)             # stop button
 
         self.upButton.pressed.connect(self.indenter.startJogUp)                  # jog up button pressed

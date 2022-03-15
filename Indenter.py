@@ -102,7 +102,7 @@ def measurementLoop(targetLoad, stepRate, graph):
             hx.power_down()
             time.sleep(.002)
             hx.power_up()
-            load = 12
+            load = hx.get_grams()
             graph.addDataPoint(stepper.getDisplacement(), load)
 
         displacement = stepper.stopMoving()
