@@ -30,7 +30,7 @@ class MainWindow(QMainWindow):
         self.stopButton.clicked.connect(self.indenter.emergencyStop)             # stop button
 
         self.upButton.pressed.connect(self.indenter.startJogUp)                  # jog up button pressed
-        self.upButton.released.connect(self.indenter.stopJogging)                  # jog up button released
+        self.upButton.released.connect(self.indenter.stopJogging)                # jog up button released
 
         self.downButton.pressed.connect(self.indenter.startJogDown)              # jog down button pressed
         self.downButton.released.connect(self.indenter.stopJogging)              # jog down button released
@@ -38,7 +38,7 @@ class MainWindow(QMainWindow):
         # set up the force application buttons / readout
         self.incrementButton.setAutoRepeat(True)
         self.decrementButton.setAutoRepeat(True)
-        self.forceText.insertPlainText("10")
+        self.forceText.insertPlainText("20")
         self.incrementButton.pressed.connect(
             lambda: self.update_force('increment'))
         self.decrementButton.pressed.connect(
@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getOpenFileName(
-            self, "QFileDialog.getOpenFileName()", "", "All Files (*);;CSV Files (*.csv)", options=options)
+            self, "QFileDialog.getOpenFileName()", "", "CSV Files (*.csv);;All Files (*)", options=options)
         if filename:
             self.indenter.loadAndShowResults(filename)
 
@@ -75,7 +75,12 @@ class MainWindow(QMainWindow):
             self.forceText.setText('0')
 
 
+    def startMeasurement(self):
+        loadGrams = int(self.forceText.toPlainText())/9.81*1000 # convert force to mass
+        self.indenter.takeStiffnessMeasurement(int(loadGrams))
+
+
     def exitProgram(self):
         print("stopped")
+        self.indenter.shutdown()
         sys.exit()
-
