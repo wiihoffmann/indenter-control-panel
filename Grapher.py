@@ -13,8 +13,6 @@ class Grapher():
         self.orangePen = pg.mkPen('r', width=3)
         self.bluePen = pg.mkPen('b', width=3)
 
-
-
         self.graph.setBackground('w')
         self.graph.setLabel('left', 'Displacement', units ='steps')
         self.graph.setLabel('right', 'Force', units ='N')

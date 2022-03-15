@@ -26,7 +26,7 @@ class MainWindow(QMainWindow):
         self.SaveButton.clicked.connect(self.saveFile)                           # save button
         self.exitButton.clicked.connect(self.exitProgram)                        # exit button
         
-        self.startButton.clicked.connect(self.indenter.takeStiffnessMeasurement) # start button
+        self.startButton.clicked.connect(self.startMeasurement) # start button
         self.stopButton.clicked.connect(self.indenter.emergencyStop)             # stop button
 
         self.upButton.pressed.connect(self.indenter.startJogUp)                  # jog up button pressed
@@ -77,7 +77,7 @@ class MainWindow(QMainWindow):
 
     def startMeasurement(self):
         loadGrams = int(self.forceText.toPlainText())/9.81*1000 # convert force to mass
-        self.indenter.takeStiffnessMeasurement(int(loadGrams))
+        self.indenter.takeStiffnessMeasurement(loadGrams)
 
 
     def exitProgram(self):

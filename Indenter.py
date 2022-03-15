@@ -60,7 +60,7 @@ class Indenter():
 
         # launch a thread to handle taking the stiffness measurement
         #TODO: make sure that only one instance of this thread runs at a time!!!
-        self.measurementLoopHandle = threading.Thread(name = 'measurementLoop', target = measurementLoop, args=(load, 1500 ))
+        self.measurementLoopHandle = threading.Thread(name = 'measurementLoop', target = measurementLoop, args=(load, 1500, self.graph))
         self.measurementLoopHandle.start()
 
 
@@ -83,7 +83,7 @@ class Indenter():
 killMeasurement = False
 displacement = 0
 TOLERANCE = 50
-def measurementLoop(targetLoad, stepRate):
+def measurementLoop(targetLoad, stepRate, graph):
     global killMeasurement, displacement
     
     # set up the HX711
@@ -100,11 +100,11 @@ def measurementLoop(targetLoad, stepRate):
         stepper.startMovingDown(stepRate)
         while(load < targetLoad and not killMeasurement):
             hx.power_down()
-            time.sleep(.001)
+            time.sleep(.002)
             hx.power_up()
-            load = hx.get_grams()
-            # TODO: log new data point here
-            #print(stepper.getDisplacement())
+            load = 12
+            graph.addDataPoint(stepper.getDisplacement(), load)
+
         displacement = stepper.stopMoving()
         
         # TODO: delete me once next section works properly
@@ -144,7 +144,7 @@ def measurementLoop(targetLoad, stepRate):
             hx.power_up()
             load = hx.get_grams()
             
-            #TODO: log data here
+            graph.addDataPoint(displacement + stepper.getDisplacement(), load)
             
         stepper.stopMoving()
         
