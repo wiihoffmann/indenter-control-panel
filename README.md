@@ -14,7 +14,8 @@ The codebase for the spinal stiffness indenter done as a computer engineering ca
    ```
 3. Install all of the dependencies:
    ```
-   sudo apt install git python3-pip python3-numpy python3-matplotlib python3-pyqt5 rpi-hardware-pwm
+   sudo apt install git python3-pip python3-numpy python3-matplotlib python3-pyqt5 
+   sudo pip3 install rpi-hardware-pwm
    ```
 4. Get the code from this repo:
    ```
