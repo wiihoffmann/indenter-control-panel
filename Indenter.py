@@ -82,70 +82,63 @@ class Indenter():
 
 killMeasurement = False
 displacement = 0
-TOLERANCE = 50
+TOLERANCE = 1
 def measurementLoop(targetLoad, stepRate, graph):
     global killMeasurement, displacement
-    
+    average = 1
     # set up the HX711
     hx = HX711(29, 31)
     hx.set_offset(8214368.3125)
     hx.set_scale(243.8564841498559)
+    hx.tare()
     stepper = StepperController(16)
     displacement = 0
     killMeasurement = False
     
     try:
         # move down until the target load is achieved
-        load = hx.get_grams()
+        load = hx.get_grams(average) /1000*9.81
         stepper.startMovingDown(stepRate)
         while(load < targetLoad and not killMeasurement):
             hx.power_down()
-            time.sleep(.002)
             hx.power_up()
-            load = hx.get_grams()
-            graph.addDataPoint(stepper.getDisplacement(), load)
-
+            load = hx.get_grams(average) /1000*9.81
+            graph.addDataPoint(stepper.getDisplacement(), load*100)
         displacement = stepper.stopMoving()
         
-        # TODO: delete me once next section works properly
-        time.sleep(2)
-        
         # once the target load is achieved, dwell at the target load for some time
-        # TODO: make sure load is maintained for the dwell time by moving the indenter up and down
-        # startTime = time.time()
-        # while time.time() < startTime + 2:
-        #     hx.power_down()
-        #     hx.power_up()
-        #     load = hx.get_grams()
+        #TODO: make sure load is maintained for the dwell time by moving the indenter up and down
+        startTime = time.time()
+        while time.time() < startTime + 2:
+            hx.power_down()
+            hx.power_up()
+            load = hx.get_grams(average) /1000*9.81
             
-        #     if load > (targetLoad + TOLERANCE):
-        #         # move up
-        #         displacement += stepper.stopMoving()
-        #         stepper.startMovingUp(stepRate)
+            if load > (targetLoad + TOLERANCE):
+                # move up
+                stepper.stopMoving()
+                stepper.startMovingUp(stepRate/8)
 
-        #     elif load < (targetLoad - TOLERANCE):
-        #         # move down
-        #         displacement += stepper.stopMoving()
-        #         stepper.startMovingDown(stepRate)
+            elif load < (targetLoad - TOLERANCE):
+                # move down
+                stepper.stopMoving()
+                stepper.startMovingDown(stepRate/8)
 
-        #     else:
-        #         # stop moving
-        #         displacement += stepper.stopMoving()
-            
-        #     # TODO: log new data point here
-        #     #print(stepper.getDisplacement())
+            else:
+                # stop moving
+                stepper.stopMoving()
+
+            graph.addDataPoint(displacement, load*100)
 
         # move the indenter up by the number of steps we moved it down
         # TODO: implement the above comment
         stepper.startMovingUp(stepRate)
         while(abs(displacement) > abs(stepper.getDisplacement()) and not killMeasurement):
             hx.power_down()
-            time.sleep(.001)
             hx.power_up()
-            load = hx.get_grams()
-            
-            graph.addDataPoint(displacement + stepper.getDisplacement(), load)
-            
+            load = hx.get_grams(average) /1000*9.81
+
+            graph.addDataPoint(displacement + stepper.getDisplacement(), load*100)
         stepper.stopMoving()
         
     except (KeyboardInterrupt, SystemExit):
