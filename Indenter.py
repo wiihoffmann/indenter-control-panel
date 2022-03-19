@@ -1,4 +1,5 @@
 
+from multiprocessing import Process, Pipe
 import threading
 import time
 
@@ -55,13 +56,16 @@ class Indenter():
         self.Stepper.startMovingDown(2000)
 
 
-    def takeStiffnessMeasurement(self, load):
+    def takeStiffnessMeasurement(self, targetLoad):
         self.graph.clear()
 
         # launch a thread to handle taking the stiffness measurement
         #TODO: make sure that only one instance of this thread runs at a time!!!
-        self.measurementLoopHandle = threading.Thread(name = 'measurementLoop', target = measurementLoop, args=(load, 1500, self.graph))
-        self.measurementLoopHandle.start()
+
+        parentPipe, childPipe = Pipe()
+        self.graph.addFromPipe(parentPipe)
+        p = Process(name = 'measurementLoop', target = measurementLoop, args=(targetLoad, 1500, childPipe))
+        p.start()
 
 
     def emergencyStop(self):
@@ -83,7 +87,7 @@ class Indenter():
 killMeasurement = False
 displacement = 0
 TOLERANCE = 1
-def measurementLoop(targetLoad, stepRate, graph):
+def measurementLoop(targetLoad, stepRate, graphPipe):
     global killMeasurement, displacement
     average = 1
     # set up the HX711
@@ -103,7 +107,7 @@ def measurementLoop(targetLoad, stepRate, graph):
             hx.power_down()
             hx.power_up()
             load = hx.get_grams(average) /1000*9.81
-            graph.addDataPoint(stepper.getDisplacement(), load*100)
+            graphPipe.send([stepper.getDisplacement(), load*100])
         displacement = stepper.stopMoving()
         
         # once the target load is achieved, dwell at the target load for some time
@@ -128,7 +132,7 @@ def measurementLoop(targetLoad, stepRate, graph):
                 # stop moving
                 stepper.stopMoving()
 
-            graph.addDataPoint(displacement, load*100)
+            graphPipe.send([displacement, load*100])
 
         # move the indenter up by the number of steps we moved it down
         # TODO: implement the above comment
@@ -138,11 +142,12 @@ def measurementLoop(targetLoad, stepRate, graph):
             hx.power_up()
             load = hx.get_grams(average) /1000*9.81
 
-            graph.addDataPoint(displacement + stepper.getDisplacement(), load*100)
+            graphPipe.send([displacement + stepper.getDisplacement(), load*100])
         stepper.stopMoving()
         
     except (KeyboardInterrupt, SystemExit):
         stepper.stopMoving()
         cleanAndExit()
 
+    graphPipe.close()
     return
