@@ -49,10 +49,9 @@ class Grapher():
         return
 
 
-    def addFromPipe(self, pipe):
+    def addDataFromPipe(self, pipe):
         self.pipeManagerhandle= threading.Thread(name = 'pipeManager', target = pipeManager, args=(self, pipe))
         self.pipeManagerhandle.start()
-
 
 
     def setData(self, x, step, load):

@@ -62,3 +62,9 @@ class StepperController():
         travelTime = (time.time_ns() - self.startTime)* pow(10,-9)
         return int(self.stepRate * travelTime * self.direction)
 
+
+    def emergencyStop(self, displacement, stepFreq = DEFAULT_STEP_RATE):
+        self.startMovingUp(stepFreq)
+        while abs(self.getDisplacement()) < displacement:
+            time.sleep(.001)
+        self.stopMoving()
