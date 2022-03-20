@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import *
 # data management imports
 import sys
 
-#custom  class imports
+#custom class imports
 from firmware.Indenter import *
 
 class MainWindow(QMainWindow):
@@ -81,6 +81,5 @@ class MainWindow(QMainWindow):
 
 
     def exitProgram(self):
-        print("stopped")
-        self.indenter.shutdown()
+        self.indenter.emergencyStop()
         sys.exit()

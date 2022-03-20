@@ -49,6 +49,11 @@ class Grapher():
         return
 
 
+    def addDataFromPipe(self, pipe):
+        self.pipeManagerhandle= threading.Thread(name = 'pipeManager', target = pipeManager, args=(self, pipe))
+        self.pipeManagerhandle.start()
+
+
     def setData(self, x, step, load):
         self.lock.acquire()
         self.xData = x
@@ -74,3 +79,12 @@ class Grapher():
         self.lock.release()
 
  
+def pipeManager(self, pipe):
+    done = False
+    while not done:
+        try:
+            step, data = pipe.recv()
+            self.addDataPoint(step, data)
+        except EOFError:
+            done = True
+    return
