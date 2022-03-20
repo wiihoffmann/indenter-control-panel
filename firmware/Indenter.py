@@ -12,6 +12,7 @@ from firmware.hx711 import HX711
 
 JOG_SPEED = 2000
 TOLERANCE = 1
+DIR_PIN = 23
 
 
 class Indenter():
@@ -21,7 +22,7 @@ class Indenter():
         self.graph = Grapher(graph)
         
         # set up the stepper controller and ADC controller
-        self.Stepper = StepperController(16)
+        self.Stepper = StepperController(DIR_PIN)
         self.ADC = ADCController()
         self.Logger = Logger()
 
@@ -94,11 +95,11 @@ class Indenter():
 
 def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
     displacement = 0
-    stepper = StepperController(16)
+    stepper = StepperController(DIR_PIN)
     
     # set up the HX711
     average = 1
-    hx = HX711(29, 31)
+    hx = HX711(21,22)
     hx.set_offset(8214368.3125)
     hx.set_scale(243.8564841498559)
     hx.tare()
