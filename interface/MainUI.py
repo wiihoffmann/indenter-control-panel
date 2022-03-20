@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import *
 import sys
 
 #custom  class imports
-from Indenter import *
+from firmware.Indenter import *
 
 class MainWindow(QMainWindow):
 

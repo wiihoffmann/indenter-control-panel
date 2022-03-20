@@ -1,10 +1,10 @@
 # ------------------------------------------------------
 # ---------------------- main.py -----------------------
 # ------------------------------------------------------
-from MainUI import *
+from interface.MainUI import *
 
 app = QApplication([])
-window = MainWindow("dialog.ui")
+window = MainWindow("interface/dialog.ui")
 window.show()
 app.exec_()
 
