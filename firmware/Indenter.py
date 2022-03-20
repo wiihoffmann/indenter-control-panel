@@ -109,7 +109,7 @@ def measurementLoop(targetLoad, stepRate, graph):
         # once the target load is achieved, dwell at the target load for some time
         #TODO: make sure load is maintained for the dwell time by moving the indenter up and down
         startTime = time.time()
-        while time.time() < startTime + 2:
+        while time.time() < (startTime + 2) and not killMeasurement:
             hx.power_down()
             hx.power_up()
             load = hx.get_grams(average) /1000*9.81
@@ -143,6 +143,5 @@ def measurementLoop(targetLoad, stepRate, graph):
         
     except (KeyboardInterrupt, SystemExit):
         stepper.stopMoving()
-        cleanAndExit()
 
     return
