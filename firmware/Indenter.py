@@ -99,7 +99,7 @@ def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
     
     # set up the HX711
     average = 1
-    hx = HX711(21,22)
+    hx = HX711(5,6)
     hx.set_offset(8214368.3125)
     hx.set_scale(243.8564841498559)
     hx.tare()
