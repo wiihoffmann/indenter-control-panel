@@ -1,9 +1,8 @@
 from PyQt5 import QtCore
 import pyqtgraph as pg
 import threading
-import time
 
-requestLock = False
+# requestLock = False
 
 class Grapher():
     
@@ -43,14 +42,14 @@ class Grapher():
 
 
     def addDataPoint(self, step, load):
-        #self.lock.acquire()
+        self.lock.acquire()
         if self.xData == []:
             self.xData.append(1)
         else:
             self.xData.append(self.xData[-1]+1)
         self.stepData.append(step)
         self.loadData.append(load)
-        #self.lock.release()
+        self.lock.release()
         return
 
 
@@ -93,15 +92,17 @@ def pipeManager(self, pipe):
     done = False
     acquired = False
     while not done:
-        # if another thread wants the lock and we have it, give it up
-        if requestLock == True and acquired == True:
-            self.lock.release()
-            requestLock = False
-            acquired = False
-        # if we don't have the lock, try and get it
-        elif acquired == False:
-            self.lock.acquire()
-            acquired = True
+        # # if another thread wants the lock and we have it, give it up
+        # if requestLock == True and acquired == True:
+            
+        #     requestLock = False
+        #     acquired = False
+        #     print("release")
+        #     self.lock.release()
+        # # if we don't have the lock, try and get it
+        # elif acquired == False:
+        #     self.lock.acquire()
+        #     acquired = True
             
         # graph the data waiting in the pipe
         try:
@@ -109,5 +110,5 @@ def pipeManager(self, pipe):
             self.addDataPoint(step, data)
         except EOFError:
             done = True
-    self.lock.release()
+    # self.lock.release()
     return

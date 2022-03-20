@@ -21,7 +21,7 @@ class Indenter():
         self.graph = Grapher(graph)
         
         # set up the stepper controller and ADC controller
-        self.Stepper = StepperController(16)
+        self.Stepper = StepperController(23)
         self.Logger = Logger()
 
         # used to kill a measurement in an emergency
@@ -108,9 +108,8 @@ def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
             graphPipe.send([displacement, load*100])
             #time.sleep(1 / SAMPLE_RATE)
             load = ADC.getLoad()
-        print(displacement)
 
-        #TODO: update the displacement values here
+
         # once the target load is achieved, dwell at the target load for some time
         startTime = time.time()
         # while the dwell time has not elapsed
@@ -134,7 +133,7 @@ def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
                 displacement += stepper.stopMoving()
             
 
-        # return the indenter head to its starting position, logging daa on the way
+        # return the indenter head to its starting position, logging data on the way
         stepper.startMovingUp(stepRate)
         # move the indenter up by the number of steps we moved it down
         while(displacement > 0 and not emergencySignal.is_set()):
@@ -152,7 +151,6 @@ def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
 
     # stop the indenter if any exceptions occur
     except Exception as e:
-        print(time.time() - start)
         stepper.emergencyStop(displacement, stepRate)
     
     # close the pipe to the graph before quitting the process
