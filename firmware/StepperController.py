@@ -18,7 +18,7 @@ class StepperController():
         self.startTime = time.time_ns()
 
         GPIO.setwarnings(False)  # Ignore warning for now
-        GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering
+        GPIO.setmode(GPIO.BCM)  # Use physical pin numbering
         GPIO.setup(self.directionPin, GPIO.OUT, initial=GPIO.LOW) # initialize direction pin low
         self.pwm = HardwarePWM(pwm_channel=0, hz=DEFAULT_STEP_RATE) # initialize step pin PWM
         self.pwm.start(0) # duty cycle 0 == off
