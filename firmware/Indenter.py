@@ -92,7 +92,6 @@ class Indenter():
 
 
 
-
 def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
     displacement = 0
     stepper = StepperController(16)
