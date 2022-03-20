@@ -3,11 +3,11 @@ import threading
 import time
 
 #custom class imports
-from StepperController import *
-from ADCController import *
-from Logger import *
-from Grapher import *
-from hx711 import HX711
+from firmware.StepperController import *
+from firmware.ADCController import *
+from datalogger.Logger import *
+from interface.Grapher import *
+from firmware.hx711 import HX711
 
 #TODO: remove
 import numpy as np
