@@ -18,7 +18,7 @@ class StepperController():
         self.startTime = time.time_ns()
 
         GPIO.setwarnings(False)  # Ignore warning for now
-        GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering
+        GPIO.setmode(GPIO.BCM)  # Use GPIO pin numbering
         GPIO.setup(self.directionPin, GPIO.OUT, initial=GPIO.LOW) # initialize direction pin low
         self.pwm = HardwarePWM(pwm_channel=0, hz=DEFAULT_STEP_RATE) # initialize step pin PWM
         self.pwm.start(0) # duty cycle 0 == off
@@ -54,17 +54,24 @@ class StepperController():
     """Stop moving the motor"""
     def stopMoving(self):
         self.pwm.change_duty_cycle(0)
-        return self.getDisplacement()
+        displacement = self.getDisplacement()
+        self.direction = 0
+        return displacement
 
 
     """ get the displacement in steps since we started moving """ 
     def getDisplacement(self):
-        travelTime = (time.time_ns() - self.startTime)* pow(10,-9)
+        now = time.time_ns()
+        travelTime = (now - self.startTime)* pow(10,-9)
+        self.startTime = now
         return int(self.stepRate * travelTime * self.direction)
 
 
     def emergencyStop(self, displacement, stepFreq = DEFAULT_STEP_RATE):
+        print("backing off")
         self.startMovingUp(stepFreq)
-        while abs(self.getDisplacement()) < displacement:
-            time.sleep(.001)
+        while displacement > 0:
+            time.sleep(.002)
+            displacement += self.getDisplacement()
         self.stopMoving()
+        print("done")
