@@ -12,6 +12,7 @@ from interface.Grapher import *
 JOG_SPEED = 2000
 TOLERANCE = 1
 SAMPLE_RATE = 1000
+DIR_PIN = 23  #physical pin 16, GPIO23
 
 
 class Indenter():
@@ -20,8 +21,8 @@ class Indenter():
         # the graph object in the UI
         self.graph = Grapher(graph)
         
-        # set up the stepper controller and ADC controller
-        self.Stepper = StepperController(23)
+        # set up the stepper controller and data logger
+        self.Stepper = StepperController() #physical pin 16, GPIO23
         self.Logger = Logger()
 
         # used to kill a measurement in an emergency
@@ -68,7 +69,7 @@ class Indenter():
         return
 
 
-    def takeStiffnessMeasurement(self, targetLoad):
+    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate):
         # only start a measurement if one is not currently running
         if self.measurementHandle == None or not self.measurementHandle.is_alive():
             self.graph.clear()
@@ -79,7 +80,7 @@ class Indenter():
             self.graph.addDataFromPipe(parentGraphPipe)
 
             # launch a process to handle taking the stiffness measurement
-            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(targetLoad, 1500, childGraphPipe, self.emergencySignal))
+            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(preload, preloadTime, maxLoad, maxLoadTime, stepRate, childGraphPipe, self.emergencySignal))
             self.measurementHandle.start()
         return
 
@@ -91,40 +92,46 @@ class Indenter():
 
 
 
-def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
+def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphPipe, emergencySignal):
     displacement = 0
-    stepper = StepperController(23) #physical pin 16, GPIO23
+    stepper = StepperController(DIR_PIN)
     ADC = ADCController()
     ADC.tare()
     start = time.time()
     try:
+        start = time.time()
+        # TODO: implement preloading and preload hold
+
         # move down to apply the main load
         load = ADC.getLoad()
         stepper.startMovingDown(stepRate)
         # move down until the target load is achieved
-        while(load < targetLoad and not emergencySignal.is_set()):
+        while(load < maxLoad and not emergencySignal.is_set()):
             # log a data point
             displacement += stepper.getDisplacement()
             graphPipe.send([displacement, load*100])
             #time.sleep(1 / SAMPLE_RATE)
             load = ADC.getLoad()
+        
+        print("time to apply load: " + str(time.time() - start))
+        start = time.time()
 
-
+        #TODO: update the displacement values here
         # once the target load is achieved, dwell at the target load for some time
         startTime = time.time()
         # while the dwell time has not elapsed
-        while time.time() < (startTime + 4) and not emergencySignal.is_set():
+        while time.time() < (startTime + maxLoadTime) and not emergencySignal.is_set():
             graphPipe.send([displacement, load*100])
             #time.sleep(1 / SAMPLE_RATE)
             load = ADC.getLoad()
             
             # move up if too much load is applied
-            if load > (targetLoad + TOLERANCE):
+            if load > (maxLoad + TOLERANCE):
                 displacement += stepper.stopMoving()
                 stepper.startMovingUp(stepRate/8)
 
             # move down is too little load is applied
-            elif load < (targetLoad - TOLERANCE):
+            elif load < (maxLoad - TOLERANCE):
                 displacement += stepper.stopMoving()
                 stepper.startMovingDown(stepRate/8)
 
@@ -133,7 +140,10 @@ def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
                 displacement += stepper.stopMoving()
             
 
-        # return the indenter head to its starting position, logging data on the way
+        print("time spent dwelling: " + str(time.time() - start))
+        start = time.time()
+
+        # return the indenter head to its starting position, logging daa on the way
         stepper.startMovingUp(stepRate)
         # move the indenter up by the number of steps we moved it down
         while(displacement > 0 and not emergencySignal.is_set()):
@@ -144,10 +154,16 @@ def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
             load = ADC.getLoad()
         stepper.stopMoving()
         
-        # if we have an emergency, we still need to retract the indenter head
+        print("time spent retracting (non-emerg): " + str(time.time() - start))
+        start = time.time()
+
+        # if we had an emergency, we still need to retract the indenter head
         if emergencySignal.is_set():
             print(time.time() - start)
             stepper.emergencyStop(displacement, stepRate)
+            
+            print("time spent retracting (emerg): " + str(time.time() - start))
+            start = time.time()
 
     # stop the indenter if any exceptions occur
     except Exception as e:
