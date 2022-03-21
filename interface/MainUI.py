@@ -8,6 +8,7 @@ import sys
 
 #custom class imports
 from firmware.Indenter import *
+from interface.WarningDialog import *
 
 DEFAULT_MAX_LOAD = "60"
 DEFAULT_MAX_LOAD_TIME = "2"
@@ -65,11 +66,11 @@ class MainWindow(QMainWindow):
         self.stepRateDisplay.setText(DEFAULT_STEP_RATE)
         self.stepRateIncButton.pressed.connect( lambda: self.updateReadout(1000, 2500, 100, self.stepRateDisplay))
         self.stepRateDecButton.pressed.connect( lambda: self.updateReadout(1000, 2500, -100, self.stepRateDisplay))
-
+        
 
     def updateReadout(self, min, max, step, readout):     
         # increment the readout by the step value
-        if readout.text()[:-1].isalpha(): # if we have units
+        if readout.text()[-1:].isalpha(): # if we have units
             newValue = int(readout.text()[:-2]) + step
             units = readout.text()[-2:]
         else: # if there are no units
@@ -105,9 +106,18 @@ class MainWindow(QMainWindow):
 
 
     def startMeasurement(self):
-        # TODO: make sure that the preload is less than the full load!
+        preload = int(self.preloadDisplay.text()[:-2])
         maxLoad = int(self.maxLoadDisplay.text()[:-2])
-        self.indenter.takeStiffnessMeasurement(maxLoad)
+        preloadTime = int(self.preloadTimeDisplay.text()[:-2])
+        maxLoadTime = int(self.maxLoadTimeDisplay.text()[:-2])
+        stepRate = int(self.stepRateDisplay.text())
+
+        # if the preload is larger than the max load, issue a warning
+        if preload >= maxLoad:
+            dlg = WarningDialog(self)
+            dlg.exec()
+        else:
+            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate)
 
 
     def exitProgram(self):
