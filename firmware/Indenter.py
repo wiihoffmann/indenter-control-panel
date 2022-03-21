@@ -98,12 +98,11 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
     ADC = ADCController()
     ADC.tare()
     try:
-        
+        start = time.time() 
         # TODO: implement preloading and preload hold
         
         # move down to apply the main load
         load = ADC.getLoad()
-        start = time.time()
         stepper.startMovingDown(stepRate)
         # move down until the target load is achieved
         while(load < maxLoad and not emergencySignal.is_set()):
@@ -115,6 +114,7 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
         displacement += stepper.stopMoving()
 
         print("time to apply load: " + str(time.time() - start))
+        print(displacement)
         start = time.time()
 
         #TODO: update the displacement values here
@@ -144,7 +144,7 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
         print("time spent dwelling: " + str(time.time() - start))
         start = time.time()
 
-        # return the indenter head to its starting position, logging daa on the way
+        # return the indenter head to its starting position, logging data on the way
         stepper.startMovingUp(stepRate)
         # move the indenter up by the number of steps we moved it down
         while(displacement > 0 and not emergencySignal.is_set()):
@@ -171,4 +171,5 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
     # close the pipe to the graph before quitting the process
     finally:
         graphPipe.close()
+        
     return
