@@ -114,7 +114,7 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
         # move down until the target load is achieved
         while(load < maxLoad and not emergencySignal.is_set()):
             hx.power_down()
-            time.sleep(.005)
+            time.sleep(.001)
             hx.power_up()
             load = hx.get_grams(average) /1000*9.81
             # log a data point
@@ -130,19 +130,19 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
         # while the dwell time has not elapsed
         while time.time() < (startTime + maxLoadTime) and not emergencySignal.is_set():
             hx.power_down()
-            time.sleep(.005)
+            time.sleep(.001)
             hx.power_up()
             load = hx.get_grams(average) /1000*9.81
             
             # move up if too much load is applied
-            if load > (maxLoad + TOLERANCE):
+            if load > (maxLoad + TOLERANCE) and stepper.getDirection != -1:
                 stepper.stopMoving()
-                stepper.startMovingUp(stepRate/8)
+                stepper.startMovingUp(80)
 
             # move down is too little load is applied
-            elif load < (maxLoad - TOLERANCE):
+            elif load < (maxLoad - TOLERANCE) and stepper.getDirection != 1:
                 stepper.stopMoving()
-                stepper.startMovingDown(stepRate/8)
+                stepper.startMovingDown(80)
 
             # do nothing if the load is just right
             else:
@@ -159,7 +159,7 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
         # move the indenter up by the number of steps we moved it down
         while(abs(displacement) > abs(stepper.getDisplacement()) and not emergencySignal.is_set()):
             hx.power_down()
-            time.sleep(.005)
+            time.sleep(.001)
             hx.power_up()
             load = hx.get_grams(average) /1000*9.81
 

@@ -103,6 +103,9 @@ class MainWindow(QMainWindow):
             self, "QFileDialog.getOpenFileName()", "", "CSV Files (*.csv);;All Files (*)", options=options)
         if filename:
             self.indenter.loadAndShowResults(filename)
+        #self.indenter.loadAndShowResults("/home/pi/spinal-stiffness-indenter/sample data/2021-12-5-15-19-34.csv")
+
+        print("finished dialog")
 
 
     def startMeasurement(self):
