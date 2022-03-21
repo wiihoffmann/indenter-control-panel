@@ -70,7 +70,7 @@ class Indenter():
         return
 
 
-    def takeStiffnessMeasurement(self, targetLoad):
+    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate):
         # only start a measurement if one is not currently running
         if self.measurementHandle == None or not self.measurementHandle.is_alive():
             self.graph.clear()
@@ -81,7 +81,7 @@ class Indenter():
             self.graph.addDataFromPipe(parentGraphPipe)
 
             # launch a process to handle taking the stiffness measurement
-            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(targetLoad, 1500, childGraphPipe, self.emergencySignal))
+            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(preload, preloadTime, maxLoad, maxLoadTime, stepRate, childGraphPipe, self.emergencySignal))
             self.measurementHandle.start()
         return
 
@@ -93,7 +93,7 @@ class Indenter():
 
 
 
-def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
+def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphPipe, emergencySignal):
     displacement = 0
     stepper = StepperController(DIR_PIN)
     
@@ -105,11 +105,14 @@ def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
     hx.tare()
     
     try:
+        start = time.time()
+        # TODO: implement preloading and preload hold
+
         # move down to apply the main load
         load = hx.get_grams(average) /1000*9.81
         stepper.startMovingDown(stepRate)
         # move down until the target load is achieved
-        while(load < targetLoad and not emergencySignal.is_set()):
+        while(load < maxLoad and not emergencySignal.is_set()):
             hx.power_down()
             time.sleep(.005)
             hx.power_up()
@@ -118,23 +121,26 @@ def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
             graphPipe.send([stepper.getDisplacement(), load*100])
         displacement = stepper.stopMoving()
         
+        print("time to apply load: " + str(time.time() - start))
+        start = time.time()
+
         #TODO: update the displacement values here
         # once the target load is achieved, dwell at the target load for some time
         startTime = time.time()
         # while the dwell time has not elapsed
-        while time.time() < (startTime + 2) and not emergencySignal.is_set():
+        while time.time() < (startTime + maxLoadTime) and not emergencySignal.is_set():
             hx.power_down()
             time.sleep(.005)
             hx.power_up()
             load = hx.get_grams(average) /1000*9.81
             
             # move up if too much load is applied
-            if load > (targetLoad + TOLERANCE):
+            if load > (maxLoad + TOLERANCE):
                 stepper.stopMoving()
                 stepper.startMovingUp(stepRate/8)
 
             # move down is too little load is applied
-            elif load < (targetLoad - TOLERANCE):
+            elif load < (maxLoad - TOLERANCE):
                 stepper.stopMoving()
                 stepper.startMovingDown(stepRate/8)
 
@@ -144,6 +150,9 @@ def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
             
             # log a data point
             graphPipe.send([displacement, load*100])
+
+        print("time spent dwelling: " + str(time.time() - start))
+        start = time.time()
 
         # return the indenter head to its starting position, logging daa on the way
         stepper.startMovingUp(stepRate)
@@ -158,9 +167,15 @@ def measurementLoop(targetLoad, stepRate, graphPipe, emergencySignal):
             graphPipe.send([displacement + stepper.getDisplacement(), load*100])
         stepper.stopMoving()
         
+        print("time spent retracting (non-emerg): " + str(time.time() - start))
+        start = time.time()
+
         # if we had an emergency, we still need to retract the indenter head
         if emergencySignal.is_set():
             stepper.emergencyStop(displacement, stepRate)
+            
+            print("time spent retracting (emerg): " + str(time.time() - start))
+            start = time.time()
 
     # stop the indenter if any exceptions occur
     except Exception as e:
