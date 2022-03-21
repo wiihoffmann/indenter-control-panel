@@ -19,6 +19,7 @@ class ADCController():
         # Initialize the I2C bus and ADC
         i2c = busio.I2C(board.SCL, board.SDA)
         ads = ADS.ADS1015(i2c, data_rate=3300)
+        ads.mode = ADS.Mode.CONTINUOUS
         # We use channel 0 for input from the load cell
         self.loadInput = AnalogIn(ads, ADS.P0)
         return

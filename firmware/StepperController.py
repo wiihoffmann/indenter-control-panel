@@ -68,10 +68,8 @@ class StepperController():
 
 
     def emergencyStop(self, displacement, stepFreq = DEFAULT_STEP_RATE):
-        print("backing off")
         self.startMovingUp(stepFreq)
         while displacement > 0:
             time.sleep(.002)
             displacement += self.getDisplacement()
         self.stopMoving()
-        print("done")
