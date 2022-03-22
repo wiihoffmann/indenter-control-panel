@@ -12,7 +12,7 @@ class ADCController():
         self.calVoltage1 = 0
         # second load/voltage calibration pair
         self.calLoad2 = 100
-        self.calVoltage2 = 3.00
+        self.calVoltage2 = 2.00
         # △load / △V (N/V)
         self.scaler = abs(self.calLoad2 - self.calLoad1) / abs(self.calVoltage2 - self.calVoltage1)
 
@@ -21,7 +21,7 @@ class ADCController():
         ads = ADS.ADS1015(i2c, data_rate=3300)
         ads.mode = ADS.Mode.CONTINUOUS
         # We use channel 0 for input from the load cell
-        self.loadInput = AnalogIn(ads, ADS.P0)
+        self.loadInput = AnalogIn(ads, ADS.P0, ADS.P1)
         return
 
 
