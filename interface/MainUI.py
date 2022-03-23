@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import *
 # data management imports
 import sys
 import os
+import signal
 
 #custom class imports
 from firmware.Indenter import *
@@ -31,6 +32,15 @@ class MainWindow(QMainWindow):
 
         # initialize the firmware/back end functionality
         self.indenter = Indenter(self.plotWidget)
+
+        # set up the signal handler for the "done" signal from the measurement loop
+        signal.signal(signal.SIGUSR1, self.unblank)
+
+        # the buttons to blank during a measurement
+        self.toBlank = [self.clearButton, self.loadButton, self.saveButton, self.moveUpButton, self.moveDownButton,
+                    self.preloadIncButton, self.preloadDecButton, self.preloadTimeIncButton, self.preloadTimeDecButton,
+                    self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton,
+                    self.stepRateIncButton, self.stepRateDecButton]
 
         # set up bindings for the buttons
         self.clearButton.clicked.connect(self.indenter.clearResults)    # clear button
@@ -106,12 +116,19 @@ class MainWindow(QMainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getOpenFileName(
-            self, "Load measurement from file", "", "CSV Files (*.csv);;All Files (*)")
+            self, "Load measurement from file", os.path.join(self.dir, "Collected Data/"), "CSV Files (*.csv);;All Files (*)")
         if filename:
             self.indenter.loadAndShowResults(filename)
+        
         #self.indenter.loadAndShowResults("/home/pi/spinal-stiffness-indenter/sample data/2021-12-5-15-19-34.csv")
 
-        print("finished dialog")
+
+    def unblank(self, signum, frame):
+        print("I am unblanking")
+        for i in self.toBlank:
+            print(i)
+            i.setText("potato")
+            i.setEnabled(True)
 
 
     def startMeasurement(self):
@@ -121,6 +138,10 @@ class MainWindow(QMainWindow):
         maxLoadTime = int(self.maxLoadTimeDisplay.text()[:-2])
         stepRate = int(self.stepRateDisplay.text())
 
+        # disable some buttons during the measurement
+        for i in self.toBlank:
+            i.setEnabled(False)
+        
         # if the preload is larger than the max load, issue a warning
         if preload >= maxLoad:
             dlg = WarningDialog(self)

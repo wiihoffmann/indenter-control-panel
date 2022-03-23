@@ -1,5 +1,6 @@
 
 from multiprocessing import Process, Pipe, Event
+import signal
 import time
 
 #custom class imports
@@ -69,7 +70,7 @@ class Indenter():
         return
 
 
-    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate):
+    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate):        
         # only start a measurement if one is not currently running
         if self.measurementHandle == None or not self.measurementHandle.is_alive():
             self.graph.clear()
@@ -107,7 +108,7 @@ def applyLoad(displacement, target, stepRate, ADC, stepper, graphPipe, emergency
     return displacement
 
 
-def dwell(displacement, target, stepRate, dwellTime, ADC, stepper, graphPipe, emergencySignal):
+def dwell(displacement, target, stepRate, dwellTime, ADC, stepper, graphPipe, emergencySignal):   
     # once the target load is achieved, dwell at the target load for some time
     startTime = time.time()
     # while the dwell time has not elapsed
@@ -151,7 +152,7 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
     stepper = StepperController(DIR_PIN)
     ADC = ADCController()
     ADC.tare()
-    
+
     try:
         # apply preload
         displacement = applyLoad(displacement, preload, stepRate, ADC, stepper, graphPipe, emergencySignal)
@@ -175,6 +176,7 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
     
     # close the pipe to the graph before quitting the process
     finally:
+        signal.raise_signal( signal.SIGUSR1 )
         graphPipe.close()
-        
+         
     return
