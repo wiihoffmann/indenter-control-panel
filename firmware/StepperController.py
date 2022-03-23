@@ -66,6 +66,11 @@ class StepperController():
         self.startTime = now
         return int(self.stepRate * travelTime * self.direction)
 
+    
+    """ get direction """ 
+    def getDirection(self):
+        return self.direction
+
 
     def emergencyStop(self, displacement, stepFreq = DEFAULT_STEP_RATE):
         self.startMovingUp(stepFreq)
