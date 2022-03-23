@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import *
 
 # data management imports
 import sys
+import os
 
 #custom class imports
 from firmware.Indenter import *
@@ -18,11 +19,15 @@ DEFAULT_STEP_RATE = "1500"
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, UIFileName):
+    def __init__(self, dir):
+        # the directory we launched from
+        self.dir = dir
+
         # initialize Qt for the GUI
         QMainWindow.__init__(self)
-        loadUi(UIFileName, self)
+        loadUi(os.path.join(self.dir, "interface/dialog.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
+        self.showFullScreen()
 
         # initialize the firmware/back end functionality
         self.indenter = Indenter(self.plotWidget)
@@ -54,8 +59,8 @@ class MainWindow(QMainWindow):
 
         # set up the max load buttons / readout
         self.maxLoadDisplay.setText(DEFAULT_MAX_LOAD + " N")
-        self.maxLoadIncButton.pressed.connect( lambda: self.updateReadout(5, 100, 5, self.maxLoadDisplay))
-        self.maxLoadDecButton.pressed.connect( lambda: self.updateReadout(5, 100, -5, self.maxLoadDisplay))
+        self.maxLoadIncButton.pressed.connect( lambda: self.updateReadout(5, 110, 5, self.maxLoadDisplay))
+        self.maxLoadDecButton.pressed.connect( lambda: self.updateReadout(5, 110, -5, self.maxLoadDisplay))
         
         # set up the max load time buttons / readout
         self.maxLoadTimeDisplay.setText(DEFAULT_MAX_LOAD_TIME + " s")
@@ -88,10 +93,11 @@ class MainWindow(QMainWindow):
 
 
     def saveFile(self):
+        print(os.path.join(self.dir, "Collected Data/"))
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getSaveFileName(
-            self, "QFileDialog.getSaveFileName()", "", "CSV File (*.csv)", options=options)
+            self, "Save measurement to file", os.path.join(self.dir, "Collected Data/"), "CSV File (*.csv)", options=options)
         if filename:
             self.indenter.saveResults(filename)
 
@@ -100,7 +106,7 @@ class MainWindow(QMainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getOpenFileName(
-            self, "QFileDialog.getOpenFileName()", "", "CSV Files (*.csv);;All Files (*)", options=options)
+            self, "Load measurement from file", "", "CSV Files (*.csv);;All Files (*)")
         if filename:
             self.indenter.loadAndShowResults(filename)
         #self.indenter.loadAndShowResults("/home/pi/spinal-stiffness-indenter/sample data/2021-12-5-15-19-34.csv")

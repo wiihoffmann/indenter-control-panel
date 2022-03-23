@@ -2,6 +2,7 @@ from PyQt5 import QtCore
 import pyqtgraph as pg
 import threading
 
+# requestLock = False
 REFRESH_DELAY = 250 # ms
 
 class Grapher():
@@ -32,6 +33,8 @@ class Grapher():
     
 
     def refreshPlot(self):
+        global requestLock
+        requestLock = True
         self.lock.acquire()
         self.loadLine.setData(self.xData, self.loadData)
         self.stepLine.setData(self.xData, self.stepData)
@@ -57,6 +60,8 @@ class Grapher():
 
 
     def setData(self, x, step, load):
+        global requestLock
+        requestLock = True
         self.lock.acquire()
         self.xData = x
         self.stepData = step
@@ -72,6 +77,8 @@ class Grapher():
 
 
     def clear(self):
+        global requestLock
+        requestLock = True
         self.lock.acquire()
         self.xData = []
         self.stepData = []
@@ -82,11 +89,27 @@ class Grapher():
 
  
 def pipeManager(self, pipe):
+    global requestLock
     done = False
+    acquired = False
     while not done:
+        # # if another thread wants the lock and we have it, give it up
+        # if requestLock == True and acquired == True:
+            
+        #     requestLock = False
+        #     acquired = False
+        #     print("release")
+        #     self.lock.release()
+        # # if we don't have the lock, try and get it
+        # elif acquired == False:
+        #     self.lock.acquire()
+        #     acquired = True
+            
+        # graph the data waiting in the pipe
         try:
             step, data = pipe.recv()
             self.addDataPoint(step, data)
         except EOFError:
             done = True
+    # self.lock.release()
     return

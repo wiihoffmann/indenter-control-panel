@@ -7,12 +7,12 @@ from firmware.StepperController import *
 from firmware.ADCController import *
 from datalogger.Logger import *
 from interface.Grapher import *
-from firmware.hx711 import HX711
 
 
 JOG_SPEED = 2000
 TOLERANCE = 1
-DIR_PIN = 23
+SAMPLE_RATE = 1000
+DIR_PIN = 23  #physical pin 16, GPIO23
 
 
 class Indenter():
@@ -21,9 +21,8 @@ class Indenter():
         # the graph object in the UI
         self.graph = Grapher(graph)
         
-        # set up the stepper controller and ADC controller
-        self.Stepper = StepperController(DIR_PIN)
-        self.ADC = ADCController()
+        # set up the stepper controller and data logger
+        self.Stepper = StepperController(DIR_PIN) #physical pin 16, GPIO23
         self.Logger = Logger()
 
         # used to kill a measurement in an emergency
@@ -93,92 +92,85 @@ class Indenter():
 
 
 
+def applyLoad(displacement, target, stepRate, ADC, stepper, graphPipe, emergencySignal):
+    # move down to apply the main load
+    load = ADC.getLoad()
+    stepper.startMovingDown(stepRate)
+    # move down until the target load is achieved
+    while(load < target and not emergencySignal.is_set()):
+        # log a data point
+        displacement += stepper.getDisplacement()
+        graphPipe.send([displacement, load*100])
+        time.sleep(1 / SAMPLE_RATE)
+        load = ADC.getLoad()
+    displacement += stepper.stopMoving()
+    return displacement
+
+
+def dwell(displacement, target, stepRate, dwellTime, ADC, stepper, graphPipe, emergencySignal):
+    # once the target load is achieved, dwell at the target load for some time
+    startTime = time.time()
+    # while the dwell time has not elapsed
+    while time.time() < (startTime + dwellTime) and not emergencySignal.is_set():
+        time.sleep(1 / SAMPLE_RATE)
+        load = ADC.getLoad()
+        graphPipe.send([displacement, load*100])
+        
+        # move up if too much load is applied
+        if load > (target + TOLERANCE):
+            displacement += stepper.stopMoving()
+            stepper.startMovingUp(100)
+
+        # move down is too little load is applied
+        elif load < (target - TOLERANCE):
+            displacement += stepper.stopMoving()
+            stepper.startMovingDown(100)
+
+        # do nothing if the load is just right
+        else:
+            displacement += stepper.stopMoving()
+    return displacement
+
+
+def retract(displacement, stepRate, ADC, stepper, graphPipe, emergencySignal):
+    # return the indenter head to its starting position, logging data on the way
+    stepper.startMovingUp(stepRate)
+    # move the indenter up by the number of steps we moved it down
+    while(displacement > 0 and not emergencySignal.is_set()):
+        # log a data point
+        displacement += stepper.getDisplacement()
+        time.sleep(1 / SAMPLE_RATE)
+        load = ADC.getLoad()
+        graphPipe.send([displacement, load*100])
+    stepper.stopMoving()
+    return displacement
+
+
 def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphPipe, emergencySignal):
     displacement = 0
     stepper = StepperController(DIR_PIN)
-    
-    # set up the HX711
-    average = 1
-    hx = HX711(5,6)
-    hx.set_offset(8214368.3125)
-    hx.set_scale(243.8564841498559)
-    hx.tare()
+    ADC = ADCController()
+    ADC.tare()
     
     try:
-        start = time.time()
-        # TODO: implement preloading and preload hold
-
-        # move down to apply the main load
-        load = hx.get_grams(average) /1000*9.81
-        stepper.startMovingDown(stepRate)
-        # move down until the target load is achieved
-        while(load < maxLoad and not emergencySignal.is_set()):
-            hx.power_down()
-            time.sleep(.001)
-            hx.power_up()
-            load = hx.get_grams(average) /1000*9.81
-            # log a data point
-            graphPipe.send([stepper.getDisplacement(), load*100])
-        displacement = stepper.stopMoving()
-        
-        print("time to apply load: " + str(time.time() - start))
-        start = time.time()
-
-        #TODO: update the displacement values here
-        # once the target load is achieved, dwell at the target load for some time
-        startTime = time.time()
-        # while the dwell time has not elapsed
-        while time.time() < (startTime + maxLoadTime) and not emergencySignal.is_set():
-            hx.power_down()
-            time.sleep(.001)
-            hx.power_up()
-            load = hx.get_grams(average) /1000*9.81
-            
-            # move up if too much load is applied
-            if load > (maxLoad + TOLERANCE) and stepper.getDirection != -1:
-                stepper.stopMoving()
-                stepper.startMovingUp(80)
-
-            # move down is too little load is applied
-            elif load < (maxLoad - TOLERANCE) and stepper.getDirection != 1:
-                stepper.stopMoving()
-                stepper.startMovingDown(80)
-
-            # do nothing if the load is just right
-            else:
-                stepper.stopMoving()
-            
-            # log a data point
-            graphPipe.send([displacement, load*100])
-
-        print("time spent dwelling: " + str(time.time() - start))
-        start = time.time()
-
-        # return the indenter head to its starting position, logging daa on the way
-        stepper.startMovingUp(stepRate)
-        # move the indenter up by the number of steps we moved it down
-        while(abs(displacement) > abs(stepper.getDisplacement()) and not emergencySignal.is_set()):
-            hx.power_down()
-            time.sleep(.001)
-            hx.power_up()
-            load = hx.get_grams(average) /1000*9.81
-
-            # log a data point
-            graphPipe.send([displacement + stepper.getDisplacement(), load*100])
-        stepper.stopMoving()
-        
-        print("time spent retracting (non-emerg): " + str(time.time() - start))
-        start = time.time()
+        # apply preload
+        displacement = applyLoad(displacement, preload, stepRate, ADC, stepper, graphPipe, emergencySignal)
+        # preload dwell
+        displacement = dwell(displacement, preload, stepRate, preloadTime, ADC, stepper, graphPipe, emergencySignal)
+        # apply main load
+        displacement = applyLoad(displacement, maxLoad, stepRate, ADC, stepper, graphPipe, emergencySignal)
+        # main load dwell
+        displacement = dwell(displacement, maxLoad, stepRate, maxLoadTime, ADC, stepper, graphPipe, emergencySignal)
+        # retract
+        displacement = retract(displacement, stepRate, ADC, stepper, graphPipe, emergencySignal)
 
         # if we had an emergency, we still need to retract the indenter head
         if emergencySignal.is_set():
             stepper.emergencyStop(displacement, stepRate)
-            
-            print("time spent retracting (emerg): " + str(time.time() - start))
-            start = time.time()
 
     # stop the indenter if any exceptions occur
     except Exception as e:
+        print(e)
         stepper.emergencyStop(displacement, stepRate)
     
     # close the pipe to the graph before quitting the process
