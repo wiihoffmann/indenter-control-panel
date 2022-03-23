@@ -10,7 +10,7 @@ from interface.Grapher import *
 
 
 JOG_SPEED = 2000
-TOLERANCE = 1.5
+TOLERANCE = 1
 SAMPLE_RATE = 1000
 DIR_PIN = 23  #physical pin 16, GPIO23
 
@@ -119,12 +119,12 @@ def dwell(displacement, target, stepRate, dwellTime, ADC, stepper, graphPipe, em
         # move up if too much load is applied
         if load > (target + TOLERANCE):
             displacement += stepper.stopMoving()
-            stepper.startMovingUp(stepRate/8)
+            stepper.startMovingUp(100)
 
         # move down is too little load is applied
         elif load < (target - TOLERANCE):
             displacement += stepper.stopMoving()
-            stepper.startMovingDown(stepRate/8)
+            stepper.startMovingDown(100)
 
         # do nothing if the load is just right
         else:

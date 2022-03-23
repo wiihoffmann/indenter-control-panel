@@ -1,6 +1,6 @@
 import board
 import busio
-import adafruit_ads1x15.ads1015 as ADS
+import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
 
 class ADCController():
@@ -16,9 +16,9 @@ class ADCController():
         # △load / △V (N/V)
         self.scaler = abs(self.calLoad2 - self.calLoad1) / abs(self.calVoltage2 - self.calVoltage1)
 
-        # Initialize the I2C bus and ADC
+        # Initialize the I2C bus and ADC at max sampling rate
         i2c = busio.I2C(board.SCL, board.SDA)
-        ads = ADS.ADS1015(i2c, data_rate=3300)
+        ads = ADS.ADS1115(i2c, data_rate=860)
         ads.mode = ADS.Mode.CONTINUOUS
         # We use channel 0 for input from the load cell
         self.loadInput = AnalogIn(ads, ADS.P0, ADS.P1)
