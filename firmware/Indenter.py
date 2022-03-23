@@ -155,9 +155,9 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
     try:
         # apply preload
         displacement = applyLoad(displacement, preload, stepRate, ADC, stepper, graphPipe, emergencySignal)
-        # apply main load dwell
+        # preload dwell
         displacement = dwell(displacement, preload, stepRate, preloadTime, ADC, stepper, graphPipe, emergencySignal)
-        # main load
+        # apply main load
         displacement = applyLoad(displacement, maxLoad, stepRate, ADC, stepper, graphPipe, emergencySignal)
         # main load dwell
         displacement = dwell(displacement, maxLoad, stepRate, maxLoadTime, ADC, stepper, graphPipe, emergencySignal)
@@ -167,8 +167,6 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
         # if we had an emergency, we still need to retract the indenter head
         if emergencySignal.is_set():
             stepper.emergencyStop(displacement, stepRate)
-            
-            print("time spent retracting (emerg): " + str(time.time() - start))
 
     # stop the indenter if any exceptions occur
     except Exception as e:
