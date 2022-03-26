@@ -2,11 +2,12 @@
 # UI imports
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import pyqtSignal, QThread
 
 # data management imports
 import sys
 import os
-import signal
+from multiprocessing import Event
 
 #custom class imports
 from firmware.Indenter import *
@@ -34,10 +35,12 @@ class MainWindow(QMainWindow):
         self.indenter = Indenter(self.plotWidget)
 
         # set up the signal handler for the "done" signal from the measurement loop
-        signal.signal(signal.SIGUSR1, self.unblank)
+        self.sigHandler = DoneSigHandler()
+        self.sigHandler.doneSig.connect(self.enableButtons)
+        self.sigHandler.start()
 
         # the buttons to blank during a measurement
-        self.toBlank = [self.clearButton, self.loadButton, self.saveButton, self.moveUpButton, self.moveDownButton,
+        self.toBlank = [self.clearButton, self.exitButton, self.loadButton, self.saveButton, self.moveUpButton, self.moveDownButton,
                     self.preloadIncButton, self.preloadDecButton, self.preloadTimeIncButton, self.preloadTimeDecButton,
                     self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton,
                     self.stepRateIncButton, self.stepRateDecButton]
@@ -123,14 +126,6 @@ class MainWindow(QMainWindow):
         #self.indenter.loadAndShowResults("/home/pi/spinal-stiffness-indenter/sample data/2021-12-5-15-19-34.csv")
 
 
-    def unblank(self, signum, frame):
-        print("I am unblanking")
-        for i in self.toBlank:
-            print(i)
-            i.setText("potato")
-            i.setEnabled(True)
-
-
     def startMeasurement(self):
         preload = int(self.preloadDisplay.text()[:-2])
         maxLoad = int(self.maxLoadDisplay.text()[:-2])
@@ -147,9 +142,36 @@ class MainWindow(QMainWindow):
             dlg = WarningDialog(self)
             dlg.exec()
         else:
-            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate)
+            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.asyncDoneEvent)
+
+
+    def enableButtons(self):
+        for i in self.toBlank:
+            i.setEnabled(True)
 
 
     def exitProgram(self):
         self.indenter.emergencyStop()
         sys.exit()
+
+
+
+# This class allows us to synchronize signals from the measurement loop (asynchronous)
+# with the QT GUI loop (synchronous)
+class DoneSigHandler(QThread):
+    doneSig = pyqtSignal()
+    asyncDoneEvent = Event()
+
+    def __init__(self):
+        super().__init__()
+        self.asyncDoneEvent.clear()
+
+    def run(self):
+        while True:
+            try:
+                self.asyncDoneEvent.wait()
+                self.doneSig.emit()
+                self.asyncDoneEvent.clear()
+            except Exception as e:
+                print(e)
+

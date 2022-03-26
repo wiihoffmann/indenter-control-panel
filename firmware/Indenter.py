@@ -1,6 +1,5 @@
 
 from multiprocessing import Process, Pipe, Event
-import signal
 import time
 
 #custom class imports
@@ -70,7 +69,7 @@ class Indenter():
         return
 
 
-    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate):        
+    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal):        
         # only start a measurement if one is not currently running
         if self.measurementHandle == None or not self.measurementHandle.is_alive():
             self.graph.clear()
@@ -81,7 +80,7 @@ class Indenter():
             self.graph.addDataFromPipe(parentGraphPipe)
 
             # launch a process to handle taking the stiffness measurement
-            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(preload, preloadTime, maxLoad, maxLoadTime, stepRate, childGraphPipe, self.emergencySignal))
+            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(preload, preloadTime, maxLoad, maxLoadTime, stepRate, childGraphPipe, self.emergencySignal, doneSignal))
             self.measurementHandle.start()
         return
 
@@ -147,13 +146,13 @@ def retract(displacement, stepRate, ADC, stepper, graphPipe, emergencySignal):
     return displacement
 
 
-def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphPipe, emergencySignal):
-    displacement = 0
-    stepper = StepperController(DIR_PIN)
-    ADC = ADCController()
-    ADC.tare()
-
+def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphPipe, emergencySignal, doneSignal):
     try:
+        displacement = 0
+        stepper = StepperController(DIR_PIN)
+        ADC = ADCController()
+        ADC.tare()
+
         # apply preload
         displacement = applyLoad(displacement, preload, stepRate, ADC, stepper, graphPipe, emergencySignal)
         # preload dwell
@@ -171,12 +170,12 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
 
     # stop the indenter if any exceptions occur
     except Exception as e:
-        print(e)
         stepper.emergencyStop(displacement, stepRate)
+        print(e)
     
     # close the pipe to the graph before quitting the process
     finally:
-        signal.raise_signal( signal.SIGUSR1 )
         graphPipe.close()
-         
+        doneSignal.set() 
     return
+
