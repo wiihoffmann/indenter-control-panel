@@ -1,11 +1,18 @@
+
 import board
 import busio
 import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
 
+
 class ADCController():
+    """ An interface class for the ADC.
+    This class allows for easily interfacing with the ADC to perform operations
+    that we need for the indenter (taring, getting load, etc.)
+    """
 
     def __init__(self):
+        """Make a new instance of the ADC controller."""
         self.offset = 0
         # first load/voltage calibration pair
         self.calLoad1 = 0
@@ -26,35 +33,16 @@ class ADCController():
 
 
     def tare(self):
+        """ Zeroes the load reading."""
         self.offset = self.loadInput.voltage
         return
 
 
     def getLoad(self):
+        """ Gets the load currently applied to the indenter.
+        Returns:
+            load (int): the load applied to the indenter in newtons
+        """
         load = self.scaler * (self.loadInput.voltage - self.offset)
         return load
 
-
-# import time
-# import board
-# import busio
-# import adafruit_ads1x15.ads1015 as ADS
-# from adafruit_ads1x15.analog_in import AnalogIn
-
-# # Create the I2C bus
-# i2c = busio.I2C(board.SCL, board.SDA)
-
-# # Create the ADC object using the I2C bus
-# ads = ADS.ADS1015(i2c)
-
-# # Create single-ended input on channel 0
-# chan = AnalogIn(ads, ADS.P0)
-
-# # Create differential input between channel 0 and 1
-# #chan = AnalogIn(ads, ADS.P0, ADS.P1)
-
-# print("{:>5}\t{:>5}".format('raw', 'v'))
-
-# while True:
-#     print("{:>5}\t{:>5.3f}".format(chan.value, chan.voltage))
-#     time.sleep(0.5)

@@ -8,27 +8,36 @@ DEFAULT_STEP_RATE = 1000
 
 
 class StepperController():
+    """ A class for driving the stepper motor.
+    This class allows for driving the stepper motor. It allows for moving the indenter head up
+    and down, as well as measuring how far the indenter head has moved in steps.
+    """
 
-    """Initialize a stepper motor controller. Use pin 12 for step output (hardware PWM) and
-    specify the pin for setting motor direction (any GPIO will do)."""
     def __init__(self, directionPinNumber):
+        """ Initialize a stepper motor controller. Use pin 12 for step output (hardware PWM).
+        Parameters:
+            directionPinNumber (int): GPIO pin for setting motor direction (any GPIO will do)."""
+
         self.directionPin = directionPinNumber
         self.stepRate = 0
         self.direction = 0
         self.startTime = time.time_ns()
 
-        GPIO.setwarnings(False)  # Ignore warning for now
-        GPIO.setmode(GPIO.BCM)  # Use GPIO pin numbering
+        GPIO.setwarnings(False)  # Ignore GPIO warnings
+        GPIO.setmode(GPIO.BCM)  # Use GPIO pin numbering (as opposed to header pin number)
         GPIO.setup(self.directionPin, GPIO.OUT, initial=GPIO.LOW) # initialize direction pin low
         self.pwm = HardwarePWM(pwm_channel=0, hz=DEFAULT_STEP_RATE) # initialize step pin PWM
         self.pwm.start(0) # duty cycle 0 == off
         return
 
 
-    """Start moving the motor downwards with a step rate of stepFreq"""
     def startMovingDown(self, stepFreq=DEFAULT_STEP_RATE):
+        """ Start moving the motor downwards.
+        Parameters:
+            stepFreq (int): the step rate to move at (steps/second)"""
+
         self.stepRate = stepFreq
-        self.direction = 1
+        self.direction = 1  # downwards
 
         # set the direction pin high to move downwards and start PWM at stepFreq
         GPIO.setup(self.directionPin, GPIO.OUT, initial=GPIO.HIGH)
@@ -38,10 +47,13 @@ class StepperController():
         return
 
 
-    """Start moving the motor upwards with a step rate of stepFreq"""
     def startMovingUp(self, stepFreq=DEFAULT_STEP_RATE):
+        """ Start moving the motor upwards.
+        Parameters:
+            stepFreq (int): the step rate to move at (steps/second)"""
+
         self.stepRate = stepFreq
-        self.direction = -1
+        self.direction = -1 # upwards
 
         # set the direction pin low to move upwards and start PWM at stepFreq
         GPIO.setup(self.directionPin, GPIO.OUT, initial=GPIO.LOW)
@@ -51,30 +63,48 @@ class StepperController():
         return
 
 
-    """Stop moving the motor"""
     def stopMoving(self):
+        """ Stop moving the stepper motor.
+        Returns:
+            displacement (int): the displacement of the stepper since the last call
+                                to getDisplacement() """
+
         self.pwm.change_duty_cycle(0)
         displacement = self.getDisplacement()
-        self.direction = 0
+        self.direction = 0 # not moving
         return displacement
 
 
-    """ get the displacement in steps since we started moving """ 
     def getDisplacement(self):
+        """ Gets the displacement of the stepper since it started moving, or since the 
+            last call to this method; whichever is most recent.
+        Returns:
+            displacement (int): The displacement of the stepper motor. Positive for downwards,
+                                negative for upwards. """
+
         now = time.time_ns()
-        travelTime = (now - self.startTime)* pow(10,-9)
+        travelTime = (now - self.startTime)* pow(10,-9) # convert from ns to s
         self.startTime = now
         return int(self.stepRate * travelTime * self.direction)
 
     
-    """ get direction """ 
     def getDirection(self):
+        """ Gets the direction in which the stepper is moving.
+        Returns:
+            direction (int): The direction of the stepper motor. Positive for downwards,
+                             negative for upwards, zero for not moving. """
+
         return self.direction
 
 
     def emergencyStop(self, displacement, stepFreq = DEFAULT_STEP_RATE):
+        """ The emergency stop procedure for the stepper motor. Moves the motor back up
+            to zero displacement. """
+
         self.startMovingUp(stepFreq)
+        # move up until zero displacement is achieved
         while displacement > 0:
             time.sleep(.002)
             displacement += self.getDisplacement()
         self.stopMoving()
+
