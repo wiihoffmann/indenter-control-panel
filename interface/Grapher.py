@@ -34,7 +34,7 @@ class Grapher():
         self.loadLine =  self.graph.plot([], [], pen=self.orangePen)
         self.stepLine =  self.graph.plot([], [], pen=self.bluePen)
 
-        # set up a process for refreahing the graph with newly collected data
+        # set up a process for refreshing the graph with newly collected data
         self.timer = QtCore.QTimer()
         self.timer.setInterval(REFRESH_DELAY)
         self.timer.timeout.connect(self.refreshPlot)
