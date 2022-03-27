@@ -1,11 +1,18 @@
+
 import board
 import busio
 import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
 
+
 class ADCController():
+    """ An interface class for the ADC.
+    This class allows for easily interfacing with the ADC to perform operations
+    that we need for the indenter (taring, getting load, etc.)
+    """
 
     def __init__(self):
+        """Make a new instance of the ADC controller."""
         self.offset = 0
         # first load/voltage calibration pair
         self.calLoad1 = 0
@@ -26,11 +33,16 @@ class ADCController():
 
 
     def tare(self):
+        """ Zeroes the load reading."""
         self.offset = self.loadInput.voltage
         return
 
 
     def getLoad(self):
+        """ Gets the load currently applied to the indenter.
+        Returns:
+            load (int): the load applied to the indenter in newtons
+        """
         load = self.scaler * (self.loadInput.voltage - self.offset)
         return load
 

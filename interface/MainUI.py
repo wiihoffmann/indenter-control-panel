@@ -1,13 +1,10 @@
 
-# UI imports
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import pyqtSignal, QThread
-
-# data management imports
+from multiprocessing import Event
 import sys
 import os
-from multiprocessing import Event
 
 #custom class imports
 from firmware.Indenter import *
@@ -20,14 +17,20 @@ DEFAULT_PRELOAD_TIME = "1"
 DEFAULT_STEP_RATE = "1500"
 
 class MainWindow(QMainWindow):
+    """ The class responsible for managing the main interface window.
+    This class also defines what happend when buttons are pressed. """
 
     def __init__(self, dir):
+        """ Create a new instance of the main window of the indenter controller.
+        Parameters:
+            dir (str): the directory the program was launched from """
+
         # the directory we launched from
         self.dir = dir
 
         # initialize Qt for the GUI
         QMainWindow.__init__(self)
-        loadUi(os.path.join(self.dir, "interface/dialog.ui"), self)
+        loadUi(os.path.join(self.dir, "interface/mainWindow.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
         self.showFullScreen()
 
@@ -39,7 +42,7 @@ class MainWindow(QMainWindow):
         self.sigHandler.doneSig.connect(self.enableButtons)
         self.sigHandler.start()
 
-        # the buttons to blank during a measurement
+        # the buttons to disable during a measurement
         self.toBlank = [self.clearButton, self.exitButton, self.loadButton, self.saveButton, self.moveUpButton, self.moveDownButton,
                     self.preloadIncButton, self.preloadDecButton, self.preloadTimeIncButton, self.preloadTimeDecButton,
                     self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton,
@@ -84,11 +87,19 @@ class MainWindow(QMainWindow):
         self.stepRateDisplay.setText(DEFAULT_STEP_RATE)
         self.stepRateIncButton.pressed.connect( lambda: self.updateReadout(1000, 2500, 100, self.stepRateDisplay))
         self.stepRateDecButton.pressed.connect( lambda: self.updateReadout(1000, 2500, -100, self.stepRateDisplay))
-        
+        return
 
-    def updateReadout(self, min, max, step, readout):     
+
+    def updateReadout(self, min, max, step, readout):
+        """ Updates a parameter readout in the user interface when a button is pressed. 
+        Parameters:
+            min (int): the minimum value the readout can take
+            max (int): the maximum value the readout can take
+            step (int): the value to increment/decrement the readout by
+            readout (QLineEdit): the readout to update"""
+
         # increment the readout by the step value
-        if readout.text()[-1:].isalpha(): # if we have units
+        if readout.text()[-1:].isalpha():   # if we have units
             newValue = int(readout.text()[:-2]) + step
             units = readout.text()[-2:]
         else: # if there are no units
@@ -103,30 +114,44 @@ class MainWindow(QMainWindow):
         
         # set the readout to the new value
         readout.setText(str(newValue) + units)
+        return
 
 
     def saveFile(self):
-        print(os.path.join(self.dir, "Collected Data/"))
+        """ Start a dialog to save the current graph data into a CSV file. """
+
+        # start the dialog for picking a directory and file name
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getSaveFileName(
             self, "Save measurement to file", os.path.join(self.dir, "Collected Data/"), "CSV File (*.csv)", options=options)
+        
+        # save data if the file name is valid
         if filename:
             self.indenter.saveResults(filename)
+        return
 
 
     def loadFile(self):
+        """ Start a dialog to load data from a CSV file. """
+
+        # start the dialog for picking a directory and file name
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getOpenFileName(
             self, "Load measurement from file", os.path.join(self.dir, "Collected Data/"), "CSV Files (*.csv);;All Files (*)")
+       
+        # load data if the file name is valid
         if filename:
             self.indenter.loadAndShowResults(filename)
-        
         #self.indenter.loadAndShowResults("/home/pi/spinal-stiffness-indenter/sample data/2021-12-5-15-19-34.csv")
+        return
 
 
     def startMeasurement(self):
+        """ Initiates a stiffness measurement. """
+
+        # get the measurement parameters from the readouts
         preload = int(self.preloadDisplay.text()[:-2])
         maxLoad = int(self.maxLoadDisplay.text()[:-2])
         preloadTime = int(self.preloadTimeDisplay.text()[:-2])
@@ -141,37 +166,49 @@ class MainWindow(QMainWindow):
         if preload >= maxLoad:
             dlg = WarningDialog(self)
             dlg.exec()
+        # else start the measurement
         else:
             self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.asyncDoneEvent)
 
 
     def enableButtons(self):
+        """ Enables the buttons when the measurement completes. """
+
         for i in self.toBlank:
             i.setEnabled(True)
+        return
 
 
     def exitProgram(self):
+        """ Quits the program. """
+
         self.indenter.emergencyStop()
         sys.exit()
+        return
 
 
 
-# This class allows us to synchronize signals from the measurement loop (asynchronous)
-# with the QT GUI loop (synchronous)
 class DoneSigHandler(QThread):
+    """ This class allows us to synchronize signals from the measurement loop (asynchronous)
+    with the QT GUI loop (synchronous). """
+
     doneSig = pyqtSignal()
     asyncDoneEvent = Event()
 
     def __init__(self):
+        """ Initialize a new done signal handler"""
         super().__init__()
         self.asyncDoneEvent.clear()
 
     def run(self):
+        """ The main loop of the signal handler. """
         while True:
             try:
+                # wait for an asynchronous done signal, then send a synchronous done signal
                 self.asyncDoneEvent.wait()
                 self.doneSig.emit()
                 self.asyncDoneEvent.clear()
             except Exception as e:
                 print(e)
+        return
 
