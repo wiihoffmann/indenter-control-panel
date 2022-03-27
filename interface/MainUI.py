@@ -1,9 +1,6 @@
 
-# UI imports
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import *
-
-# data management imports
 import sys
 import os
 
@@ -14,14 +11,20 @@ import Config
 
 
 class MainWindow(QMainWindow):
+    """ The class responsible for managing the main interface window.
+    This class also defines what happend when buttons are pressed. """
 
     def __init__(self, dir):
+        """ Create a new instance of the main window of the indenter controller.
+        Parameters:
+            dir (str): the directory the program was launched from """
+
         # the directory we launched from
         self.dir = dir
 
         # initialize Qt for the GUI
         QMainWindow.__init__(self)
-        loadUi(os.path.join(self.dir, "interface/dialog.ui"), self)
+        loadUi(os.path.join(self.dir, "interface/mainWindow.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
         self.showFullScreen()
 
@@ -67,11 +70,19 @@ class MainWindow(QMainWindow):
         self.stepRateDisplay.setText(str(Config.DEFAULT_STEP_RATE))
         self.stepRateIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
         self.stepRateDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, -1 * Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
-        
+        return
 
-    def updateReadout(self, min, max, step, readout):     
+
+    def updateReadout(self, min, max, step, readout):
+        """ Updates a parameter readout in the user interface when a button is pressed. 
+        Parameters:
+            min (int): the minimum value the readout can take
+            max (int): the maximum value the readout can take
+            step (int): the value to increment/decrement the readout by
+            readout (QLineEdit): the readout to update"""
+
         # increment the readout by the step value
-        if readout.text()[-1:].isalpha(): # if we have units
+        if readout.text()[-1:].isalpha():   # if we have units
             newValue = int(readout.text()[:-2]) + step
             units = readout.text()[-2:]
         else: # if there are no units
@@ -86,31 +97,44 @@ class MainWindow(QMainWindow):
         
         # set the readout to the new value
         readout.setText(str(newValue) + units)
+        return
 
 
     def saveFile(self):
-        print(os.path.join(self.dir, "Collected Data/"))
+        """ Start a dialog to save the current graph data into a CSV file. """
+
+        # start the dialog for picking a directory and file name
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getSaveFileName(
             self, "Save measurement to file", os.path.join(self.dir, "Collected Data/"), "CSV File (*.csv)", options=options)
+        
+        # save data if the file name is valid
         if filename:
             self.indenter.saveResults(filename)
+        return
 
 
     def loadFile(self):
+        """ Start a dialog to load data from a CSV file. """
+
+        # start the dialog for picking a directory and file name
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getOpenFileName(
             self, "Load measurement from file", "", "CSV Files (*.csv);;All Files (*)")
+        
+        # load data if the file name is valid
         if filename:
             self.indenter.loadAndShowResults(filename)
         #self.indenter.loadAndShowResults("/home/pi/spinal-stiffness-indenter/sample data/2021-12-5-15-19-34.csv")
-
-        print("finished dialog")
+        return
 
 
     def startMeasurement(self):
+        """ Initiates a stiffness measurement. """
+
+        # get the measurement parameters from the readouts
         preload = int(self.preloadDisplay.text()[:-2])
         maxLoad = int(self.maxLoadDisplay.text()[:-2])
         preloadTime = int(self.preloadTimeDisplay.text()[:-2])
@@ -121,10 +145,16 @@ class MainWindow(QMainWindow):
         if preload >= maxLoad:
             dlg = WarningDialog(self)
             dlg.exec()
+        # else start the measurement
         else:
             self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate)
+        return
 
 
     def exitProgram(self):
+        """ Quits the program. """
+
         self.indenter.emergencyStop()
         sys.exit()
+        return
+

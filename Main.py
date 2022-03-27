@@ -6,6 +6,7 @@ import os
 
 # get the path the program was launched from
 dir = os.path.dirname(__file__)
+
 # launch the main program
 app = QApplication([])
 window = MainWindow(dir)
