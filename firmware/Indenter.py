@@ -222,11 +222,6 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
         graphPipe (Pipe): the pipe used to send data into the graph process
         emergencySignal (Event): a signal used to start an emergency stop."""
     
-    displacement = 0
-    stepper = StepperController(DIR_PIN)
-    ADC = ADCController()
-    ADC.tare()
-    
     try:
         displacement = 0
         stepper = StepperController(DIR_PIN)
