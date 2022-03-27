@@ -16,11 +16,19 @@ DIR_PIN = 23  #physical pin 16, GPIO23
 
 
 class Indenter():
+    """ The main controller class for the indenter.
+    This class imlements the controller for the indenter. It allows for performing 
+    measurements, loading/saving data, homing the indenter head, emergency stop, etc.
+    """
 
     def __init__(self, graph):
+        """ Creates a new instance of the indenter controller.
+        Parameters:
+            graph: A reference to the graph widget in the interface """
+        
         # the graph object in the UI
         self.graph = Grapher(graph)
-        
+
         # set up the stepper controller and data logger
         self.Stepper = StepperController(DIR_PIN) #physical pin 16, GPIO23
         self.Logger = Logger()
@@ -33,43 +41,63 @@ class Indenter():
 
 
     def loadAndShowResults(self, filename):
+        """ Given a file name, load the data in the file and show it in
+        the graph area of the UI. 
+        Parameters:
+            filename (str): the name of the file to load data from"""
+
         x, step, load = self.Logger.loadFile(filename)
         self.graph.setData(x, step, load)
         return
 
 
     def saveResults(self, filename):
+        """ Saves the measurement data to a file.
+        Parameters:
+            filename (str): the name of the file to save data to """
+
         x, step, load = self.graph.getData()
         self.Logger.saveFile(filename, x, step, load)
         return
 
 
     def clearResults(self):
+        """ Clears the graph area of the UI. """
+
         self.graph.clear()
         return
 
 
-    def compareResults(self, filename):
-        # TODO: load data from another CSV and overlay it on the current graph
-        pass
-
-
     def startJogUp(self):
+        """ Starts manually jogging the indenter head upwards. """
+
         self.Stepper.startMovingUp(JOG_SPEED)
         return
 
 
     def stopJogging(self):
+        """ Starts manually jogging the indenter head downwards. """
+
         self.Stepper.stopMoving()
         return
 
 
     def startJogDown(self):
+        """ Stops the manual jogging of the indenter head. """
+
         self.Stepper.startMovingDown(JOG_SPEED)
         return
 
 
     def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate):
+        """ Initiates the process of taking a new stffness measurement.
+        Parameters:
+            preload (int): how much preload to apply (newtons)
+            preloadTime (int): how long to keep the preload applied (seconds)
+            maxLoad (int): the full load to apply (newtons)
+            maxLoadTime (int): how long to keep the max load applied (seconds)
+            stepRate (int): how fast to move the indenter head (steps/second)"""
+
         # only start a measurement if one is not currently running
         if self.measurementHandle == None or not self.measurementHandle.is_alive():
             self.graph.clear()
@@ -86,6 +114,8 @@ class Indenter():
 
 
     def emergencyStop(self):
+        """ Defines the emergency stop procedure. """
+
         # terminate the process doing the stiffness measurement
         self.emergencySignal.set()
         return
@@ -93,7 +123,18 @@ class Indenter():
 
 
 def applyLoad(displacement, target, stepRate, ADC, stepper, graphPipe, emergencySignal):
-    # move down to apply the main load
+    """ Moves the indenter head down to apply a target load
+    Parameters:
+        displacement (int): the current displacement of the indenter head
+        target (int): the load we wish to maintain (newtons)
+        stepRate (int): how fast to move the indenter head (steps/second)
+        ADC (ADCController): the ADC to get load data from
+        stepper (StepperController): the stepper we want to control
+        graphPipe (Pipe): the pipe used to send data into the graph process
+        emergencySignal (Event): a signal used to start an emergency stop.
+    Returns:
+        displacement (int): the displacement of the indenter head"""
+
     load = ADC.getLoad()
     stepper.startMovingDown(stepRate)
     # move down until the target load is achieved
@@ -103,15 +144,28 @@ def applyLoad(displacement, target, stepRate, ADC, stepper, graphPipe, emergency
         graphPipe.send([displacement, load*100])
         time.sleep(1 / SAMPLE_RATE)
         load = ADC.getLoad()
+        
     displacement += stepper.stopMoving()
     return displacement
 
 
 def dwell(displacement, target, stepRate, dwellTime, ADC, stepper, graphPipe, emergencySignal):
-    # once the target load is achieved, dwell at the target load for some time
+    """ Once the target load is achieved, dwell at the target load for some time and collect data.
+    Parameters:
+        displacement (int): the current displacement of the indenter head
+        target (int): the load we wish to maintain (newtons)
+        dwellTime (int): how long to keep the target load applied for (seconds)
+        ADC (ADCController): the ADC to get load data from
+        stepper (StepperController): the stepper we want to control
+        graphPipe (Pipe): the pipe used to send data into the graph process
+        emergencySignal (Event): a signal used to start an emergency stop.
+    Returns:
+        displacement (int): the displacement of the indenter head"""
+
     startTime = time.time()
     # while the dwell time has not elapsed
     while time.time() < (startTime + dwellTime) and not emergencySignal.is_set():
+        # log a data point
         time.sleep(1 / SAMPLE_RATE)
         load = ADC.getLoad()
         graphPipe.send([displacement, load*100])
@@ -133,20 +187,41 @@ def dwell(displacement, target, stepRate, dwellTime, ADC, stepper, graphPipe, em
 
 
 def retract(displacement, stepRate, ADC, stepper, graphPipe, emergencySignal):
-    # return the indenter head to its starting position, logging data on the way
+    """ Retracts the indenter head back to the starting position, logging data on the way.
+    Parameters:
+        displacement (int): the current displacement of the indenter head
+        stepRate (int): how fast to move the indenter head (steps/second)
+        ADC (ADCController): the ADC to get load data from
+        stepper (StepperController): the stepper we want to control
+        graphPipe (Pipe): the pipe used to send data into the graph process
+        emergencySignal (Event): a signal used to start an emergency stop.
+    Returns:
+        displacement (int): the displacement of the indenter head (should be 0)"""
+
     stepper.startMovingUp(stepRate)
     # move the indenter up by the number of steps we moved it down
     while(displacement > 0 and not emergencySignal.is_set()):
         # log a data point
-        displacement += stepper.getDisplacement()
         time.sleep(1 / SAMPLE_RATE)
+        displacement += stepper.getDisplacement()
         load = ADC.getLoad()
         graphPipe.send([displacement, load*100])
+    
     stepper.stopMoving()
     return displacement
 
 
 def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphPipe, emergencySignal):
+    """ The process which performs the stiffness measurement.
+    Parameters:
+        preload (int): how much preload to apply (newtons)
+        preloadTime (int): how long to keep the preload applied (seconds)
+        maxLoad (int): the full load to apply (newtons)
+        maxLoadTime (int): how long to keep the max load applied (seconds)
+        stepRate (int): how fast to move the indenter head (steps/second)
+        graphPipe (Pipe): the pipe used to send data into the graph process
+        emergencySignal (Event): a signal used to start an emergency stop."""
+    
     displacement = 0
     stepper = StepperController(DIR_PIN)
     ADC = ADCController()
@@ -170,11 +245,12 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
 
     # stop the indenter if any exceptions occur
     except Exception as e:
-        print(e)
         stepper.emergencyStop(displacement, stepRate)
+        print(e)
     
     # close the pipe to the graph before quitting the process
     finally:
         graphPipe.close()
         
     return
+
