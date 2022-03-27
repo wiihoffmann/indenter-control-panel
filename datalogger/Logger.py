@@ -16,7 +16,7 @@ class Logger():
 
             for index, row in enumerate(lines):
                 if index == 0:
-                    filler = ", ".join(row)
+                    ", ".join(row)
                 else:
                     try:
                         x.append(index)

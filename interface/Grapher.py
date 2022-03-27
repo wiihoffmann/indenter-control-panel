@@ -2,8 +2,9 @@ from PyQt5 import QtCore
 import pyqtgraph as pg
 import threading
 
+import Config
+
 # requestLock = False
-REFRESH_DELAY = 250 # ms
 
 class Grapher():
     
@@ -26,7 +27,7 @@ class Grapher():
 
         self.lock = threading.Lock()
         self.timer = QtCore.QTimer()
-        self.timer.setInterval(REFRESH_DELAY)
+        self.timer.setInterval(Config.GRAPH_REFRESH_DELAY)
         self.timer.timeout.connect(self.refreshPlot)
         self.timer.start()
         return

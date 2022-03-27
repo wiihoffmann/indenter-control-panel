@@ -10,12 +10,8 @@ import os
 #custom class imports
 from firmware.Indenter import *
 from interface.WarningDialog import *
+import Config
 
-DEFAULT_MAX_LOAD = "60"
-DEFAULT_MAX_LOAD_TIME = "2"
-DEFAULT_PRELOAD = "5"
-DEFAULT_PRELOAD_TIME = "1"
-DEFAULT_STEP_RATE = "1500"
 
 class MainWindow(QMainWindow):
 
@@ -48,29 +44,29 @@ class MainWindow(QMainWindow):
         self.moveDownButton.released.connect(self.indenter.stopJogging) # jog down button released
         
         # set up the preload buttons / readout
-        self.preloadDisplay.setText(DEFAULT_PRELOAD + " N")
-        self.preloadIncButton.pressed.connect( lambda: self.updateReadout(5, 30, 1, self.preloadDisplay))
-        self.preloadDecButton.pressed.connect( lambda: self.updateReadout(5, 30, -1, self.preloadDisplay))
+        self.preloadDisplay.setText(str(Config.DEFAULT_PRELOAD) + " N")
+        self.preloadIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_PRELOAD, Config.MAX_PRELOAD, Config.PRELOAD_INCREMENT_SIZE, self.preloadDisplay))
+        self.preloadDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_PRELOAD, Config.MAX_PRELOAD, -1 * Config.PRELOAD_INCREMENT_SIZE, self.preloadDisplay))
         
         # set up the preload time buttons / readout
-        self.preloadTimeDisplay.setText(DEFAULT_PRELOAD_TIME + " s")
-        self.preloadTimeIncButton.pressed.connect( lambda: self.updateReadout(0, 15, 1, self.preloadTimeDisplay))
-        self.preloadTimeDecButton.pressed.connect( lambda: self.updateReadout(0, 15, -1, self.preloadTimeDisplay))
+        self.preloadTimeDisplay.setText(str(Config.DEFAULT_PRELOAD_TIME) + " s")
+        self.preloadTimeIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, Config.HOLD_TIME_INCREMENT_SIZE, self.preloadTimeDisplay))
+        self.preloadTimeDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, -1 * Config.HOLD_TIME_INCREMENT_SIZE, self.preloadTimeDisplay))
 
         # set up the max load buttons / readout
-        self.maxLoadDisplay.setText(DEFAULT_MAX_LOAD + " N")
-        self.maxLoadIncButton.pressed.connect( lambda: self.updateReadout(5, 110, 5, self.maxLoadDisplay))
-        self.maxLoadDecButton.pressed.connect( lambda: self.updateReadout(5, 110, -5, self.maxLoadDisplay))
+        self.maxLoadDisplay.setText(str(Config.DEFAULT_MAX_LOAD) + " N")
+        self.maxLoadIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_LOAD, Config.MAX_LOAD, Config.MAX_LOAD_INCREMENT_SIZE, self.maxLoadDisplay))
+        self.maxLoadDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_LOAD, Config.MAX_LOAD, -1 * Config.MAX_LOAD_INCREMENT_SIZE, self.maxLoadDisplay))
         
         # set up the max load time buttons / readout
-        self.maxLoadTimeDisplay.setText(DEFAULT_MAX_LOAD_TIME + " s")
-        self.maxLoadTimeIncButton.pressed.connect( lambda: self.updateReadout(0, 15, 1, self.maxLoadTimeDisplay))
-        self.maxLoadTimeDecButton.pressed.connect( lambda: self.updateReadout(0, 15, -1, self.maxLoadTimeDisplay))
+        self.maxLoadTimeDisplay.setText(str(Config.DEFAULT_MAX_LOAD_TIME) + " s")
+        self.maxLoadTimeIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, Config.HOLD_TIME_INCREMENT_SIZE, self.maxLoadTimeDisplay))
+        self.maxLoadTimeDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, -1 * Config.HOLD_TIME_INCREMENT_SIZE, self.maxLoadTimeDisplay))
 
         # set up the step rate buttons / readout
-        self.stepRateDisplay.setText(DEFAULT_STEP_RATE)
-        self.stepRateIncButton.pressed.connect( lambda: self.updateReadout(1000, 2500, 100, self.stepRateDisplay))
-        self.stepRateDecButton.pressed.connect( lambda: self.updateReadout(1000, 2500, -100, self.stepRateDisplay))
+        self.stepRateDisplay.setText(str(Config.DEFAULT_STEP_RATE))
+        self.stepRateIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
+        self.stepRateDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, -1 * Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
         
 
     def updateReadout(self, min, max, step, readout):     
