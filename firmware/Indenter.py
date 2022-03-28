@@ -85,7 +85,7 @@ class Indenter():
         return
 
 
-    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate):
+    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal):
         """ Initiates the process of taking a new stffness measurement.
         Parameters:
             preload (int): how much preload to apply (newtons)
@@ -104,7 +104,7 @@ class Indenter():
             self.graph.addDataFromPipe(parentGraphPipe)
 
             # launch a process to handle taking the stiffness measurement
-            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(preload, preloadTime, maxLoad, maxLoadTime, stepRate, childGraphPipe, self.emergencySignal))
+            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(preload, preloadTime, maxLoad, maxLoadTime, stepRate, childGraphPipe, self.emergencySignal, doneSignal))
             self.measurementHandle.start()
         return
 
@@ -207,7 +207,7 @@ def retract(displacement, stepRate, ADC, stepper, graphPipe, emergencySignal):
     return displacement
 
 
-def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphPipe, emergencySignal):
+def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphPipe, emergencySignal, doneSignal):
     """ The process which performs the stiffness measurement.
     Parameters:
         preload (int): how much preload to apply (newtons)
@@ -218,12 +218,12 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
         graphPipe (Pipe): the pipe used to send data into the graph process
         emergencySignal (Event): a signal used to start an emergency stop."""
     
-    displacement = 0
-    stepper = StepperController(DIR_PIN)
-    ADC = ADCController()
-    ADC.tare()
-    
     try:
+        displacement = 0
+        stepper = StepperController(DIR_PIN)
+        ADC = ADCController()
+        ADC.tare()
+
         # apply preload
         displacement = applyLoad(displacement, preload, stepRate, ADC, stepper, graphPipe, emergencySignal)
         # preload dwell
@@ -247,6 +247,6 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
     # close the pipe to the graph before quitting the process
     finally:
         graphPipe.close()
-        
+        doneSignal.set() 
     return
 
