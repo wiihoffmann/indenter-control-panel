@@ -4,9 +4,6 @@ from rpi_hardware_pwm import HardwarePWM
 import time
 
 
-DEFAULT_STEP_RATE = 1000
-
-
 class StepperController():
     """ A class for driving the stepper motor.
     This class allows for driving the stepper motor. It allows for moving the indenter head up
@@ -26,12 +23,12 @@ class StepperController():
         GPIO.setwarnings(False)  # Ignore GPIO warnings
         GPIO.setmode(GPIO.BCM)  # Use GPIO pin numbering (as opposed to header pin number)
         GPIO.setup(self.directionPin, GPIO.OUT, initial=GPIO.LOW) # initialize direction pin low
-        self.pwm = HardwarePWM(pwm_channel=0, hz=DEFAULT_STEP_RATE) # initialize step pin PWM
+        self.pwm = HardwarePWM(pwm_channel=0, hz=100) # initialize step pin PWM
         self.pwm.start(0) # duty cycle 0 == off
         return
 
 
-    def startMovingDown(self, stepFreq=DEFAULT_STEP_RATE):
+    def startMovingDown(self, stepFreq):
         """ Start moving the motor downwards.
         Parameters:
             stepFreq (int): the step rate to move at (steps/second)"""
@@ -40,14 +37,14 @@ class StepperController():
         self.direction = 1  # downwards
 
         # set the direction pin high to move downwards and start PWM at stepFreq
-        GPIO.setup(self.directionPin, GPIO.OUT, initial=GPIO.HIGH)
+        GPIO.setup(self.directionPin, GPIO.OUT, initial = GPIO.HIGH)
         self.startTime = time.time_ns()
         self.pwm.change_frequency(stepFreq)
         self.pwm.change_duty_cycle(50)
         return
 
 
-    def startMovingUp(self, stepFreq=DEFAULT_STEP_RATE):
+    def startMovingUp(self, stepFreq):
         """ Start moving the motor upwards.
         Parameters:
             stepFreq (int): the step rate to move at (steps/second)"""
@@ -56,7 +53,7 @@ class StepperController():
         self.direction = -1 # upwards
 
         # set the direction pin low to move upwards and start PWM at stepFreq
-        GPIO.setup(self.directionPin, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(self.directionPin, GPIO.OUT, initial = GPIO.LOW)
         self.startTime = time.time_ns()
         self.pwm.change_frequency(stepFreq)
         self.pwm.change_duty_cycle(50)
@@ -97,14 +94,14 @@ class StepperController():
         return self.direction
 
 
-    def emergencyStop(self, displacement, stepFreq = DEFAULT_STEP_RATE):
+    def emergencyStop(self, displacement, stepFreq):
         """ The emergency stop procedure for the stepper motor. Moves the motor back up
             to zero displacement. """
 
         self.startMovingUp(stepFreq)
         # move up until zero displacement is achieved
         while displacement > 0:
-            time.sleep(.002)
+            time.sleep(.001)
             displacement += self.getDisplacement()
         self.stopMoving()
 

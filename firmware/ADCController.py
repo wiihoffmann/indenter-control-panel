@@ -4,6 +4,7 @@ import busio
 import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
 
+import Config
 
 class ADCController():
     """ An interface class for the ADC.
@@ -14,14 +15,8 @@ class ADCController():
     def __init__(self):
         """Make a new instance of the ADC controller."""
         self.offset = 0
-        # first load/voltage calibration pair
-        self.calLoad1 = 0
-        self.calVoltage1 = 0
-        # second load/voltage calibration pair
-        self.calLoad2 = 100
-        self.calVoltage2 = 2.00
         # △load / △V (N/V)
-        self.scaler = abs(self.calLoad2 - self.calLoad1) / abs(self.calVoltage2 - self.calVoltage1)
+        self.scaler = abs(Config.CAL_LOAD_2 - Config.CAL_LOAD_1) / abs(Config.CAL_VOLTAGE_2 - Config.CAL_VOLTAGE_1)
 
         # Initialize the I2C bus and ADC at max sampling rate
         i2c = busio.I2C(board.SCL, board.SDA)

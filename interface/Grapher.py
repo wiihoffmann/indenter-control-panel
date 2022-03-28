@@ -1,8 +1,10 @@
+
 from PyQt5 import QtCore
 import pyqtgraph as pg
 import threading
 
-REFRESH_DELAY = 250 # ms
+import Config
+
 
 class Grapher():
     """ A class for plotting collected data into the graph are of the UI.
@@ -36,7 +38,7 @@ class Grapher():
 
         # set up a process for refreshing the graph with newly collected data
         self.timer = QtCore.QTimer()
-        self.timer.setInterval(REFRESH_DELAY)
+        self.timer.setInterval(Config.GRAPH_REFRESH_DELAY)
         self.timer.timeout.connect(self.refreshPlot)
         self.timer.start()
         return
