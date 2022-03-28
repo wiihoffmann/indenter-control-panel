@@ -153,17 +153,19 @@ class MainWindow(QMainWindow):
         preloadTime = int(self.preloadTimeDisplay.text()[:-2])
         maxLoadTime = int(self.maxLoadTimeDisplay.text()[:-2])
         stepRate = int(self.stepRateDisplay.text())
-
-        # disable some buttons during the measurement
-        for i in self.toBlank:
-            i.setEnabled(False)
         
         # if the preload is larger than the max load, issue a warning
         if preload >= maxLoad:
             dlg = WarningDialog(self)
             dlg.exec()
+            dlg.raise_()
+
         # else start the measurement
         else:
+            # disable some buttons during the measurement
+            for i in self.toBlank:
+                i.setEnabled(False)
+
             self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.asyncDoneEvent)
 
 
