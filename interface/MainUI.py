@@ -1,6 +1,8 @@
 
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import pyqtSignal, QThread
+from multiprocessing import Event
 import sys
 import os
 
@@ -34,6 +36,17 @@ class MainWindow(QMainWindow):
 
         # initialize the firmware/back end functionality
         self.indenter = Indenter(self.plotWidget)
+
+        # set up the signal handler for the "done" signal from the measurement loop
+        self.sigHandler = DoneSigHandler()
+        self.sigHandler.doneSig.connect(self.enableButtons)
+        self.sigHandler.start()
+
+        # the buttons to disable during a measurement
+        self.toBlank = [self.clearButton, self.exitButton, self.loadButton, self.saveButton, self.moveUpButton, self.moveDownButton,
+                    self.preloadIncButton, self.preloadDecButton, self.preloadTimeIncButton, self.preloadTimeDecButton,
+                    self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton,
+                    self.stepRateIncButton, self.stepRateDecButton]
 
         # set up bindings for the buttons
         self.clearButton.clicked.connect(self.indenter.clearResults)    # clear button
@@ -126,8 +139,8 @@ class MainWindow(QMainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getOpenFileName(
-            self, "Load measurement from file", "", "CSV Files (*.csv);;All Files (*)")
-        
+            self, "Load measurement from file", os.path.join(self.dir, "Collected Data/"), "CSV Files (*.csv);;All Files (*)")
+       
         # load data if the file name is valid
         if filename:
             self.indenter.loadAndShowResults(filename)
@@ -145,13 +158,24 @@ class MainWindow(QMainWindow):
         maxLoadTime = int(self.maxLoadTimeDisplay.text()[:-2])
         stepRate = int(self.stepRateDisplay.text())
 
+        # disable some buttons during the measurement
+        for i in self.toBlank:
+            i.setEnabled(False)
+        
         # if the preload is larger than the max load, issue a warning
         if preload >= maxLoad:
             dlg = WarningDialog(self)
             dlg.exec()
         # else start the measurement
         else:
-            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate)
+            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.asyncDoneEvent)
+
+
+    def enableButtons(self):
+        """ Enables the buttons when the measurement completes. """
+
+        for i in self.toBlank:
+            i.setEnabled(True)
         return
 
 
@@ -160,5 +184,31 @@ class MainWindow(QMainWindow):
 
         self.indenter.emergencyStop()
         sys.exit()
+        return
+
+
+
+class DoneSigHandler(QThread):
+    """ This class allows us to synchronize signals from the measurement loop (asynchronous)
+    with the QT GUI loop (synchronous). """
+
+    doneSig = pyqtSignal()
+    asyncDoneEvent = Event()
+
+    def __init__(self):
+        """ Initialize a new done signal handler"""
+        super().__init__()
+        self.asyncDoneEvent.clear()
+
+    def run(self):
+        """ The main loop of the signal handler. """
+        while True:
+            try:
+                # wait for an asynchronous done signal, then send a synchronous done signal
+                self.asyncDoneEvent.wait()
+                self.doneSig.emit()
+                self.asyncDoneEvent.clear()
+            except Exception as e:
+                print(e)
         return
 

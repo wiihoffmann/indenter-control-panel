@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>400</y>
+      <y>460</y>
       <width>91</width>
       <height>51</height>
      </rect>
@@ -36,7 +36,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>470</y>
+      <y>530</y>
       <width>91</width>
       <height>51</height>
      </rect>
@@ -54,7 +54,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>400</y>
+      <y>460</y>
       <width>91</width>
       <height>51</height>
      </rect>
@@ -72,7 +72,7 @@
     <property name="geometry">
      <rect>
       <x>230</x>
-      <y>400</y>
+      <y>460</y>
       <width>91</width>
       <height>51</height>
      </rect>
@@ -90,7 +90,7 @@
     <property name="geometry">
      <rect>
       <x>230</x>
-      <y>470</y>
+      <y>530</y>
       <width>91</width>
       <height>51</height>
      </rect>
@@ -108,7 +108,7 @@
     <property name="geometry">
      <rect>
       <x>750</x>
-      <y>470</y>
+      <y>530</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -126,7 +126,7 @@
     <property name="geometry">
      <rect>
       <x>870</x>
-      <y>470</y>
+      <y>530</y>
       <width>141</width>
       <height>51</height>
      </rect>
@@ -144,7 +144,7 @@
     <property name="geometry">
      <rect>
       <x>480</x>
-      <y>410</y>
+      <y>470</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -165,7 +165,7 @@
     <property name="geometry">
      <rect>
       <x>350</x>
-      <y>410</y>
+      <y>470</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -186,7 +186,7 @@
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>470</y>
+      <y>530</y>
       <width>91</width>
       <height>51</height>
      </rect>
@@ -206,7 +206,7 @@
       <x>10</x>
       <y>10</y>
       <width>1001</width>
-      <height>371</height>
+      <height>431</height>
      </rect>
     </property>
    </widget>
@@ -214,7 +214,7 @@
     <property name="geometry">
      <rect>
       <x>390</x>
-      <y>410</y>
+      <y>470</y>
       <width>91</width>
       <height>41</height>
      </rect>
@@ -231,14 +231,14 @@
      <set>Qt::AlignCenter</set>
     </property>
     <property name="readOnly">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>350</x>
-      <y>390</y>
+      <y>450</y>
       <width>101</width>
       <height>17</height>
      </rect>
@@ -256,7 +256,7 @@
     <property name="geometry">
      <rect>
       <x>350</x>
-      <y>460</y>
+      <y>520</y>
       <width>181</width>
       <height>17</height>
      </rect>
@@ -274,7 +274,7 @@
     <property name="geometry">
      <rect>
       <x>480</x>
-      <y>480</y>
+      <y>540</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -295,7 +295,7 @@
     <property name="geometry">
      <rect>
       <x>350</x>
-      <y>480</y>
+      <y>540</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -316,7 +316,7 @@
     <property name="geometry">
      <rect>
       <x>390</x>
-      <y>480</y>
+      <y>540</y>
       <width>91</width>
       <height>41</height>
      </rect>
@@ -333,14 +333,14 @@
      <set>Qt::AlignCenter</set>
     </property>
     <property name="readOnly">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="maxLoadTimeDecButton">
     <property name="geometry">
      <rect>
       <x>550</x>
-      <y>480</y>
+      <y>540</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -361,7 +361,7 @@
     <property name="geometry">
      <rect>
       <x>680</x>
-      <y>410</y>
+      <y>470</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -382,7 +382,7 @@
     <property name="geometry">
      <rect>
       <x>680</x>
-      <y>480</y>
+      <y>540</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -403,7 +403,7 @@
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>480</y>
+      <y>540</y>
       <width>91</width>
       <height>41</height>
      </rect>
@@ -420,14 +420,14 @@
      <set>Qt::AlignCenter</set>
     </property>
     <property name="readOnly">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
       <x>550</x>
-      <y>460</y>
+      <y>520</y>
       <width>191</width>
       <height>17</height>
      </rect>
@@ -445,7 +445,7 @@
     <property name="geometry">
      <rect>
       <x>550</x>
-      <y>390</y>
+      <y>450</y>
       <width>171</width>
       <height>17</height>
      </rect>
@@ -463,7 +463,7 @@
     <property name="geometry">
      <rect>
       <x>550</x>
-      <y>410</y>
+      <y>470</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -484,7 +484,7 @@
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>410</y>
+      <y>470</y>
       <width>91</width>
       <height>41</height>
      </rect>
@@ -501,14 +501,14 @@
      <set>Qt::AlignCenter</set>
     </property>
     <property name="readOnly">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
       <x>750</x>
-      <y>390</y>
+      <y>450</y>
       <width>171</width>
       <height>17</height>
      </rect>
@@ -526,7 +526,7 @@
     <property name="geometry">
      <rect>
       <x>790</x>
-      <y>410</y>
+      <y>470</y>
       <width>91</width>
       <height>41</height>
      </rect>
@@ -543,14 +543,14 @@
      <set>Qt::AlignCenter</set>
     </property>
     <property name="readOnly">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="stepRateIncButton">
     <property name="geometry">
      <rect>
       <x>880</x>
-      <y>410</y>
+      <y>470</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -571,7 +571,7 @@
     <property name="geometry">
      <rect>
       <x>750</x>
-      <y>410</y>
+      <y>470</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -588,17 +588,6 @@
      <bool>true</bool>
     </property>
    </widget>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1024</width>
-     <height>22</height>
-    </rect>
-   </property>
   </widget>
   <action name="actionSave_as_settings_as_default">
    <property name="text">
