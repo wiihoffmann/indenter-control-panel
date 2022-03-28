@@ -3,6 +3,8 @@ from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import pyqtSignal, QThread
 from multiprocessing import Event
+from threading import Timer
+import subprocess
 import sys
 import os
 
@@ -115,7 +117,10 @@ class MainWindow(QMainWindow):
 
     def saveFile(self):
         """ Start a dialog to save the current graph data into a CSV file. """
-
+        
+        # open the on screen keyboard once the next window has had a chance to open
+        Timer(.25, lambda: subprocess.Popen(["xvkbd", "-compact", "-window", "Save measurement to file"])).start()
+        
         # start the dialog for picking a directory and file name
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
