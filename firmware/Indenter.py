@@ -1,5 +1,6 @@
 
 from multiprocessing import Process, Pipe, Event
+import RPi.GPIO as GPIO
 import time
 
 #custom class imports
@@ -9,7 +10,8 @@ from datalogger.Logger import *
 from interface.Grapher import *
 import Config
 
-DIR_PIN = 23  #physical pin 16, GPIO23
+DIR_PIN = 23  # physical pin 16, GPIO23
+EMERG_STOP_PIN = 24 # GPIO24 for emergency stop button
 
 class Indenter():
     """ The main controller class for the indenter.
@@ -33,6 +35,12 @@ class Indenter():
         self.emergencySignal = Event()
         # process handle for the measurement loop
         self.measurementHandle = None
+
+        # set up emergency stop button
+        GPIO.setmode(GPIO.BCM)  # Use GPIO pin numbering (as opposed to header pin number)
+        GPIO.setup(EMERG_STOP_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.add_event_detect(EMERG_STOP_PIN, GPIO.FALLING, callback=self.emergencyStop, bouncetime=100)
+
         return
 
 
@@ -109,7 +117,7 @@ class Indenter():
         return
 
 
-    def emergencyStop(self):
+    def emergencyStop(self, *args):
         """ Defines the emergency stop procedure. """
 
         # terminate the process doing the stiffness measurement
@@ -166,19 +174,23 @@ def dwell(displacement, target, dwellTime, ADC, stepper, graphPipe, emergencySig
         load = ADC.getLoad()
         graphPipe.send([displacement, load*100])
         
-        # move up if too much load is applied
-        if load > (target + Config.TOLERANCE):
+        # move up if too much load is applied and we're not already moving up
+        if load > (target + Config.TOLERANCE) and stepper.getDirection() != -1:
             displacement += stepper.stopMoving()
-            stepper.startMovingUp(100)
+            stepper.startMovingUp(Config.HOLD_STEP_UP_RATE)
 
-        # move down is too little load is applied
-        elif load < (target - Config.TOLERANCE):
+        # move down is too little load is applied and we're not already moving down
+        elif load < (target - Config.TOLERANCE) and stepper.getDirection() != 1:
             displacement += stepper.stopMoving()
-            stepper.startMovingDown(100)
+            stepper.startMovingDown(Config.HOLD_STEP_DOWN_RATE)
 
         # do nothing if the load is just right
-        else:
+        elif load >= (target - Config.TOLERANCE) and load <= (target + Config.TOLERANCE):
             displacement += stepper.stopMoving()
+
+        # else just keep recording data
+        else:
+            displacement += stepper.getDisplacement()
     return displacement
 
 
@@ -237,10 +249,12 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
 
         # if we had an emergency, we still need to retract the indenter head
         if emergencySignal.is_set():
+            #displacement += stepper.stopMoving()
             stepper.emergencyStop(displacement, stepRate)
 
     # stop the indenter if any exceptions occur
     except Exception as e:
+        displacement += stepper.stopMoving()
         stepper.emergencyStop(displacement, Config.EMERGENCY_STOP_STEP_RATE)
         print(e)
     

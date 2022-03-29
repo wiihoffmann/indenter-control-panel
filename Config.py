@@ -30,7 +30,9 @@ STEP_RATE_INCREMENT_SIZE = 100  # steps/second
 
 ######### misc settings ###########
 GRAPH_REFRESH_DELAY = 250       # milliseconds
-TOLERANCE = 1                   # newtons (Max deviance from target load when holding.)
+TOLERANCE = 2.5                 # newtons (Max deviance from target load when holding.)
+HOLD_STEP_UP_RATE = 40         # steps/second (when holding, how fast can we move up to maintain the target load)
+HOLD_STEP_DOWN_RATE = 400       # steps/second (when holding, how fast can we move down to maintain the target load)
 SAMPLE_RATE = 1000              # samples/second (Target sampling rate. Actual will vary slightly)
 
 ####### hardware calibration ######
