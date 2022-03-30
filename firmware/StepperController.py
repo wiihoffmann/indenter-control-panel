@@ -82,7 +82,7 @@ class StepperController():
         now = time.time_ns()
         travelTime = (now - self.startTime)* pow(10,-9) # convert from ns to s
         self.startTime = now
-        return int(self.stepRate * travelTime * self.direction)
+        return self.stepRate * travelTime * self.direction
 
     
     def getDirection(self):
