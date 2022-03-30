@@ -145,7 +145,7 @@ def applyLoad(displacement, target, stepRate, ADC, stepper, graphPipe, emergency
     while(load < target and not emergencySignal.is_set()):
         # log a data point
         displacement += stepper.getDisplacement()
-        graphPipe.send([displacement, load*100])
+        graphPipe.send([displacement, int(load*100)])
         time.sleep(1 / Config.SAMPLE_RATE)
         load = ADC.getLoad()
         
@@ -172,7 +172,7 @@ def dwell(displacement, target, dwellTime, ADC, stepper, graphPipe, emergencySig
         # log a data point
         time.sleep(1 / Config.SAMPLE_RATE)
         load = ADC.getLoad()
-        graphPipe.send([displacement, load*100])
+        graphPipe.send([displacement, int(load*100)])
         
         # move up if too much load is applied and we're not already moving up
         if load > (target + Config.TOLERANCE) and stepper.getDirection() != -1:
@@ -213,7 +213,7 @@ def retract(displacement, stepRate, ADC, stepper, graphPipe, emergencySignal):
         time.sleep(1 / Config.SAMPLE_RATE)
         displacement += stepper.getDisplacement()
         load = ADC.getLoad()
-        graphPipe.send([displacement, load*100])
+        graphPipe.send([displacement, int(load*100)])
     
     stepper.stopMoving()
     return displacement
