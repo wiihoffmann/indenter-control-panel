@@ -250,7 +250,7 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
         # if we had an emergency, we still need to retract the indenter head
         if emergencySignal.is_set():
             #displacement += stepper.stopMoving()
-            stepper.emergencyStop(displacement, stepRate)
+            stepper.emergencyStop(displacement, Config.EMERGENCY_STOP_STEP_RATE)
 
     # stop the indenter if any exceptions occur
     except Exception as e:

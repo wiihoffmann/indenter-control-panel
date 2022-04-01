@@ -21,7 +21,7 @@ MAX_HOLD_TIME = 15              # seconds
 HOLD_TIME_INCREMENT_SIZE = 1    # seconds
 
 ######## step rate settings #######
-EMERGENCY_STOP_STEP_RATE = 1500 # steps/second (How fast to retract indenter during an emergency stop.)
+EMERGENCY_STOP_STEP_RATE = 2100 # steps/second (How fast to retract indenter during an emergency stop.)
 JOG_SPEED = 2000                # steps/second (Manual move up/down speed.)
 DEFAULT_STEP_RATE = 1900        # steps/second (Default rate used when taking a measurement.)
 MIN_STEP_RATE = 1000            # steps/second
