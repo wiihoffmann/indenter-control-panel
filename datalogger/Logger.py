@@ -54,7 +54,7 @@ class Logger():
         # open the file for writing the data
         with open(filename, mode='w') as csvfile:
             lines = csv.writer(csvfile, delimiter=',')
-            lines.writerow(["Step", "Load"])
+            lines.writerow(["Step", "Load x100"])
             
             # insert the data
             for i in range(min(len(x), len(step), len(load))):

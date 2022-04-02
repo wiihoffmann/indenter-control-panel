@@ -29,7 +29,7 @@ class Grapher():
         # set up the graph area
         self.graph.setBackground('w')
         self.graph.setLabel('left', 'Displacement', units ='steps')
-        self.graph.setLabel('right', 'Force', units ='N')
+        self.graph.setLabel('right', 'Force x100', units ='N')
         self.graph.setLabel('bottom', 'Sample number')
 
         # add the two data series for load and displacement data
