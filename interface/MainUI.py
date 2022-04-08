@@ -30,7 +30,7 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         loadUi(os.path.join(self.dir, "interface/mainWindow.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
-#        self.showFullScreen()
+        self.showFullScreen()
 
         # initialize the firmware/back end functionality
         self.indenter = Indenter(self.plotWidget)
