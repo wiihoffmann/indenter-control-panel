@@ -40,7 +40,6 @@ class Indenter():
         GPIO.setmode(GPIO.BCM)  # Use GPIO pin numbering (as opposed to header pin number)
         GPIO.setup(EMERG_STOP_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(EMERG_STOP_PIN, GPIO.FALLING, callback=self.emergencyStop, bouncetime=100)
-
         return
 
 
@@ -91,6 +90,10 @@ class Indenter():
 
         self.Stepper.startMovingDown(Config.JOG_SPEED)
         return
+
+
+    def changeView(self):
+        self.graph.cycleViews()
 
 
     def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal):

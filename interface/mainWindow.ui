@@ -588,6 +588,24 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QPushButton" name="viewButton">
+    <property name="geometry">
+     <rect>
+      <x>930</x>
+      <y>460</y>
+      <width>91</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>View</string>
+    </property>
+   </widget>
   </widget>
   <action name="actionSave_as_settings_as_default">
    <property name="text">
