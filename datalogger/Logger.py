@@ -31,7 +31,7 @@ class Logger():
                     # append the data from the row
                     try:
                         x.append(index)
-                        step.append(float(row[0]))
+                        step.append(float(row[0])/100)
                         load.append(float(row[1]))
                     except:
                         pass
@@ -54,10 +54,10 @@ class Logger():
         # open the file for writing the data
         with open(filename, mode='w') as csvfile:
             lines = csv.writer(csvfile, delimiter=',')
-            lines.writerow(["Step", "Load x100"])
+            lines.writerow(["Step (steps)", "Load (N)"])
             
             # insert the data
             for i in range(min(len(x), len(step), len(load))):
-                lines.writerow([step[i], load[i]])
+                lines.writerow([step[i]*100, load[i]])
         return
 

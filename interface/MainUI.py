@@ -44,10 +44,11 @@ class MainWindow(QMainWindow):
         self.toBlank = [self.clearButton, self.exitButton, self.loadButton, self.saveButton, self.moveUpButton, self.moveDownButton,
                     self.preloadIncButton, self.preloadDecButton, self.preloadTimeIncButton, self.preloadTimeDecButton,
                     self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton,
-                    self.stepRateIncButton, self.stepRateDecButton]
+                    self.stepRateIncButton, self.stepRateDecButton, self.viewButton]
 
         # set up bindings for the buttons
         self.clearButton.clicked.connect(self.indenter.clearResults)    # clear button
+        self.viewButton.clicked.connect(self.indenter.changeView)      # view button
         self.loadButton.clicked.connect(self.loadFile)                  # load button
         self.saveButton.clicked.connect(self.saveFile)                  # save button
         self.exitButton.clicked.connect(self.exitProgram)               # exit button

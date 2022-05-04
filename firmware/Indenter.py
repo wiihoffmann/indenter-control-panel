@@ -40,7 +40,6 @@ class Indenter():
         GPIO.setmode(GPIO.BCM)  # Use GPIO pin numbering (as opposed to header pin number)
         GPIO.setup(EMERG_STOP_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(EMERG_STOP_PIN, GPIO.FALLING, callback=self.emergencyStop, bouncetime=100)
-
         return
 
 
@@ -67,7 +66,6 @@ class Indenter():
 
     def clearResults(self):
         """ Clears the graph area of the UI. """
-
         self.graph.clear()
         return
 
@@ -93,6 +91,10 @@ class Indenter():
         return
 
 
+    def changeView(self):
+        self.graph.cycleViews()
+
+
     def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal):
         """ Initiates the process of taking a new stffness measurement.
         Parameters:
@@ -104,6 +106,7 @@ class Indenter():
 
         # only start a measurement if one is not currently running
         if self.measurementHandle == None or not self.measurementHandle.is_alive():
+            self.graph.setupTimeSeries()
             self.graph.clear()
             
             # clear emergency stop state and establish a pipe to send data to the graph
@@ -145,7 +148,7 @@ def applyLoad(displacement, target, stepRate, ADC, stepper, graphPipe, emergency
     while(load < target and not emergencySignal.is_set()):
         # log a data point
         displacement += stepper.getDisplacement()
-        graphPipe.send([displacement, int(load*100)])
+        graphPipe.send([displacement/100, load])
         time.sleep(1 / Config.SAMPLE_RATE)
         load = ADC.getLoad()
         
@@ -172,7 +175,7 @@ def dwell(displacement, target, dwellTime, ADC, stepper, graphPipe, emergencySig
         # log a data point
         time.sleep(1 / Config.SAMPLE_RATE)
         load = ADC.getLoad()
-        graphPipe.send([displacement, int(load*100)])
+        graphPipe.send([displacement/100, load])
         
         # move up if too much load is applied and we're not already moving up
         if load > (target + Config.TOLERANCE) and stepper.getDirection() != -1:
@@ -213,7 +216,7 @@ def retract(displacement, stepRate, ADC, stepper, graphPipe, emergencySignal):
         time.sleep(1 / Config.SAMPLE_RATE)
         displacement += stepper.getDisplacement()
         load = ADC.getLoad()
-        graphPipe.send([displacement, int(load*100)])
+        graphPipe.send([displacement/100, load])
     
     stepper.stopMoving()
     return displacement
