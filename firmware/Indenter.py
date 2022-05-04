@@ -107,6 +107,7 @@ class Indenter():
 
         # only start a measurement if one is not currently running
         if self.measurementHandle == None or not self.measurementHandle.is_alive():
+            self.graph.setupTimeSeries()
             self.graph.clear()
             
             # clear emergency stop state and establish a pipe to send data to the graph
