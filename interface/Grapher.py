@@ -49,8 +49,8 @@ class Grapher():
 
         # set up the graph area
         self.graph.setBackground('w')
-        self.graph.setLabel('left', 'Displacement', units ='steps')
-        self.graph.setLabel('right', 'Force x100', units ='N')
+        self.graph.setLabel('left', 'Displacement (x100)', units ='steps')
+        self.graph.setLabel('right', 'Force', units ='N')
         self.graph.setLabel('bottom', 'Sample number')
 
         # add the two data series for load and displacement data
@@ -75,7 +75,7 @@ class Grapher():
         self.graph.setBackground('w')
         self.graph.setLabel('left', 'Force', units ='N')
         self.graph.setLabel('right', '', units ='')
-        self.graph.setLabel('bottom', 'Displacement', units ='steps')
+        self.graph.setLabel('bottom', 'Displacement (x100)', units ='steps')
         
         # add the two data series for load and displacement data
         self.loadLine.setData(self.stepData, self.loadData, pen=self.redPen)
