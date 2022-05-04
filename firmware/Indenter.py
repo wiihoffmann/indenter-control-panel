@@ -66,7 +66,6 @@ class Indenter():
 
     def clearResults(self):
         """ Clears the graph area of the UI. """
-
         self.graph.clear()
         return
 

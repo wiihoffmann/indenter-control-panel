@@ -90,6 +90,9 @@ class Grapher():
         # toggle to load as function of displacement
         elif self.view == 1:
             self.setupTimeSeries()
+
+        # make sure the data is in range
+        self.graph.getPlotItem().enableAutoRange()
         return
 
 
@@ -164,6 +167,8 @@ class Grapher():
 
     def clear(self):
         """ Clears the collected data and the graph area. """
+        self.setupTimeSeries()
+        self.graph.getPlotItem().enableAutoRange()
 
         self.lock.acquire()
         self.xData = []
