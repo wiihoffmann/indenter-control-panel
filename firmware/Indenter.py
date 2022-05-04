@@ -40,7 +40,6 @@ class Indenter():
         GPIO.setmode(GPIO.BCM)  # Use GPIO pin numbering (as opposed to header pin number)
         GPIO.setup(EMERG_STOP_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(EMERG_STOP_PIN, GPIO.FALLING, callback=self.emergencyStop, bouncetime=100)
-
         return
 
 
@@ -67,7 +66,6 @@ class Indenter():
 
     def clearResults(self):
         """ Clears the graph area of the UI. """
-
         self.graph.clear()
         return
 
@@ -93,6 +91,10 @@ class Indenter():
         return
 
 
+    def changeView(self):
+        self.graph.cycleViews()
+
+
     def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal):
         """ Initiates the process of taking a new stffness measurement.
         Parameters:
@@ -104,6 +106,7 @@ class Indenter():
 
         # only start a measurement if one is not currently running
         if self.measurementHandle == None or not self.measurementHandle.is_alive():
+            self.graph.setupTimeSeries()
             self.graph.clear()
             
             # clear emergency stop state and establish a pipe to send data to the graph
