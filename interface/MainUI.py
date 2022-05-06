@@ -5,6 +5,7 @@ from PyQt5.QtCore import pyqtSignal, QThread
 from multiprocessing import Event
 from threading import Timer
 import subprocess
+from datetime import datetime
 import sys
 import os
 
@@ -119,14 +120,19 @@ class MainWindow(QMainWindow):
     def saveFile(self):
         """ Start a dialog to save the current graph data into a CSV file. """
         
-        # open the on screen keyboard once the next window has had a chance to open
-        Timer(.25, lambda: subprocess.Popen(["xvkbd", "-compact", "-window", "Save measurement to file"])).start()
+        # # open the on screen keyboard once the next window has had a chance to open
+        # Timer(.25, lambda: subprocess.Popen(["xvkbd", "-compact", "-window", "Save measurement to file"])).start()
         
+        # set default file name to the current date/time
+        now = datetime.now()
+        # dd-mm-YY H:M:S
+        dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
+
         # start the dialog for picking a directory and file name
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getSaveFileName(
-            self, "Save measurement to file", os.path.join(self.dir, "Collected Data/"), "CSV File (*.csv)", options=options)
+            self, "Save measurement to file", os.path.join(self.dir, "Collected Data/")+ dt_string + ".csv", "CSV File (*.csv)", options=options)
         
         # save data if the file name is valid
         if filename:
