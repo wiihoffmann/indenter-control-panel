@@ -22,9 +22,9 @@ HOLD_TIME_INCREMENT_SIZE = 1    # seconds
 
 ######## step rate settings #######
 EMERGENCY_STOP_STEP_RATE = 2100 # steps/second (How fast to retract indenter during an emergency stop.)
-JOG_SPEED = 2000                # steps/second (Manual move up/down speed.)
-DEFAULT_STEP_RATE = 1900        # steps/second (Default rate used when taking a measurement.)
-MIN_STEP_RATE = 1000            # steps/second
+JOG_SPEED = 1000                # steps/second (Manual move up/down speed.)
+DEFAULT_STEP_RATE = 1000        # steps/second (Default rate used when taking a measurement.)
+MIN_STEP_RATE = 500            # steps/second
 MAX_STEP_RATE = 2500            # steps/second
 STEP_RATE_INCREMENT_SIZE = 100  # steps/second
 
@@ -32,7 +32,7 @@ STEP_RATE_INCREMENT_SIZE = 100  # steps/second
 GRAPH_REFRESH_DELAY = 250       # milliseconds
 TOLERANCE = 2.5                 # newtons (Max deviance from target load when holding.)
 HOLD_STEP_UP_RATE = 40         # steps/second (when holding, how fast can we move up to maintain the target load)
-HOLD_STEP_DOWN_RATE = 400       # steps/second (when holding, how fast can we move down to maintain the target load)
+HOLD_STEP_DOWN_RATE = 200       # steps/second (when holding, how fast can we move down to maintain the target load)
 SAMPLE_RATE = 1000              # samples/second (Target sampling rate. Actual will vary slightly)
 
 ####### hardware calibration ######
