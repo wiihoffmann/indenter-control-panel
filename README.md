@@ -4,7 +4,7 @@ The codebase for the spinal stiffness indenter done as a computer engineering ca
 # Setup instructions (quick)
 1. Get the code from this repo and cd into the directory:
    ```
-   git clone https://github.com/ECE-492-capstone/spinal-stiffness-indenter
+   git clone https://github.com/wiihoffmann/spinal-stiffness-indenter
    cd spinal-stiffness-indenter
    ```
 2. Run the setup script:
@@ -24,6 +24,18 @@ The codebase for the spinal stiffness indenter done as a computer engineering ca
 2. Enable hardware I2C by running the following command:
    ```
    sudo raspi-config nonint do_i2c 0
+   ```
+4. Enable the RTC module with the following commands:
+   ```
+   sudo modprobe rtc-ds1307
+   sudo echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
+   sudo hwclock -w
+   ```
+   Add the following lines to ```/etc/rc.local``` above the ```exit 0``` line at the bottom
+   ```
+   echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
+   sudo hwclock -s
+   date
    ```
 3. Make sure that everything is up to date and reboot:
    ```
