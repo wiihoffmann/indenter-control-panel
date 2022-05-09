@@ -31,7 +31,7 @@ The codebase for the spinal stiffness indenter done as a computer engineering ca
    sudo echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
    sudo hwclock -w
    ```
-   Add the following lines to ```/etc/rc.local``` above the ```exit 0``` line at the bottom
+   Add the following lines to ```/etc/rc.local``` above the ```exit 0``` line at the bottom to enable the RTC at boot.
    ```
    echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
    sudo hwclock -s
