@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+# line above lets us launch the program with ./Calibration.py instead of "python3 Calibration.py"
+
 import time
 import board
 import busio
