@@ -40,9 +40,9 @@ SAMPLE_RATE = 1000              # samples/second (Target sampling rate. Actual w
 two different loads to the indenter and record the corresponding output voltage. The 
 calculation assumes that a larger load produces a larger output voltage. """
 # first load/voltage calibration pair
-CAL_LOAD_1 = 0                  # newtons
-CAL_VOLTAGE_1 = 0               # volts
+CAL_LOAD_1 = 13.07673                # newtons
+CAL_VOLTAGE_1 = 0.511807446121897    # volts
 # second load/voltage calibration pair
-CAL_LOAD_2 = 100                # newtons
-CAL_VOLTAGE_2 = 2.00            # volts
+CAL_LOAD_2 = 103.48569               # newtons
+CAL_VOLTAGE_2 = 2.42733884862367     # volts
 
