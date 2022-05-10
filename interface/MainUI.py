@@ -125,14 +125,14 @@ class MainWindow(QMainWindow):
         
         # set default file name to the current date/time
         now = datetime.now()
-        # dd-mm-YY H:M:S
-        dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
+        # dd-mm-YY H-M-S
+        dt_string = now.strftime("%Y-%m-%d %H-%M-%S")
 
         # start the dialog for picking a directory and file name
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getSaveFileName(
-            self, "Save measurement to file", os.path.join(self.dir, "Collected Data/")+ dt_string + ".csv", "CSV File (*.csv)", options=options)
+            self, "Save measurement to file", self.getDirectory() + dt_string + ".csv", "CSV File (*.csv)", options=options)
         
         # save data if the file name is valid
         if filename:
@@ -147,13 +147,27 @@ class MainWindow(QMainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getOpenFileName(
-            self, "Load measurement from file", os.path.join(self.dir, "Collected Data/"), "CSV Files (*.csv);;All Files (*)")
+            self, "Load measurement from file", self.getDirectory(), "CSV Files (*.csv);;All Files (*)", options=options)
        
         # load data if the file name is valid
         if filename:
             self.indenter.loadAndShowResults(filename)
-        #self.indenter.loadAndShowResults("/home/pi/spinal-stiffness-indenter/sample data/2021-12-5-15-19-34.csv")
         return
+
+
+    def getDirectory(self):
+        """Returns a string to the directory in which files should be stored.
+        Attempts to store to a USB stick before storing locally."""
+
+        # check if a USB stick is inserted and set default path to it
+        dirs = os.listdir("/media/pi")
+        if len(dirs) != 0:
+            directory = os.path.join("/media/pi", dirs[0]) + "/"
+            print(directory)
+        # else save locally
+        else:
+            directory = os.path.join(self.dir, "Collected Data/")
+        return directory
 
 
     def startMeasurement(self):
