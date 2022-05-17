@@ -5,7 +5,7 @@ import sys
 import os
 
 #custom class imports
-from firmware.Indenter import *
+from interface.ComparisonGrapher import *
 
 
 class CompareWindow(QMainWindow):
@@ -26,13 +26,13 @@ class CompareWindow(QMainWindow):
         self.setWindowTitle("Indenter Control Panel")
 #        self.showFullScreen()
 
-        # initialize the firmware/back end functionality
-       # self.indenter = Indenter(self.plotWidget)
+        # initialize the grapher functionality
+        self.grapher = ComparisonGrapher(self.plotWidget)
 
 
         # set up bindings for the buttons
-#        self.clearButton.clicked.connect()    # clear button
-#        self.viewButton.clicked.connect()       # view button
+        self.clearButton.clicked.connect(self.grapher.clear)    # clear button
+        self.viewButton.clicked.connect(self.grapher.cycleViews)       # view button
         self.loadButton.clicked.connect(self.loadFile)                  # load button
         self.exitButton.clicked.connect(mainUIcallback)               # exit button
         return
