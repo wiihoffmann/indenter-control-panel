@@ -15,11 +15,11 @@ from interface.WarningDialog import *
 import Config
 
 
-class MainWindow(QMainWindow):
+class MainUI(QMainWindow):
     """ The class responsible for managing the main interface window.
     This class also defines what happend when buttons are pressed. """
 
-    def __init__(self, dir):
+    def __init__(self, dir, compareCallback):
         """ Create a new instance of the main window of the indenter controller.
         Parameters:
             dir (str): the directory the program was launched from """
@@ -31,7 +31,7 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         loadUi(os.path.join(self.dir, "interface/mainWindow.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
-        self.showFullScreen()
+#        self.showFullScreen()
 
         # initialize the firmware/back end functionality
         self.indenter = Indenter(self.plotWidget)
@@ -45,13 +45,14 @@ class MainWindow(QMainWindow):
         self.toBlank = [self.clearButton, self.exitButton, self.loadButton, self.saveButton, self.moveUpButton, self.moveDownButton,
                     self.preloadIncButton, self.preloadDecButton, self.preloadTimeIncButton, self.preloadTimeDecButton,
                     self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton,
-                    self.stepRateIncButton, self.stepRateDecButton, self.viewButton]
+                    self.stepRateIncButton, self.stepRateDecButton, self.viewButton, self.compareButton]
 
         # set up bindings for the buttons
         self.clearButton.clicked.connect(self.indenter.clearResults)    # clear button
-        self.viewButton.clicked.connect(self.indenter.changeView)      # view button
+        self.viewButton.clicked.connect(self.indenter.changeView)       # view button
         self.loadButton.clicked.connect(self.loadFile)                  # load button
         self.saveButton.clicked.connect(self.saveFile)                  # save button
+        self.compareButton.clicked.connect(compareCallback)             # compare button
         self.exitButton.clicked.connect(self.exitProgram)               # exit button
         
         self.startButton.clicked.connect(self.startMeasurement)         # start button
@@ -117,6 +118,21 @@ class MainWindow(QMainWindow):
         return
 
 
+    def getDirectory(self):
+        """Returns a string to the directory in which files should be stored.
+        Attempts to store to a USB stick before storing locally."""
+
+        # check if a USB stick is inserted and set default path to it
+        dirs = os.listdir("/media/pi")
+        if len(dirs) != 0:
+            directory = os.path.join("/media/pi", dirs[0]) + "/"
+            print(directory)
+        # else save locally
+        else:
+            directory = os.path.join(self.dir, "Collected Data/")
+        return directory
+
+
     def saveFile(self):
         """ Start a dialog to save the current graph data into a CSV file. """
         
@@ -153,21 +169,6 @@ class MainWindow(QMainWindow):
         if filename:
             self.indenter.loadAndShowResults(filename)
         return
-
-
-    def getDirectory(self):
-        """Returns a string to the directory in which files should be stored.
-        Attempts to store to a USB stick before storing locally."""
-
-        # check if a USB stick is inserted and set default path to it
-        dirs = os.listdir("/media/pi")
-        if len(dirs) != 0:
-            directory = os.path.join("/media/pi", dirs[0]) + "/"
-            print(directory)
-        # else save locally
-        else:
-            directory = os.path.join(self.dir, "Collected Data/")
-        return directory
 
 
     def startMeasurement(self):
