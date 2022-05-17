@@ -48,7 +48,8 @@ class Indenter():
         the graph area of the UI. 
         Parameters:
             filename (str): the name of the file to load data from"""
-
+        
+        self.graph.clear()
         x, step, load = self.Logger.loadFile(filename)
         self.graph.setData(x, step, load)
         return
