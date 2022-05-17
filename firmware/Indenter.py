@@ -7,7 +7,7 @@ import time
 from firmware.StepperController import *
 from firmware.ADCController import *
 from datalogger.Logger import *
-from interface.Grapher import *
+from interface.LiveGrapher import *
 import Config
 
 DIR_PIN = 23  # physical pin 16, GPIO23
@@ -25,7 +25,7 @@ class Indenter():
             graph: A reference to the graph widget in the interface """
         
         # the graph object in the UI
-        self.graph = Grapher(graph)
+        self.graph = LiveGrapher(graph)
 
         # set up the stepper controller and data logger
         self.Stepper = StepperController(DIR_PIN) #physical pin 16, GPIO23
