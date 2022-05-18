@@ -1,5 +1,5 @@
 # spinal-stiffness-indenter
-The codebase for the spinal stiffness indenter done as a computer engineering capstone project.
+The codebase for the spinal stiffness indenter - a device for taking bulk stiffness measurements of the spine.
 
 # Setup instructions (quick)
 1. Get the code from this repo and cd into the directory:
