@@ -13,9 +13,7 @@ class ComparisonGrapher(Grapher):
             graphHandle: The pyqtplot widget used in the UI """
         super().__init__(graphHandle)
 
-        self.xData = []
-        self.stepData = []
-        self.loadData = []
+        self.data = List[MeasurementData]
 
         # default to time series when setting up the graph axes
         self.setupTimeSeries()

@@ -67,7 +67,9 @@ class CompareWindow(QMainWindow):
 
 
             #TODO: load the file here
-            
+            measurementData = self.Logger.loadFile(filename)
+            #self.grapher.addDataSet()
+
             
             pass
         return

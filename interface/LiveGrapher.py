@@ -1,6 +1,5 @@
 
 from PyQt5 import QtCore
-import pyqtgraph as pg
 import threading
 
 from interface.Grapher import *
@@ -19,14 +18,12 @@ class LiveGrapher(Grapher):
             graphHandle: The pyqtplot widget used in the UI """
         super().__init__(graphHandle)
 
-        self.xData = []
-        self.stepData = []
-        self.loadData = []
+        self.data = MeasurementData([],[],[])
         self.lock = threading.Lock() # lock for controlling access to graph data
         
         # add the two data series for load and displacement data
-        self.loadLine = self.graph.plot(self.xData, self.loadData, pen=self.redPen)
-        self.stepLine = self.graph.plot(self.xData, self.stepData, pen=self.bluePen)
+        self.loadLine = self.graph.plot(self.data.sample, self.data.load, pen=self.redPen)
+        self.stepLine = self.graph.plot(self.data.sample, self.data.step, pen=self.bluePen)
 
         # set up a process for refreshing the graph with newly collected data
         self.timer = QtCore.QTimer()
@@ -44,9 +41,9 @@ class LiveGrapher(Grapher):
         super().setupTimeSeries()
 
         # add the two data series for load and displacement data
-        self.loadLine.setData(self.xData, self.loadData, pen=self.redPen)
-        self.stepLine.setData(self.xData, self.stepData, pen=self.bluePen)
-        
+        self.loadLine.setData(self.data.sample, self.data.load, pen=self.redPen)
+        self.stepLine.setData(self.data.sample, self.data.step, pen=self.bluePen)       
+
         # make sure the update timer is running
         self.timer.start()
         return
@@ -60,8 +57,8 @@ class LiveGrapher(Grapher):
         super().setupLoadDisplacementGraph()
 
         # add the two data series for load and displacement data
-        self.loadLine.setData(self.stepData, self.loadData, pen=self.redPen)
-        self.stepLine.setData([], [], pen=self.bluePen)
+        self.loadLine.setData(self.data.step, self.data.load, pen=self.redPen)
+        self.stepLine.clear()
         return
 
 
@@ -69,8 +66,8 @@ class LiveGrapher(Grapher):
         """ Refreshes the graph display with any newly collected data. """
 
         self.lock.acquire()
-        self.loadLine.setData(self.xData, self.loadData)
-        self.stepLine.setData(self.xData, self.stepData)
+        self.loadLine.setData(self.data.sample, self.data.load)
+        self.stepLine.setData(self.data.sample, self.data.step)
         self.lock.release()
         return
 
@@ -83,14 +80,14 @@ class LiveGrapher(Grapher):
 
         self.lock.acquire()
         # if this is the first data point in the series
-        if self.xData == []:
-            self.xData.append(1)
+        if self.data.sample == []:
+            self.data.sample.append(1)
         # else increment the sample number by 1 and append
         else:
-            self.xData.append(self.xData[-1]+1)
+            self.data.sample.append(self.data.sample[-1]+1)
 
-        self.stepData.append(step)
-        self.loadData.append(load)
+        self.data.step.append(step)
+        self.data.load.append(load)
         self.lock.release()
         return
 
@@ -105,7 +102,7 @@ class LiveGrapher(Grapher):
         return
 
 
-    def setData(self, x, step = [], load = []):
+    def setData(self, graphData):
         """ Sets all of the data for the series in the graph.
         Parameters:
             x (int): array of sample numbers to be graphed
@@ -115,19 +112,21 @@ class LiveGrapher(Grapher):
         self.setupTimeSeries()
 
         self.lock.acquire()
-        self.xData = x
-        self.stepData = step
-        self.loadData = load
-        self.loadLine.setData(self.xData, self.loadData, pen=self.redPen)
-        self.stepLine.setData(self.xData, self.stepData, pen=self.bluePen)
+        self.data = graphData
+        self.loadLine.setData(self.data.sample, self.data.load)
+        self.stepLine.setData(self.data.sample, self.data.step)
         self.lock.release()
         return
 
 
     def clear(self):
         """ Clears the collected data and the graph area. """
+
         self.lock.acquire()
         super().clear()
+        self.data = MeasurementData([],[],[])
+        self.loadLine.clear()
+        self.stepLine.clear()
         self.lock.release()
         return
 

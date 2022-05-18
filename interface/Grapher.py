@@ -1,5 +1,6 @@
 
 import pyqtgraph as pg
+from datalogger.MeasurementData import *
 
 
 
@@ -14,6 +15,7 @@ class Grapher():
             graphHandle: The pyqtplot widget used in the UI """
 
         self.graph = graphHandle
+        self.data = None
 
         # set up line colors
         self.redPen = pg.mkPen('r', width=3)
@@ -68,18 +70,12 @@ class Grapher():
             stepData (int): array of displacement data
             loadData (fload): array of load data """
 
-        return self.xData, self.stepData, self.loadData
+        return self.data
 
 
     def clear(self):
         """ Clears the collected data and the graph area. """
         self.setupTimeSeries()
         self.graph.getPlotItem().enableAutoRange()
-
-        self.xData = []
-        self.stepData = []
-        self.loadData = []
-        self.loadLine.clear()
-        self.stepLine.clear()
         return
 

@@ -50,8 +50,8 @@ class Indenter():
             filename (str): the name of the file to load data from"""
         
         self.graph.clear()
-        x, step, load = self.Logger.loadFile(filename)
-        self.graph.setData(x, step, load)
+        data = self.Logger.loadFile(filename)
+        self.graph.setData(data)
         return
 
 
@@ -60,8 +60,8 @@ class Indenter():
         Parameters:
             filename (str): the name of the file to save data to """
 
-        x, step, load = self.graph.getData()
-        self.Logger.saveFile(filename, x, step, load)
+        data = self.graph.getData()
+        self.Logger.saveFile(filename, data)
         return
 
 
