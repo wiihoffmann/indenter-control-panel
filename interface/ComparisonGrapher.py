@@ -13,7 +13,7 @@ class ComparisonGrapher(Grapher):
             graphHandle: The pyqtplot widget used in the UI """
         super().__init__(graphHandle)
 
-        self.data = List[MeasurementData]
+        self.data = []
 
         # default to time series when setting up the graph axes
         self.setupTimeSeries()
@@ -23,6 +23,8 @@ class ComparisonGrapher(Grapher):
     def setupTimeSeries(self):
 
         super().setupTimeSeries()
+
+        print("here")
 
         return
 
@@ -34,14 +36,15 @@ class ComparisonGrapher(Grapher):
         return
 
 
-    def addDataSet(self, x, step = [], load = []):
+    def addDataSet(self, measurementData):
         """ Adds a set of data to the graph screen.
         Parameters:
             x (int): array of sample numbers to be graphed
             step (int): array of displacement data to be graphed
             load (fload): array of load data to be graphed """
 
-
+        self.data.append(measurementData)
+        self.setupTimeSeries()
         return
 
 

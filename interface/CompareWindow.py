@@ -6,6 +6,7 @@ import os
 
 #custom class imports
 from interface.ComparisonGrapher import *
+from datalogger.Logger import *
 
 
 class CompareWindow(QMainWindow):
@@ -28,7 +29,8 @@ class CompareWindow(QMainWindow):
 
         # initialize the grapher functionality
         self.grapher = ComparisonGrapher(self.plotWidget)
-
+        # initialize the logger for loading files
+        self.logger = Logger()
 
         # set up bindings for the buttons
         self.clearButton.clicked.connect(self.grapher.clear)    # clear button
@@ -64,14 +66,9 @@ class CompareWindow(QMainWindow):
        
         # load data if the file name is valid
         if filename:
+            measurementData = self.logger.loadFile(filename)
+            self.grapher.addDataSet(measurementData)            
 
-
-            #TODO: load the file here
-            measurementData = self.Logger.loadFile(filename)
-            #self.grapher.addDataSet()
-
-            
-            pass
         return
 
 

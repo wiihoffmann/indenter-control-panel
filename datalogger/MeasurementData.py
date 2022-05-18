@@ -9,4 +9,5 @@ class MeasurementData:
     sample: List[int]
     step: List[float]
     load: List[float]
+    filename: str = ""
 
