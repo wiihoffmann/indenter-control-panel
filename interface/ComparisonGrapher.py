@@ -7,6 +7,7 @@ class ComparisonGrapher(Grapher):
         This class allows for graphing data as its collected, graphing old data,
         and clearing the graph. """
 
+
     def __init__(self, graphHandle):
         """ Creates a new grapher object for visualizing collected data.
         Parameters:
@@ -14,48 +15,9 @@ class ComparisonGrapher(Grapher):
         super().__init__(graphHandle)
 
         self.openFiles = []
-        self.loadLines = []
-        self.stepLines = []
-        self.loadStepLines = []
 
         # default to time series when setting up the graph axes
         self.setupTimeSeries()
-        return
-    
-
-    def setupTimeSeries(self):
-
-        super().setupTimeSeries()
-
-        print("building time series graph")
-
-        for i in self.loadLines:
-            i.show()
-
-        for i in self.stepLines:
-            i.show()
-
-        for i in self.loadStepLines:
-            i.hide()
-
-        return
-
-
-    def setupLoadDisplacementGraph(self):
-        
-        super().setupLoadDisplacementGraph()
-        
-        print("building load displacement graph")
-
-        for i in self.loadLines:
-            i.hide()
-
-        for i in self.stepLines:
-            i.hide()
-
-        for i in self.loadStepLines:
-            i.show()
-
         return
 
 
@@ -84,19 +46,7 @@ class ComparisonGrapher(Grapher):
 
     def clear(self):
         """ Clears the collected data and the graph area. """
-        for i in self.loadLines:
-            i.clear()
-
-        for i in self.stepLines:
-            i.clear()
-
-        for i in self.loadStepLines:
-            i.clear()  
-
         self.openFiles = []
-        self.loadLines = []
-        self.stepLines = []
-        self.loadStepLines = []
 
         super().clear()
         return

@@ -33,10 +33,10 @@ class CompareWindow(QMainWindow):
         self.logger = Logger()
 
         # set up bindings for the buttons
-        self.clearButton.clicked.connect(self.grapher.clear)    # clear button
-        self.viewButton.clicked.connect(self.grapher.cycleViews)       # view button
-        self.loadButton.clicked.connect(self.loadFile)                  # load button
-        self.exitButton.clicked.connect(mainUIcallback)               # exit button
+        self.clearButton.clicked.connect(self.grapher.clear)        # clear button
+        self.viewButton.clicked.connect(self.grapher.cycleViews)    # view button
+        self.loadButton.clicked.connect(self.loadFile)              # load button
+        self.exitButton.clicked.connect(mainUIcallback)             # exit button
         return
 
 

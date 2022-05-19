@@ -18,12 +18,19 @@ class LiveGrapher(Grapher):
             graphHandle: The pyqtplot widget used in the UI """
         super().__init__(graphHandle)
 
+        # set up line colors
+        self.redPen = pg.mkPen('r', width=Config.GRAPH_LINE_WIDTH)
+        self.bluePen = pg.mkPen('b', width=Config.GRAPH_LINE_WIDTH)
+
         self.data = MeasurementData([],[],[])
-        self.lock = threading.Lock() # lock for controlling access to graph data
-        
         # add the two data series for load and displacement data
-        self.loadLine = self.graph.plot(self.data.sample, self.data.load, pen=self.redPen)
-        self.stepLine = self.graph.plot(self.data.sample, self.data.step, pen=self.bluePen)
+        self.loadLines.append(self.graph.plot(self.data.sample, self.data.load, pen=self.redPen))
+        self.stepLines.append(self.graph.plot(self.data.sample, self.data.step, pen=self.bluePen))
+        self.loadStepLines.append(self.graph.plot(self.data.step, self.data.load, pen=self.redPen))
+        self.lock = threading.Lock() # lock for controlling access to graph data
+
+        print(self.loadLines)
+        print("here")
 
         # set up a process for refreshing the graph with newly collected data
         self.timer = QtCore.QTimer()
@@ -37,12 +44,7 @@ class LiveGrapher(Grapher):
     
 
     def setupTimeSeries(self):
-
-        super().setupTimeSeries()
-
-        # add the two data series for load and displacement data
-        self.loadLine.setData(self.data.sample, self.data.load, pen=self.redPen)
-        self.stepLine.setData(self.data.sample, self.data.step, pen=self.bluePen)       
+        super().setupTimeSeries()     
 
         # make sure the update timer is running
         self.timer.start()
@@ -55,10 +57,6 @@ class LiveGrapher(Grapher):
         self.timer.stop()
 
         super().setupLoadDisplacementGraph()
-
-        # add the two data series for load and displacement data
-        self.loadLine.setData(self.data.step, self.data.load, pen=self.redPen)
-        self.stepLine.clear()
         return
 
 
@@ -74,8 +72,8 @@ class LiveGrapher(Grapher):
         """ Refreshes the graph display with any newly collected data. """
 
         self.lock.acquire()
-        self.loadLine.setData(self.data.sample, self.data.load)
-        self.stepLine.setData(self.data.sample, self.data.step)
+        self.loadLines[0].setData(self.data.sample, self.data.load)
+        self.stepLines[0].setData(self.data.sample, self.data.step)
         self.lock.release()
         return
 
@@ -116,15 +114,27 @@ class LiveGrapher(Grapher):
             x (int): array of sample numbers to be graphed
             step (float): array of displacement data to be graphed
             load (float): array of load data to be graphed """
-        # default back to a time series
-        self.setupTimeSeries()
 
         self.lock.acquire()
         self.data = graphData
-        self.loadLine.setData(self.data.sample, self.data.load)
-        self.stepLine.setData(self.data.sample, self.data.step)
+        self.loadLines[0].setData(self.data.sample, self.data.load)
+        self.stepLines[0].setData(self.data.sample, self.data.step)
+        self.loadStepLines[0].setData(self.data.step, self.data.load)
         self.lock.release()
+        
+        # default back to a time series
+        self.setupTimeSeries()
         return
+
+
+    def getData(self):
+        """ Gets all of the data currently shown in the graph.
+        Returns:
+            xData (int): array of sample numbers
+            stepData (int): array of displacement data
+            loadData (fload): array of load data """
+
+        return self.data
 
 
     def clear(self):
@@ -133,8 +143,9 @@ class LiveGrapher(Grapher):
         self.lock.acquire()
         super().clear()
         self.data = MeasurementData([],[],[])
-        self.loadLine.clear()
-        self.stepLine.clear()
+        self.loadLines.append(self.graph.plot(self.data.sample, self.data.load, pen=self.redPen))
+        self.stepLines.append(self.graph.plot(self.data.sample, self.data.step, pen=self.bluePen))
+        self.loadStepLines.append(self.graph.plot(self.data.step, self.data.load, pen=self.redPen))
         self.lock.release()
         return
 

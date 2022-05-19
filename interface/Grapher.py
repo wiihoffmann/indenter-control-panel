@@ -15,12 +15,12 @@ class Grapher():
             graphHandle: The pyqtplot widget used in the UI """
 
         self.graph = graphHandle
-        self.data = None
         self.colorindex = 0
 
-        # set up line colors
-        self.redPen = pg.mkPen('r', width=Config.GRAPH_LINE_WIDTH)
-        self.bluePen = pg.mkPen('b', width=Config.GRAPH_LINE_WIDTH)
+        self.loadLines = []
+        self.stepLines = []
+        self.loadStepLines = []
+        
         return
     
 
@@ -39,6 +39,17 @@ class Grapher():
         self.graph.setLabel('left', 'Displacement (x100)', units ='steps')
         self.graph.setLabel('right', 'Force', units ='N')
         self.graph.setLabel('bottom', 'Sample number')
+        
+        if self.loadLines != [] and self.stepLines != [] and self.loadStepLines != []:
+            for i in self.loadLines:
+                i.show()
+
+            for i in self.stepLines:
+                i.show()
+
+            for i in self.loadStepLines:
+                i.hide()
+
         return
 
 
@@ -51,6 +62,17 @@ class Grapher():
         self.graph.setLabel('left', 'Force', units ='N')
         self.graph.setLabel('right', '', units ='')
         self.graph.setLabel('bottom', 'Displacement (x100)', units ='steps')
+
+        if self.loadLines != [] and self.stepLines != [] and self.loadStepLines != []:
+            for i in self.loadLines:
+                i.hide()
+
+            for i in self.stepLines:
+                i.hide()
+
+            for i in self.loadStepLines:
+                i.show()
+
         return
 
 
@@ -70,18 +92,21 @@ class Grapher():
         return
 
 
-    def getData(self):
-        """ Gets all of the data currently shown in the graph.
-        Returns:
-            xData (int): array of sample numbers
-            stepData (int): array of displacement data
-            loadData (fload): array of load data """
-
-        return self.data
-
-
     def clear(self):
         """ Clears the collected data and the graph area. """
+        for i in self.loadLines:
+            i.clear()
+
+        for i in self.stepLines:
+            i.clear()
+
+        for i in self.loadStepLines:
+            i.clear()  
+
+        self.loadLines = []
+        self.stepLines = []
+        self.loadStepLines = []
+        
         self.setupTimeSeries()
         self.graph.getPlotItem().enableAutoRange()
         self.colorindex = 0
