@@ -14,7 +14,10 @@ dir = os.path.dirname(__file__)
 
 def openCompareWindow(self):
     global window
-    window.close()
+
+    window.indenter.graph.stopLiveUpdate()  #TODO: remove this line once other stuff is fixed
+
+    window.close()    
     GPIO.cleanup()
     window = CompareWindow(dir, openMainWindow)
     window.show()

@@ -1,7 +1,7 @@
 
 import pyqtgraph as pg
 from datalogger.MeasurementData import *
-
+import Config
 
 
 class Grapher():
@@ -16,12 +16,19 @@ class Grapher():
 
         self.graph = graphHandle
         self.data = None
+        self.colorindex = 0
 
         # set up line colors
-        self.redPen = pg.mkPen('r', width=3)
-        self.bluePen = pg.mkPen('b', width=3)
+        self.redPen = pg.mkPen('r', width=Config.GRAPH_LINE_WIDTH)
+        self.bluePen = pg.mkPen('b', width=Config.GRAPH_LINE_WIDTH)
         return
     
+
+    def getPen(self):
+        color = pg.intColor(self.colorindex, hues=Config.GRAPH_COLORS, values=1, maxValue=255, minValue=150, maxHue=360, minHue=0, sat=255, alpha=255)
+        self.colorindex += 1
+        return pg.mkPen(color, width = Config.GRAPH_LINE_WIDTH)
+
 
     def setupTimeSeries(self):
         
@@ -77,5 +84,6 @@ class Grapher():
         """ Clears the collected data and the graph area. """
         self.setupTimeSeries()
         self.graph.getPlotItem().enableAutoRange()
+        self.colorindex = 0
         return
 
