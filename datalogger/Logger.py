@@ -17,7 +17,7 @@ class Logger():
             step (int): array of step (displacement) data
             load (float): array of load data
         """
-        data = MeasurementData([],[],[])
+        data = MeasurementData([],[],[], filename)
         
         # try opening the file and iterating over the data
         with open(filename, 'r') as csvfile:

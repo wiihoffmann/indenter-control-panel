@@ -62,6 +62,14 @@ class LiveGrapher(Grapher):
         return
 
 
+    def startLiveUpdate(self):
+        self.timer.start()
+
+
+    def stopLiveUpdate(self):
+        self.timer.stop()
+
+
     def refreshPlot(self):
         """ Refreshes the graph display with any newly collected data. """
 
@@ -106,8 +114,8 @@ class LiveGrapher(Grapher):
         """ Sets all of the data for the series in the graph.
         Parameters:
             x (int): array of sample numbers to be graphed
-            step (int): array of displacement data to be graphed
-            load (fload): array of load data to be graphed """
+            step (float): array of displacement data to be graphed
+            load (float): array of load data to be graphed """
         # default back to a time series
         self.setupTimeSeries()
 
