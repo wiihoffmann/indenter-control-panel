@@ -38,3 +38,4 @@ if __name__ == "__main__":
     window = MainUI(dir, openCompareWindow)
     window.show()
     app.exec_()
+

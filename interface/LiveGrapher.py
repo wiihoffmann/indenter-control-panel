@@ -29,9 +29,6 @@ class LiveGrapher(Grapher):
         self.loadStepLines.append(self.graph.plot(self.data.step, self.data.load, pen=self.redPen))
         self.lock = threading.Lock() # lock for controlling access to graph data
 
-        print(self.loadLines)
-        print("here")
-
         # set up a process for refreshing the graph with newly collected data
         self.timer = QtCore.QTimer()
         self.timer.setInterval(Config.GRAPH_REFRESH_DELAY)
@@ -52,7 +49,6 @@ class LiveGrapher(Grapher):
 
 
     def setupLoadDisplacementGraph(self):
-        
         # don't auto update the graph data
         self.timer.stop()
 
