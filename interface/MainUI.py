@@ -1,8 +1,6 @@
 
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import pyqtSignal, QThread
-from multiprocessing import Event
 from threading import Timer
 import subprocess
 from datetime import datetime
@@ -11,6 +9,7 @@ import os
 
 #custom class imports
 from firmware.Indenter import *
+from interface.SignalConnector import *
 from interface.WarningDialog import *
 import Config
 
@@ -37,8 +36,8 @@ class MainUI(QMainWindow):
         self.indenter = Indenter(self.plotWidget)
 
         # set up the signal handler for the "done" signal from the measurement loop
-        self.sigHandler = DoneSigHandler()
-        self.sigHandler.doneSig.connect(self.enableButtons)
+        self.sigHandler = SignalConnector()
+        self.sigHandler.connect(self.enableButtons)
         self.sigHandler.start()
 
         # the buttons to disable during a measurement
@@ -193,7 +192,7 @@ class MainUI(QMainWindow):
             for i in self.toBlank:
                 i.setEnabled(False)
 
-            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.asyncDoneEvent)
+            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal())
 
 
     def enableButtons(self):
@@ -209,31 +208,5 @@ class MainUI(QMainWindow):
 
         self.indenter.emergencyStop()
         sys.exit()
-        return
-
-
-
-class DoneSigHandler(QThread):
-    """ This class allows us to synchronize signals from the measurement loop (asynchronous)
-    with the QT GUI loop (synchronous). """
-
-    doneSig = pyqtSignal()
-    asyncDoneEvent = Event()
-
-    def __init__(self):
-        """ Initialize a new done signal handler"""
-        super().__init__()
-        self.asyncDoneEvent.clear()
-
-    def run(self):
-        """ The main loop of the signal handler. """
-        while True:
-            try:
-                # wait for an asynchronous done signal, then send a synchronous done signal
-                self.asyncDoneEvent.wait()
-                self.doneSig.emit()
-                self.asyncDoneEvent.clear()
-            except Exception as e:
-                print(e)
         return
 
