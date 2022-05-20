@@ -2,7 +2,7 @@
 from PyQt5 import QtCore
 import threading
 
-from interface.Grapher import *
+from graphTools.Grapher import *
 import Config
 
 
@@ -44,13 +44,13 @@ class LiveGrapher(Grapher):
         super().setupTimeSeries()     
 
         # make sure the update timer is running
-        self.timer.start()
+        #self.timer.start()
         return
 
 
     def setupLoadDisplacementGraph(self):
         # don't auto update the graph data
-        self.timer.stop()
+        #self.timer.stop()
 
         super().setupLoadDisplacementGraph()
         return
@@ -68,8 +68,13 @@ class LiveGrapher(Grapher):
         """ Refreshes the graph display with any newly collected data. """
 
         self.lock.acquire()
-        self.loadLines[0].setData(self.data.sample, self.data.load)
-        self.stepLines[0].setData(self.data.sample, self.data.step)
+        # if we are showing a time series
+        if(self.view == 0):
+            self.loadLines[0].setData(self.data.sample, self.data.load)
+            self.stepLines[0].setData(self.data.sample, self.data.step)
+        # if we are showing the force as a function of displacement
+        elif(self.view == 1):
+            self.loadStepLines[0].setData(self.data.step, self.data.load)
         self.lock.release()
         return
 

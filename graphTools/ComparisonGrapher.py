@@ -1,5 +1,5 @@
 
-from interface.Grapher import *
+from graphTools.Grapher import *
 
 
 class ComparisonGrapher(Grapher):

@@ -7,7 +7,7 @@ import time
 from firmware.StepperController import *
 from firmware.ADCController import *
 from datalogger.Logger import *
-from interface.LiveGrapher import *
+from graphTools.LiveGrapher import *
 import Config
 
 DIR_PIN = 23  # physical pin 16, GPIO23

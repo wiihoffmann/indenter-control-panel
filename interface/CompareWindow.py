@@ -5,7 +5,7 @@ import sys
 import os
 
 #custom class imports
-from interface.ComparisonGrapher import *
+from graphTools.ComparisonGrapher import *
 from datalogger.Logger import *
 
 
