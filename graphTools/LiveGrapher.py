@@ -3,6 +3,7 @@ from PyQt5 import QtCore
 import threading
 
 from graphTools.Grapher import *
+from interface.SignalConnector import *
 import Config
 
 
@@ -29,39 +30,39 @@ class LiveGrapher(Grapher):
         self.loadStepLines.append(self.graph.plot(self.data.step, self.data.load, pen=self.redPen))
         self.lock = threading.Lock() # lock for controlling access to graph data
 
-        # set up a process for refreshing the graph with newly collected data
-        self.timer = QtCore.QTimer()
-        self.timer.setInterval(Config.GRAPH_REFRESH_DELAY)
-        self.timer.timeout.connect(self.refreshPlot)
-        self.timer.start()
-
         # default to time series when setting up the graph axes
         self.setupTimeSeries()
         return
-    
+
 
     def setupTimeSeries(self):
-        super().setupTimeSeries()     
-
-        # make sure the update timer is running
-        #self.timer.start()
+        print(self.loadLines)
+        print(self.stepLines)
+        print(self.loadStepLines)
+        super().setupTimeSeries()
         return
 
 
     def setupLoadDisplacementGraph(self):
-        # don't auto update the graph data
-        #self.timer.stop()
-
+        
         super().setupLoadDisplacementGraph()
         return
 
 
     def startLiveUpdate(self):
+        # set up a process for refreshing the graph with newly collected data
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(Config.GRAPH_REFRESH_DELAY)
+        self.timer.timeout.connect(self.refreshPlot)
         self.timer.start()
+        print("timer started")
 
 
     def stopLiveUpdate(self):
         self.timer.stop()
+        print("timer stopped")
+
+        #self.timer = None
 
 
     def refreshPlot(self):
@@ -104,7 +105,16 @@ class LiveGrapher(Grapher):
         Parameters:
             pipe (Pipe): the pipe to read data from """
 
-        self.pipeManagerhandle= threading.Thread(name = 'pipeManager', target = pipeManager, args=(self, pipe))
+        # start performing live updates to the graph screen
+        self.startLiveUpdate()
+
+        # set up a signal handler to stop live updates when the pipe closes
+        self.signalManager = SignalConnector()
+        self.signalManager.connect(self.stopLiveUpdate)
+        self.signalManager.start()
+
+        # start the thread to accept data over the pipe
+        self.pipeManagerhandle= threading.Thread(name = 'pipeManager', target = pipeManager, args=(self, pipe, self.signalManager))
         self.pipeManagerhandle.start()
         return
 
@@ -152,7 +162,7 @@ class LiveGrapher(Grapher):
 
 
 
-def pipeManager(self, pipe):
+def pipeManager(self, pipe, pipeEndSignal):
     """ The thread function responsible for loading data from the pipe and 
     plotting it to the graph area. """
 
@@ -164,4 +174,6 @@ def pipeManager(self, pipe):
             self.addDataPoint(step, data)
         except EOFError:
             done = True
+    print("closing the pipe")
+    pipeEndSignal.setAsyncSignal()
     return
