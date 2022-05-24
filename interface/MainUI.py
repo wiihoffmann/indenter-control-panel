@@ -30,7 +30,7 @@ class MainUI(QMainWindow):
         QMainWindow.__init__(self)
         loadUi(os.path.join(self.dir, "interface/mainWindow.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
-#        self.showFullScreen()
+        self.showFullScreen()
 
         # initialize the firmware/back end functionality
         self.indenter = Indenter(self.plotWidget)
@@ -125,7 +125,6 @@ class MainUI(QMainWindow):
         dirs = os.listdir("/media/pi")
         if len(dirs) != 0:
             directory = os.path.join("/media/pi", dirs[0]) + "/"
-            print(directory)
         # else save locally
         else:
             directory = os.path.join(self.dir, "Collected Data/")

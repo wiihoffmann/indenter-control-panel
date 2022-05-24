@@ -106,8 +106,7 @@ class Grapher():
         self.loadLines = []
         self.stepLines = []
         self.loadStepLines = []
-        
-        self.setupTimeSeries()
+
         self.graph.getPlotItem().enableAutoRange()
         self.colorindex = 0
         return

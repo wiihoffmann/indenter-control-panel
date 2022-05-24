@@ -36,16 +36,14 @@ class LiveGrapher(Grapher):
 
 
     def setupTimeSeries(self):
-        print(self.loadLines)
-        print(self.stepLines)
-        print(self.loadStepLines)
         super().setupTimeSeries()
+        self.refreshPlot()
         return
 
 
     def setupLoadDisplacementGraph(self):
-        
         super().setupLoadDisplacementGraph()
+        self.refreshPlot()
         return
 
 
@@ -60,9 +58,6 @@ class LiveGrapher(Grapher):
 
     def stopLiveUpdate(self):
         self.timer.stop()
-        print("timer stopped")
-
-        #self.timer = None
 
 
     def refreshPlot(self):

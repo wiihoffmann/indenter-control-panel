@@ -47,6 +47,6 @@ class ComparisonGrapher(Grapher):
     def clear(self):
         """ Clears the collected data and the graph area. """
         self.openFiles = []
-
+        self.setupTimeSeries()
         super().clear()
         return

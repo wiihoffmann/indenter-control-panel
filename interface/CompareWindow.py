@@ -25,7 +25,7 @@ class CompareWindow(QMainWindow):
         QMainWindow.__init__(self)
         loadUi(os.path.join(self.dir, "interface/compareWindow.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
-#        self.showFullScreen()
+        self.showFullScreen()
 
         # initialize the grapher functionality
         self.grapher = ComparisonGrapher(self.plotWidget)
@@ -48,7 +48,6 @@ class CompareWindow(QMainWindow):
         dirs = os.listdir("/media/pi")
         if len(dirs) != 0:
             directory = os.path.join("/media/pi", dirs[0]) + "/"
-            print(directory)
         # else save locally
         else:
             directory = os.path.join(self.dir, "Collected Data/")
