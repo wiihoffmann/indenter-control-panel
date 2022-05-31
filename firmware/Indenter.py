@@ -130,6 +130,22 @@ class Indenter():
 
 
 
+def initialPause(ADC, graphPipe, emergencySignal, pauseTime):
+    """ Records some data before beginning the measurement. 
+    Parameters:
+        ADC (ADCController): the ADC to get load data from
+        graphPipe (Pipe): the pipe used to send data into the graph process
+        emergencySignal (Event): a signal used to start an emergency stop. """
+
+    startTime = time.time_ns()
+    while (time.time_ns() < startTime + pauseTime) and not emergencySignal.is_set():
+        # log a data point
+        load = ADC.getLoad()
+        graphPipe.send([0, load])
+        time.sleep(1 / Config.SAMPLE_RATE)
+    return
+
+
 def applyLoad(displacement, target, stepRate, ADC, stepper, graphPipe, emergencySignal):
     """ Moves the indenter head down to apply a target load
     Parameters:
@@ -240,6 +256,7 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
         ADC = ADCController()
         ADC.tare()
 
+        initialPause(ADC, graphPipe, emergencySignal, Config.INITIAL_PAUSE_TIME * 10**6)
         # apply preload
         displacement = applyLoad(displacement, preload, stepRate, ADC, stepper, graphPipe, emergencySignal)
         # preload dwell
