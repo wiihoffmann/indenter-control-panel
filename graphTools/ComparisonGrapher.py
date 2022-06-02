@@ -38,8 +38,8 @@ class ComparisonGrapher(Grapher):
         if exists == False:
             self.openFiles.append(data.filename)
             self.loadLines.append(self.graph.plot(data.sample, data.load, pen=self.getPen()))
-            self.stepLines.append(self.graph.plot(data.sample, data.step, pen=self.getPen()))
             self.loadStepLines.append(self.graph.plot(data.step, data.load, pen=self.getPen()))
+            self.stepLines.append(self.graph.plot(data.sample, data.step, pen=self.getPen()))
             self.setupTimeSeries()
         return
 

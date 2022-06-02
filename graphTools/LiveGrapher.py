@@ -58,6 +58,7 @@ class LiveGrapher(Grapher):
 
     def stopLiveUpdate(self):
         self.timer.stop()
+        self.refreshPlot()
 
 
     def refreshPlot(self):
@@ -153,6 +154,7 @@ class LiveGrapher(Grapher):
         self.stepLines.append(self.graph.plot(self.data.sample, self.data.step, pen=self.bluePen))
         self.loadStepLines.append(self.graph.plot(self.data.step, self.data.load, pen=self.redPen))
         self.lock.release()
+        self.refreshPlot()
         return
 
 
