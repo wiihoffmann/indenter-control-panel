@@ -37,6 +37,7 @@ HOLD_STEP_DOWN_RATE = 200       # steps/second (when holding, how fast can we mo
 SAMPLE_RATE = 1000              # samples/second (Target sampling rate. Actual will vary slightly)
 GRAPH_COLORS = 10               # how many colors we can use on the graph comparison screen
 GRAPH_LINE_WIDTH = 3            # width of the graph line
+INVERT_DIR = False              # Set to True if the indenter moves up when it should move down
 
 ####### hardware calibration ######
 """ To calibrate the device, we need to calculate △load / △V (N/V). To do this, apply

@@ -2,6 +2,7 @@
 import RPi.GPIO as GPIO
 from rpi_hardware_pwm import HardwarePWM
 import time
+import Config
 
 
 class StepperController():
@@ -20,9 +21,16 @@ class StepperController():
         self.direction = 0
         self.startTime = time.time_ns()
 
+        if(Config.INVERT_DIR):
+            self.downPolarity = GPIO.LOW
+            self.upPolarity = GPIO.HIGH
+        else:
+            self.downPolarity = GPIO.HIGH
+            self.upPolarity = GPIO.LOW
+
         GPIO.setwarnings(False)  # Ignore GPIO warnings
         GPIO.setmode(GPIO.BCM)  # Use GPIO pin numbering (as opposed to header pin number)
-        GPIO.setup(self.directionPin, GPIO.OUT, initial=GPIO.LOW) # initialize direction pin low
+        GPIO.setup(self.directionPin, GPIO.OUT, initial=self.upPolarity) # initialize direction pin low
         self.pwm = HardwarePWM(pwm_channel=0, hz=100) # initialize step pin PWM
         self.pwm.start(0) # duty cycle 0 == off
         return
@@ -37,7 +45,7 @@ class StepperController():
         self.direction = 1  # downwards
 
         # set the direction pin high to move downwards and start PWM at stepFreq
-        GPIO.setup(self.directionPin, GPIO.OUT, initial = GPIO.HIGH)
+        GPIO.output(self.directionPin, self.downPolarity)
         self.startTime = time.time_ns()
         self.pwm.change_frequency(stepFreq)
         self.pwm.change_duty_cycle(50)
@@ -53,7 +61,7 @@ class StepperController():
         self.direction = -1 # upwards
 
         # set the direction pin low to move upwards and start PWM at stepFreq
-        GPIO.setup(self.directionPin, GPIO.OUT, initial = GPIO.LOW)
+        GPIO.output(self.directionPin, self.upPolarity)
         self.startTime = time.time_ns()
         self.pwm.change_frequency(stepFreq)
         self.pwm.change_duty_cycle(50)
