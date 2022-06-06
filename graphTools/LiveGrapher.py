@@ -79,7 +79,7 @@ class LiveGrapher(Grapher):
     def markInitialApproachStart(self):
         self.lock.acquire()
         if self.data.step == []:
-            self.data.initialApproachStart = 0
+            self.data.initialApproachStart = 1
         else:
             self.data.initialApproachStart = self.data.sample[-1]
         self.lock.release()
