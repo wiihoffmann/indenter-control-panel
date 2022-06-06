@@ -10,4 +10,9 @@ class MeasurementData:
     step: List[float]
     load: List[float]
     filename: str = ""
+    initialApproachStart: int = -1
+    preloadHoldStart: int = -1
+    mainApproachStart: int = -1
+    mainHoldStart:int = -1
+    retractStart: int = -1
 
