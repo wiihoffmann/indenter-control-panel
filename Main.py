@@ -6,18 +6,15 @@ from interface.MainUI import *
 from interface.CompareWindow import *
 import os
 
-window = None
 
 # get the path the program was launched from
 dir = os.path.dirname(__file__)
+window = None
 
 
 def openCompareWindow(self):
     global window
-
-#    window.indenter.graph.stopLiveUpdate()  #TODO: remove this line once other stuff is fixed
-
-    window.close()    
+    window.close()
     GPIO.cleanup()
     window = CompareWindow(dir, openMainWindow)
     window.show()

@@ -29,7 +29,6 @@ MAX_STEP_RATE = 1500            # steps/second
 STEP_RATE_INCREMENT_SIZE = 100  # steps/second
 
 ######### misc settings ###########
-INITIAL_PAUSE_TIME = 1000       # milliseconds (time between pressing start and starting to move the indenter head)
 GRAPH_REFRESH_DELAY = 250       # milliseconds
 TOLERANCE = 2.5                 # newtons (Max deviance from target load when holding.)
 HOLD_STEP_UP_RATE = 200         # steps/second (when holding, how fast can we move up to maintain the target load)
