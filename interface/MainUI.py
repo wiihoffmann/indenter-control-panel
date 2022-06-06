@@ -128,7 +128,8 @@ class MainWindow(QMainWindow):
         """ Start a dialog to save the current graph data into a CSV file. """
         
         # open the on screen keyboard once the next window has had a chance to open
-        Timer(.25, self.launchKeyboard).start()
+        if Config.SHOW_KEYBOARD:
+            Timer(.25, self.launchKeyboard).start()
         
         # set default file name to the current date/time
         now = datetime.now()
