@@ -18,7 +18,8 @@ class Logger():
             load (float): array of load data
         """
         data = MeasurementData([],[],[], filename)
-        
+        phaseMessage = ""
+
         # try opening the file and iterating over the data
         with open(filename, 'r') as csvfile:
             lines = csv.reader(csvfile, delimiter=',')
@@ -32,6 +33,21 @@ class Logger():
                         data.sample.append(index)
                         data.step.append(float(row[0])/100)
                         data.load.append(float(row[1]))
+
+                        # load in the phase info (if applicable)
+                        if len(row) >= 3 and row[2] != phaseMessage:
+                            phaseMessage = row[2]
+
+                            if data.initialApproachStart == -1:
+                                data.initialApproachStart = index
+                            elif data.preloadHoldStart == -1:
+                                data.preloadHoldStart = index
+                            elif data.mainApproachStart == -1:
+                                data.mainApproachStart = index              
+                            elif data.mainHoldStart == -1:
+                                data.mainHoldStart = index
+                            elif data.retractStart == -1:
+                                data.retractStart = index        
                     except:
                         pass
 
