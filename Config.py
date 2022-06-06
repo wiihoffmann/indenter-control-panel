@@ -29,11 +29,14 @@ MAX_STEP_RATE = 1500            # steps/second
 STEP_RATE_INCREMENT_SIZE = 100  # steps/second
 
 ######### misc settings ###########
+INITIAL_PAUSE_TIME = 1000       # milliseconds (time between pressing start and starting to move the indenter head)
 GRAPH_REFRESH_DELAY = 250       # milliseconds
 TOLERANCE = 2.5                 # newtons (Max deviance from target load when holding.)
 HOLD_STEP_UP_RATE = 200         # steps/second (when holding, how fast can we move up to maintain the target load)
 HOLD_STEP_DOWN_RATE = 200       # steps/second (when holding, how fast can we move down to maintain the target load)
 SAMPLE_RATE = 1000              # samples/second (Target sampling rate. Actual will vary slightly)
+GRAPH_COLORS = 10               # how many colors we can use on the graph comparison screen
+GRAPH_LINE_WIDTH = 3            # width of the graph line
 SHOW_KEYBOARD = True            # show the keyboard when saving?
 INVERT_DIR = False              # Set to True if the indenter moves up when it should move down
 

@@ -7,7 +7,7 @@ import time
 from firmware.StepperController import *
 from firmware.ADCController import *
 from datalogger.Logger import *
-from interface.Grapher import *
+from graphTools.LiveGrapher import *
 import Config
 
 DIR_PIN = 23  # physical pin 16, GPIO23
@@ -25,7 +25,7 @@ class Indenter():
             graph: A reference to the graph widget in the interface """
         
         # the graph object in the UI
-        self.graph = Grapher(graph)
+        self.graph = LiveGrapher(graph)
 
         # set up the stepper controller and data logger
         self.Stepper = StepperController(DIR_PIN) #physical pin 16, GPIO23
@@ -50,8 +50,8 @@ class Indenter():
             filename (str): the name of the file to load data from"""
         
         self.graph.clear()
-        x, step, load = self.Logger.loadFile(filename)
-        self.graph.setData(x, step, load)
+        data = self.Logger.loadFile(filename)
+        self.graph.setData(data)
         return
 
 
@@ -60,8 +60,8 @@ class Indenter():
         Parameters:
             filename (str): the name of the file to save data to """
 
-        x, step, load = self.graph.getData()
-        self.Logger.saveFile(filename, x, step, load)
+        data = self.graph.getData()
+        self.Logger.saveFile(filename, data)
         return
 
 

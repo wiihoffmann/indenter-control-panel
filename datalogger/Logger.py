@@ -1,5 +1,6 @@
 
 import csv
+from datalogger.MeasurementData import *
 
 class Logger():
     """ Data logger for loading/saving CSV files
@@ -16,9 +17,7 @@ class Logger():
             step (int): array of step (displacement) data
             load (float): array of load data
         """
-        x = []
-        step = []
-        load = []
+        data = MeasurementData([],[],[], filename)
         
         # try opening the file and iterating over the data
         with open(filename, 'r') as csvfile:
@@ -30,16 +29,16 @@ class Logger():
                 else:
                     # append the data from the row
                     try:
-                        x.append(index)
-                        step.append(float(row[0])/100)
-                        load.append(float(row[1]))
+                        data.sample.append(index)
+                        data.step.append(float(row[0])/100)
+                        data.load.append(float(row[1]))
                     except:
                         pass
 
-        return x, step, load
+        return data
 
 
-    def saveFile(self, filename, x, step, load):
+    def saveFile(self, filename, data):
         """ Save the results of a measurement to a CSV file.
         Parameters:
             filename (str): the path/filename of the CSV file to load data from
@@ -57,7 +56,7 @@ class Logger():
             lines.writerow(["Step (steps)", "Load (N)"])
             
             # insert the data
-            for i in range(min(len(x), len(step), len(load))):
-                lines.writerow([step[i]*100, load[i]])
+            for i in range(min(len(data.sample), len(data.step), len(data.load))):
+                lines.writerow([data.step[i]*100, data.load[i]])
         return
 
