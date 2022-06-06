@@ -117,6 +117,13 @@ class MainUI(QMainWindow):
         return
 
 
+    def launchKeyboard(self):
+        self.showMaximized()
+        subprocess.run(["xvkbd", "-no-keypad", "-window", "Save measurement to file"])
+        self.showFullScreen()
+        return
+
+
     def getDirectory(self):
         """Returns a string to the directory in which files should be stored.
         Attempts to store to a USB stick before storing locally."""
@@ -134,8 +141,9 @@ class MainUI(QMainWindow):
     def saveFile(self):
         """ Start a dialog to save the current graph data into a CSV file. """
         
-        # # open the on screen keyboard once the next window has had a chance to open
-        # Timer(.25, lambda: subprocess.Popen(["xvkbd", "-compact", "-window", "Save measurement to file"])).start()
+        # open the on screen keyboard once the next window has had a chance to open
+        if Config.SHOW_KEYBOARD:
+            Timer(.25, self.launchKeyboard).start()
         
         # set default file name to the current date/time
         now = datetime.now()
