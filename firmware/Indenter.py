@@ -241,14 +241,19 @@ def measurementLoop(preload, preloadTime, maxLoad, maxLoadTime, stepRate, graphP
         ADC.tare()
 
         # apply preload
+        graphPipe.send(["X", LiveGrapher.markInitialApproachStart])
         displacement = applyLoad(displacement, preload, stepRate, ADC, stepper, graphPipe, emergencySignal)
         # preload dwell
+        graphPipe.send(["X", LiveGrapher.markPreloadHoldStart])
         displacement = dwell(displacement, preload, preloadTime, ADC, stepper, graphPipe, emergencySignal)
         # apply main load
+        graphPipe.send(["X", LiveGrapher.markMainApproachStart])
         displacement = applyLoad(displacement, maxLoad, stepRate, ADC, stepper, graphPipe, emergencySignal)
         # main load dwell
+        graphPipe.send(["X", LiveGrapher.markMainHoldStart])
         displacement = dwell(displacement, maxLoad, maxLoadTime, ADC, stepper, graphPipe, emergencySignal)
         # retract
+        graphPipe.send(["X", LiveGrapher.markRetractStart])
         displacement = retract(displacement, stepRate, ADC, stepper, graphPipe, emergencySignal)
 
         # if we had an emergency, we still need to retract the indenter head

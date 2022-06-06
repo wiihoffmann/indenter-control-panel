@@ -76,6 +76,44 @@ class LiveGrapher(Grapher):
         return
 
 
+    def markInitialApproachStart(self):
+        self.lock.acquire()
+        if self.data.step == []:
+            self.data.initialApproachStart = 0
+        else:
+            self.data.initialApproachStart = self.data.sample[-1]
+        self.lock.release()
+        return
+
+
+    def markPreloadHoldStart(self):
+        self.lock.acquire()        
+        self.data.preloadHoldStart = self.data.sample[-1]
+        self.lock.release()
+        return
+
+
+    def markMainApproachStart(self):
+        self.lock.acquire()
+        self.data.mainApproachStart = self.data.sample[-1]
+        self.lock.release()
+        return
+
+
+    def markMainHoldStart(self):
+        self.lock.acquire()
+        self.data.mainHoldStart = self.data.sample[-1]
+        self.lock.release()
+        return
+
+
+    def markRetractStart(self):
+        self.lock.acquire()
+        self.data.retractStart = self.data.sample[-1]
+        self.lock.release()
+        return
+
+
     def addDataPoint(self, step, load):
         """ Adds a single data point to the end of the graph.
         Parameters:
@@ -168,7 +206,13 @@ def pipeManager(self, pipe, pipeEndSignal):
         # graph the data waiting in the pipe
         try:
             step, data = pipe.recv()
-            self.addDataPoint(step, data)
+            # if we are not sending a special command
+            if step != "X":
+                self.addDataPoint(step, data)
+            # execute the special command
+            else:
+                data(self)
+
         except EOFError:
             done = True
     print("closing the pipe")
