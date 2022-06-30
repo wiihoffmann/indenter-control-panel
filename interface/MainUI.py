@@ -58,9 +58,11 @@ class MainUI(QMainWindow):
         self.stopButton.clicked.connect(self.indenter.emergencyStop)    # stop button
 
         self.moveUpButton.pressed.connect(self.indenter.startJogUp)     # jog up button pressed
+        self.moveUpButton.clicked.connect(self.indenter.startJogUp)     # jog up button held down
         self.moveUpButton.released.connect(self.indenter.stopJogging)   # jog up button released
 
         self.moveDownButton.pressed.connect(self.indenter.startJogDown) # jog down button pressed
+        self.moveDownButton.clicked.connect(self.indenter.startJogDown) # jog up button held down
         self.moveDownButton.released.connect(self.indenter.stopJogging) # jog down button released
         
         # set up the preload buttons / readout

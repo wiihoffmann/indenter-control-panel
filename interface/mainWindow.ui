@@ -85,6 +85,15 @@
     <property name="text">
      <string> Move Up</string>
     </property>
+    <property name="autoRepeat">
+     <bool>true</bool>
+    </property>
+    <property name="autoRepeatDelay">
+     <number>30</number>
+    </property>
+    <property name="autoRepeatInterval">
+     <number>30</number>
+    </property>
    </widget>
    <widget class="QPushButton" name="moveDownButton">
     <property name="geometry">
@@ -102,6 +111,15 @@
     </property>
     <property name="text">
      <string>Move Down</string>
+    </property>
+    <property name="autoRepeat">
+     <bool>true</bool>
+    </property>
+    <property name="autoRepeatDelay">
+     <number>30</number>
+    </property>
+    <property name="autoRepeatInterval">
+     <number>30</number>
     </property>
    </widget>
    <widget class="QPushButton" name="startButton">
