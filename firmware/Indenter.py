@@ -87,6 +87,14 @@ class Indenter():
         self.graph.cycleViews()
 
 
+    def emergencyStop(self, *args):
+        """ Defines the emergency stop procedure. """
+        self.comm.emergencyStop(Config.EMERGENCY_STOP_STEP_RATE)
+        # terminate the process doing the stiffness measurement
+        self.emergencySignal.set()
+        return
+
+
     def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal):
         """ Initiates the process of taking a new stffness measurement.
         Parameters:
@@ -119,13 +127,6 @@ class Indenter():
             self.measurementHandle.start()
         return
 
-
-    def emergencyStop(self, *args):
-        """ Defines the emergency stop procedure. """
-
-        # terminate the process doing the stiffness measurement
-        self.emergencySignal.set()
-        return
 
 
 def measurementLoop(params, comm:Communicator, graphPipe, emergencySignal, doneSignal):

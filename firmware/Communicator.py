@@ -84,6 +84,10 @@ class Communicator:
         return data
 
 
+    def emergencyStop(self, stepRate):
+        self.__sendCommand('*S', uc.stepRateToMicros(stepRate))
+
+
     def moveXAxisUp(self, stepRate):
         self.__sendCommand('*X', -1*uc.stepRateToMicros(stepRate))
 
