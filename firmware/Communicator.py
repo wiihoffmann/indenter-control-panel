@@ -25,7 +25,7 @@ class Communicator:
                     time.sleep(0)
 
             else:
-                raise RuntimeError("ERROR: Could not detect the Arduino. Is it connected?")
+                raise RuntimeError("Could not detect and connect to the Arduino. Is it connected?")
 
 
     def __sendCommand(self, preamble, int=0000):

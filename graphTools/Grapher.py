@@ -19,6 +19,7 @@ class Grapher():
 
         self.loadLines = []
         self.stepLines = []
+        self.phaseLines = []
         self.loadStepLines = []
         
         return

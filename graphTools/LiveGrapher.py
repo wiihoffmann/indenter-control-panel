@@ -24,7 +24,7 @@ class LiveGrapher(Grapher):
         self.redPen = pg.mkPen('r', width=Config.GRAPH_LINE_WIDTH)
         self.bluePen = pg.mkPen('b', width=Config.GRAPH_LINE_WIDTH)
 
-        self.data = MeasurementData([],[],[])
+        self.data = MeasurementData([],[],[],[])
         # add the two data series for load and displacement data
         self.loadLines.append(self.graph.plot(self.data.sample, self.data.load, pen=self.redPen))
         self.stepLines.append(self.graph.plot(self.data.sample, self.data.step, pen=self.bluePen))
@@ -131,6 +131,7 @@ class LiveGrapher(Grapher):
 
         self.data.step.append(dataPoint[0])
         self.data.load.append(dataPoint[1])
+        self.data.phase.append(dataPoint[2])
         self.lock.release()
         return
 
@@ -188,7 +189,7 @@ class LiveGrapher(Grapher):
 
         self.lock.acquire()
         super().clear()
-        self.data = MeasurementData([],[],[])
+        self.data = MeasurementData([],[],[],[])
         self.loadLines.append(self.graph.plot(self.data.sample, self.data.load, pen=self.redPen))
         self.stepLines.append(self.graph.plot(self.data.sample, self.data.step, pen=self.bluePen))
         self.loadStepLines.append(self.graph.plot(self.data.step, self.data.load, pen=self.redPen))
