@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # line above lets us launch the program with ./Main.py instead of "python3 Main.py"
 
-import RPi.GPIO as GPIO
 from interface.MainUI import *
 from interface.CompareWindow import *
 import os
@@ -15,7 +14,6 @@ window = None
 def openCompareWindow(self):
     global window
     window.close()
-    GPIO.cleanup()
     window = CompareWindow(dir, openMainWindow)
     window.show()
     return

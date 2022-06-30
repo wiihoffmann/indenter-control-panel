@@ -1,6 +1,6 @@
 
 import csv
-from datalogger.MeasurementData import *
+from dataTools.MeasurementData import *
 
 class Logger():
     """ Data logger for loading/saving CSV files

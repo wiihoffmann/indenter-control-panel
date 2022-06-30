@@ -44,9 +44,10 @@ INVERT_DIR = False              # Set to True if the indenter moves up when it s
 two different loads to the indenter and record the corresponding output voltage. The 
 calculation assumes that a larger load produces a larger output voltage. """
 # first load/voltage calibration pair
-CAL_LOAD_1 = 13.07673                # newtons
-CAL_VOLTAGE_1 = 0.511807446121897    # volts
+CAL_READING_1 = 1           # newtons
+CAL_VOLTAGE_1 = 50          # raw ADC value
 # second load/voltage calibration pair
-CAL_LOAD_2 = 103.48569               # newtons
-CAL_VOLTAGE_2 = 2.42733884862367     # volts
+CAL_READING_2 = 11          # newtons
+CAL_VOLTAGE_2 = 550         # raw ADC value
 
+# TODO: FIX ABOVE!!!!!!!!!!!!!!

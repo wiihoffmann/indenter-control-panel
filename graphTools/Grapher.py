@@ -1,6 +1,6 @@
 
 import pyqtgraph as pg
-from datalogger.MeasurementData import *
+from dataTools.MeasurementData import *
 import Config
 
 

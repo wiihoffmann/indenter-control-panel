@@ -1,6 +1,7 @@
 
 from PyQt5 import QtCore
 import threading
+import dataTools.UnitConverter as uc
 
 from graphTools.Grapher import *
 from interface.SignalConnector import *
@@ -114,7 +115,7 @@ class LiveGrapher(Grapher):
         return
 
 
-    def addDataPoint(self, step, load):
+    def addDataPoint(self, dataPoint):
         """ Adds a single data point to the end of the graph.
         Parameters:
             step (int): the displacemet for this data point
@@ -128,8 +129,8 @@ class LiveGrapher(Grapher):
         else:
             self.data.sample.append(self.data.sample[-1]+1)
 
-        self.data.step.append(step)
-        self.data.load.append(load)
+        self.data.step.append(dataPoint[0])
+        self.data.load.append(dataPoint[1])
         self.lock.release()
         return
 
@@ -205,13 +206,10 @@ def pipeManager(self, pipe, pipeEndSignal):
     while not done:          
         # graph the data waiting in the pipe
         try:
-            step, data = pipe.recv()
-            # if we are not sending a special command
-            if step != "X":
-                self.addDataPoint(step, data)
-            # execute the special command
-            else:
-                data(self)
+            rawData = list(pipe.recv())
+            rawData[0] = rawData[0] / 100 # scale the displacement
+            rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
+            self.addDataPoint(rawData)
 
         except EOFError:
             done = True

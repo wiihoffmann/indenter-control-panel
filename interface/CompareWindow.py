@@ -6,7 +6,7 @@ import os
 
 #custom class imports
 from graphTools.ComparisonGrapher import *
-from datalogger.Logger import *
+from dataTools.Logger import *
 
 
 class CompareWindow(QMainWindow):
