@@ -14,17 +14,18 @@ class Communicator:
 
         if arduino == None: 
             ports = list(serial.tools.list_ports.comports())
-            
+
             if len(ports) != 0:
-                arduino = serial.Serial(port=ports.pop().device, baudrate=2000000, timeout=None)
-                arduino.flush()
+                for p in ports:
+                    if "Arduino" in p.manufacturer:
+                        arduino = serial.Serial(port=p.device, baudrate=2000000, timeout=None)
+                        arduino.flush()
 
-                # wait for arduino to be ready
-                while(self.readCommand() != 'R'):
-                    time.sleep(0)
-
-            else:
-                raise RuntimeError("Could not detect and connect to the Arduino. Is it connected?")
+                        # wait for arduino to be ready
+                        while(self.readCommand() != 'R'):
+                            time.sleep(0)
+                        return
+            raise RuntimeError("Could not detect and connect to the Arduino. Is it connected?")
 
 
     def __sendCommand(self, preamble, num=0000):
