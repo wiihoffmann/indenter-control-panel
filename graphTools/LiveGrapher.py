@@ -24,7 +24,8 @@ class LiveGrapher(Grapher):
         self.redPen = pg.mkPen('r', width=Config.GRAPH_LINE_WIDTH)
         self.bluePen = pg.mkPen('b', width=Config.GRAPH_LINE_WIDTH)
 
-        self.data = MeasurementData([],[],[],[])
+        self.dataIndex = 0
+        self.data = MeasurementData([0]*50000,[0]*50000,[0]*50000,[0]*50000)
         # add the two data series for load and displacement data
         self.loadLines.append(self.graph.plot(self.data.sample, self.data.load, pen=self.redPen))
         self.stepLines.append(self.graph.plot(self.data.sample, self.data.step, pen=self.bluePen))
@@ -68,11 +69,11 @@ class LiveGrapher(Grapher):
         self.lock.acquire()
         # if we are showing a time series
         if(self.view == 0):
-            self.loadLines[0].setData(self.data.sample, self.data.load)
-            self.stepLines[0].setData(self.data.sample, self.data.step)
+            self.loadLines[0].setData(self.data.sample[0:self.dataIndex], self.data.load[0:self.dataIndex])
+            self.stepLines[0].setData(self.data.sample[0:self.dataIndex], self.data.step[0:self.dataIndex])
         # if we are showing the force as a function of displacement
         elif(self.view == 1):
-            self.loadStepLines[0].setData(self.data.step, self.data.load)
+            self.loadStepLines[0].setData(self.data.step[0:self.dataIndex], self.data.load[0:self.dataIndex])
         self.lock.release()
         return
 
@@ -127,16 +128,17 @@ class LiveGrapher(Grapher):
             self.data.sample.append(1)
         # else increment the sample number by 1 and append
         else:
-            self.data.sample.append(self.data.sample[-1]+1)
+            self.data.sample[self.dataIndex] = self.dataIndex +1
 
-        self.data.step.append(dataPoint[0])
-        self.data.load.append(dataPoint[1])
-        self.data.phase.append(dataPoint[2])
+        self.data.step[self.dataIndex] = dataPoint[0]
+        # self.data.load.append(dataPoint[1])
+        # self.data.phase.append(dataPoint[2])
+        self.dataIndex += 1
         self.lock.release()
         return
 
 
-    def addDataFromPipe(self, pipe):
+    def addDataFromPipe(self, dataQueue):
         """ Starts a process to add data points to the end of the graph from a pipe.
         Parameters:
             pipe (Pipe): the pipe to read data from """
@@ -150,7 +152,7 @@ class LiveGrapher(Grapher):
         self.signalManager.start()
 
         # start the thread to accept data over the pipe
-        self.pipeManagerhandle= threading.Thread(name = 'pipeManager', target = pipeManager, args=(self, pipe, self.signalManager))
+        self.pipeManagerhandle= threading.Thread(name = 'pipeManager', target = pipeManager, args=(self, dataQueue, self.signalManager))
         self.pipeManagerhandle.start()
         return
 
@@ -189,7 +191,8 @@ class LiveGrapher(Grapher):
 
         self.lock.acquire()
         super().clear()
-        self.data = MeasurementData([],[],[],[])
+        self.dataIndex = 0
+        self.data = MeasurementData([0]*50000,[0]*50000,[0]*50000,[0]*50000)
         self.loadLines.append(self.graph.plot(self.data.sample, self.data.load, pen=self.redPen))
         self.stepLines.append(self.graph.plot(self.data.sample, self.data.step, pen=self.bluePen))
         self.loadStepLines.append(self.graph.plot(self.data.step, self.data.load, pen=self.redPen))
@@ -199,15 +202,24 @@ class LiveGrapher(Grapher):
 
 
 
-def pipeManager(self, pipe, pipeEndSignal):
+def pipeManager(self, dataQueue, pipeEndSignal):
     """ The thread function responsible for loading data from the pipe and 
     plotting it to the graph area. """
-
+    count = 0
+    rawData = None
     done = False # pipe EOF
     while not done:          
         # graph the data waiting in the pipe
         try:
-            rawData = list(pipe.recv())
+            count +=1
+
+            data = dataQueue.get()
+            if data == None: 
+                return
+            
+            rawData = list(data)
+
+            # dataQueue.task_done()
             rawData[0] = rawData[0] / 100 # scale the displacement
             rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
             self.addDataPoint(rawData)
@@ -215,5 +227,7 @@ def pipeManager(self, pipe, pipeEndSignal):
         except EOFError:
             done = True
     print("closing the pipe")
+    print(count)
+    print(rawData)
     pipeEndSignal.setAsyncSignal()
     return
