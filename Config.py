@@ -21,7 +21,7 @@ MAX_HOLD_TIME = 15              # seconds
 HOLD_TIME_INCREMENT_SIZE = 1    # seconds
 
 ######## step rate settings #######
-EMERGENCY_STOP_STEP_RATE = 2000 # steps/second (How fast to retract indenter during an emergency stop.)
+EMERGENCY_STOP_STEP_RATE = 1500 # steps/second (How fast to retract indenter during an emergency stop.)
 JOG_SPEED = 600                 # steps/second (Manual move up/down speed.)
 DEFAULT_STEP_RATE = 600         # steps/second (Default rate used when taking a measurement.)
 MIN_STEP_RATE = 200             # steps/second
@@ -37,7 +37,7 @@ SAMPLE_RATE = 1000              # samples/second (Target sampling rate. Actual w
 GRAPH_COLORS = 10               # how many colors we can use on the graph comparison screen
 GRAPH_LINE_WIDTH = 3            # width of the graph line
 SHOW_KEYBOARD = True            # show the keyboard when saving?
-INVERT_DIR = False              # Set to True if the indenter moves up when it should move down
+INVERT_DIR = True               # Set to True if the indenter moves up when it should move down
 
 ####### hardware calibration ######
 """ To calibrate the device, we need to calculate △load / △V (N/V). To do this, apply
@@ -48,5 +48,5 @@ CAL_READING_1 = 35.18847    # newtons
 CAL_VOLTAGE_1 = 10140       # raw ADC value
 # second load/voltage calibration pair
 CAL_READING_2 = 92.214      # newtons
-CAL_VOLTAGE_2 = 19170       # raw ADC value
+CAL_VOLTAGE_2 = 17500       # raw ADC value
 
