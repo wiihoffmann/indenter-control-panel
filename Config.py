@@ -21,7 +21,7 @@ MAX_HOLD_TIME = 15              # seconds
 HOLD_TIME_INCREMENT_SIZE = 1    # seconds
 
 ######## step rate settings #######
-EMERGENCY_STOP_STEP_RATE = 1500 # steps/second (How fast to retract indenter during an emergency stop.)
+EMERGENCY_STOP_STEP_RATE = 500  # steps/second (How fast to retract indenter during an emergency stop.)
 JOG_SPEED = 600                 # steps/second (Manual move up/down speed.)
 DEFAULT_STEP_RATE = 600         # steps/second (Default rate used when taking a measurement.)
 MIN_STEP_RATE = 200             # steps/second
@@ -31,9 +31,8 @@ STEP_RATE_INCREMENT_SIZE = 100  # steps/second
 ######### misc settings ###########
 GRAPH_REFRESH_DELAY = 250       # milliseconds
 TOLERANCE = 2.5                 # newtons (Max deviance from target load when holding.)
-HOLD_STEP_UP_RATE = 200         # steps/second (when holding, how fast can we move up to maintain the target load)
-HOLD_STEP_DOWN_RATE = 200       # steps/second (when holding, how fast can we move down to maintain the target load)
-SAMPLE_RATE = 1000              # samples/second (Target sampling rate. Actual will vary slightly)
+HOLD_STEP_UP_RATE = 100         # steps/second (when holding, how fast can we move up to maintain the target load)
+HOLD_STEP_DOWN_RATE = 100       # steps/second (when holding, how fast can we move down to maintain the target load)
 GRAPH_COLORS = 10               # how many colors we can use on the graph comparison screen
 GRAPH_LINE_WIDTH = 3            # width of the graph line
 SHOW_KEYBOARD = True            # show the keyboard when saving?
