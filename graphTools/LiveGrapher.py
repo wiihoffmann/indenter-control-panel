@@ -69,11 +69,11 @@ class LiveGrapher(Grapher):
         self.lock.acquire()
         # if we are showing a time series
         if(self.view == 0):
-            self.loadLines[0].setData(self.data.sample[0:self.dataIndex], self.data.load[0:self.dataIndex])
-            self.stepLines[0].setData(self.data.sample[0:self.dataIndex], self.data.step[0:self.dataIndex])
+            self.loadLines[0].setData((self.data.sample[0:self.dataIndex])[::10], (self.data.load[0:self.dataIndex])[::10])
+            self.stepLines[0].setData((self.data.sample[0:self.dataIndex])[::10], (self.data.step[0:self.dataIndex])[::10])
         # if we are showing the force as a function of displacement
         elif(self.view == 1):
-            self.loadStepLines[0].setData(self.data.step[0:self.dataIndex], self.data.load[0:self.dataIndex])
+            self.loadStepLines[0].setData(self.data.step[0:self.dataIndex:10], self.data.load[0:self.dataIndex:10])
         self.lock.release()
         return
 
@@ -131,8 +131,9 @@ class LiveGrapher(Grapher):
             self.data.sample[self.dataIndex] = self.dataIndex +1
 
         self.data.step[self.dataIndex] = dataPoint[0]
-        # self.data.load.append(dataPoint[1])
-        # self.data.phase.append(dataPoint[2])
+        self.data.load[self.dataIndex] = dataPoint[1]
+        self.data.phase[self.dataIndex] = dataPoint[2]
+
         self.dataIndex += 1
         self.lock.release()
         return
@@ -219,7 +220,6 @@ def pipeManager(self, dataQueue, pipeEndSignal):
             
             rawData = list(data)
 
-            # dataQueue.task_done()
             rawData[0] = rawData[0] / 100 # scale the displacement
             rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
             self.addDataPoint(rawData)
