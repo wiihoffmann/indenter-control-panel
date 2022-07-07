@@ -31,8 +31,8 @@ class Logger():
                     # append the data from the row
                     try:
                         data.sample.append(index)
-                        data.step.append(float(row[0])/100)
-                        data.load.append(float(row[1]))
+                        data.step.append(row[0]/100)
+                        data.load.append(row[1])
 
                         # load in the phase info (if applicable)
                         if len(row) >= 3 and row[2] != phaseMessage:
@@ -73,6 +73,6 @@ class Logger():
 
             # insert the data
             for i in range(min(len(data.sample), len(data.step), len(data.load), len(data.phase))):                                  
-                lines.writerow([data.step[i]*100, data.load[i], data.phase[i]])
+                lines.writerow([int(round(data.step[i]*100)), data.load[i], data.phase[i]])
         return
 
