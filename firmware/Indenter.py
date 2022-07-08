@@ -65,9 +65,9 @@ class Indenter():
     def startJogUp(self):
         """ Starts manually jogging the indenter head upwards. """
         if Config.INVERT_DIR:
-            self.comm.moveZAxisDown(Config.JOG_SPEED)
-        else:
             self.comm.moveZAxisUp(Config.JOG_SPEED)
+        else:
+            self.comm.moveZAxisDown(Config.JOG_SPEED)
         return
 
 
@@ -81,9 +81,9 @@ class Indenter():
     def startJogDown(self):
         """ Stops the manual jogging of the indenter head. """
         if Config.INVERT_DIR:
-            self.comm.moveZAxisUp(Config.JOG_SPEED)
-        else:
             self.comm.moveZAxisDown(Config.JOG_SPEED)
+        else:
+            self.comm.moveZAxisUp(Config.JOG_SPEED)
         return
 
 

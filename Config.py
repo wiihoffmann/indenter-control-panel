@@ -36,7 +36,7 @@ HOLD_STEP_DOWN_RATE = 100       # steps/second (when holding, how fast can we mo
 GRAPH_COLORS = 10               # how many colors we can use on the graph comparison screen
 GRAPH_LINE_WIDTH = 3            # width of the graph line
 SHOW_KEYBOARD = True            # show the keyboard when saving?
-INVERT_DIR = True               # Set to True if the indenter moves up when it should move down
+INVERT_DIR = False               # Set to True if the indenter moves up when it should move down
 
 ####### hardware calibration ######
 """ To calibrate the device, we need to calculate △load / △V (N/V). To do this, apply

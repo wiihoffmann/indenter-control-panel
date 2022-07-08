@@ -207,7 +207,8 @@ def pipeManager(self, pipe, pipeEndSignal):
     while not done:          
         # graph the data waiting in the pipe
         try:
-            rawData = list(pipe.recv())
+            data = pipe.recv()
+            rawData = list(data)
             rawData[0] = rawData[0] / 100 # scale the displacement
             rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
             self.addDataPoint(rawData)
@@ -215,5 +216,7 @@ def pipeManager(self, pipe, pipeEndSignal):
         except EOFError:
             done = True
     print("closing the pipe")
+    print(list(data))
+    print(list(data)[0]/list(data)[1]*1000)
     pipeEndSignal.setAsyncSignal()
     return

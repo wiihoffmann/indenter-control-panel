@@ -8,11 +8,11 @@ def calculateCalFactor():
 
 
 def stepRateToMicros(stepRate):
-    return (1/stepRate) * 10**6 / 2
+    return int((1/stepRate) * 10**6 / 2)
 
 
 def NewtonToRawADC(load):
-    return calculateCalFactor() * load
+    return int(calculateCalFactor() * load)
 
 
 def rawADCToNewton(reading):
