@@ -1,4 +1,5 @@
 import time
+from typing import Iterable
 import serial
 import serial.tools.list_ports
 import dataTools.UnitConverter as uc
@@ -14,11 +15,10 @@ class Communicator:
 
         if arduino == None: 
             ports = list(serial.tools.list_ports.comports())
-
             if len(ports) != 0:
                 for p in ports:
-                    if "Arduino" in p.manufacturer:
-                        arduino = serial.Serial(port=p.device, baudrate=2000000, timeout=None)
+                    if (p.description is not None and "USB2.0-Ser!" in p.description) or (p.manufacturer is not None and "Arduino" in p.manufacturer):
+                        arduino = serial.Serial(port=p.device, baudrate=1000000, timeout=None)
                         arduino.flush()
 
                         # wait for arduino to be ready
