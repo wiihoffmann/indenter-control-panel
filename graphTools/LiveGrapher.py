@@ -69,11 +69,11 @@ class LiveGrapher(Grapher):
         self.lock.acquire()
         # if we are showing a time series
         if(self.view == 0):
-            self.loadLines[0].setData((self.data.sample[0:self.dataIndex])[::10], (self.data.load[0:self.dataIndex])[::10])
-            self.stepLines[0].setData((self.data.sample[0:self.dataIndex])[::10], (self.data.step[0:self.dataIndex])[::10])
+            self.loadLines[0].setData((self.data.sample[0:self.dataIndex])[::Config.GRAPH_POINT_SKIP], (self.data.load[0:self.dataIndex])[::Config.GRAPH_POINT_SKIP])
+            self.stepLines[0].setData((self.data.sample[0:self.dataIndex])[::Config.GRAPH_POINT_SKIP], (self.data.step[0:self.dataIndex])[::Config.GRAPH_POINT_SKIP])
         # if we are showing the force as a function of displacement
         elif(self.view == 1):
-            self.loadStepLines[0].setData(self.data.step[0:self.dataIndex:10], self.data.load[0:self.dataIndex:10])
+            self.loadStepLines[0].setData(self.data.step[0:self.dataIndex:Config.GRAPH_POINT_SKIP], self.data.load[0:self.dataIndex:Config.GRAPH_POINT_SKIP])
         self.lock.release()
         return
 
