@@ -23,7 +23,6 @@ class Logger():
         with open(filename, 'r') as csvfile:
             lines = csv.reader(csvfile, delimiter=',')
             for index, row in enumerate(lines):
-                print(row)
                 # discard the first row (column headers)
                 if index == 0:
                     ", ".join(row)

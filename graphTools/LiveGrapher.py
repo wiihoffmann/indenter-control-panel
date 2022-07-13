@@ -24,8 +24,7 @@ class LiveGrapher(Grapher):
         self.redPen = pg.mkPen('r', width=Config.GRAPH_LINE_WIDTH)
         self.bluePen = pg.mkPen('b', width=Config.GRAPH_LINE_WIDTH)
 
-        self.dataIndex = 0
-        self.data = MeasurementData([0]*50000,[0]*50000,[0]*50000,[0]*50000)
+        self.data = MeasurementData([],[],[],[])
         # add the two data series for load and displacement data
         self.loadLines.append(self.graph.plot(self.data.sample, self.data.load, pen=self.redPen))
         self.stepLines.append(self.graph.plot(self.data.sample, self.data.step, pen=self.bluePen))
@@ -69,11 +68,11 @@ class LiveGrapher(Grapher):
         self.lock.acquire()
         # if we are showing a time series
         if(self.view == 0):
-            self.loadLines[0].setData((self.data.sample[0:self.dataIndex])[::Config.GRAPH_POINT_SKIP], (self.data.load[0:self.dataIndex])[::Config.GRAPH_POINT_SKIP])
-            self.stepLines[0].setData((self.data.sample[0:self.dataIndex])[::Config.GRAPH_POINT_SKIP], (self.data.step[0:self.dataIndex])[::Config.GRAPH_POINT_SKIP])
+            self.loadLines[0].setData(self.data.sample[::Config.GRAPH_POINT_SKIP], self.data.load[::Config.GRAPH_POINT_SKIP])
+            self.stepLines[0].setData(self.data.sample[::Config.GRAPH_POINT_SKIP], self.data.step[::Config.GRAPH_POINT_SKIP])
         # if we are showing the force as a function of displacement
         elif(self.view == 1):
-            self.loadStepLines[0].setData(self.data.step[0:self.dataIndex:Config.GRAPH_POINT_SKIP], self.data.load[0:self.dataIndex:Config.GRAPH_POINT_SKIP])
+            self.loadStepLines[0].setData(self.data.step[::Config.GRAPH_POINT_SKIP], self.data.load[::Config.GRAPH_POINT_SKIP])
         self.lock.release()
         return
 
@@ -128,13 +127,12 @@ class LiveGrapher(Grapher):
             self.data.sample.append(1)
         # else increment the sample number by 1 and append
         else:
-            self.data.sample[self.dataIndex] = self.dataIndex +1
+            self.data.sample.append(self.data.sample[-1] +1)
 
-        self.data.step[self.dataIndex] = dataPoint[0]
-        self.data.load[self.dataIndex] = dataPoint[1]
-        self.data.phase[self.dataIndex] = dataPoint[2]
+        self.data.step.append(dataPoint[0])
+        self.data.load.append(dataPoint[1])
+        self.data.phase.append(dataPoint[2])
 
-        self.dataIndex += 1
         self.lock.release()
         return
 
@@ -192,8 +190,7 @@ class LiveGrapher(Grapher):
 
         self.lock.acquire()
         super().clear()
-        self.dataIndex = 0
-        self.data = MeasurementData([0]*50000,[0]*50000,[0]*50000,[0]*50000)
+        self.data = MeasurementData([],[],[],[])
         self.loadLines.append(self.graph.plot(self.data.sample, self.data.load, pen=self.redPen))
         self.stepLines.append(self.graph.plot(self.data.sample, self.data.step, pen=self.bluePen))
         self.loadStepLines.append(self.graph.plot(self.data.step, self.data.load, pen=self.redPen))
@@ -212,18 +209,18 @@ def pipeManager(self, dataQueue, pipeEndSignal):
         # graph the data waiting in the pipe
         try:
             data = dataQueue.get()
-            if data == None: 
-                return
+            if data != None: 
+                rawData = list(data)
+                rawData[0] = rawData[0] / 100 # scale the displacement
+                rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
+                self.addDataPoint(rawData)
+            else:
+                done = True
+        except Exception as e:
+            print(e)
 
-            rawData = list(data)
-            rawData[0] = rawData[0] / 100 # scale the displacement
-            rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
-            self.addDataPoint(rawData)
-
-        except EOFError:
-            done = True
     print("closing the pipe")
-    print(list(data))
-    print(list(data)[0]/list(data)[1]*1000)
+    print(rawData)
+    print(rawData[0]/uc.NewtonToRawADC(rawData[1])*1000*100)
     pipeEndSignal.setAsyncSignal()
     return
