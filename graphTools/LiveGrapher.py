@@ -68,11 +68,11 @@ class LiveGrapher(Grapher):
         self.lock.acquire()
         # if we are showing a time series
         if(self.view == 0):
-            self.loadLines[0].setData(self.data.sample, self.data.load)
-            self.stepLines[0].setData(self.data.sample, self.data.step)
+            self.loadLines[0].setData(self.data.sample[::Config.GRAPH_POINT_SKIP], self.data.load[::Config.GRAPH_POINT_SKIP])
+            self.stepLines[0].setData(self.data.sample[::Config.GRAPH_POINT_SKIP], self.data.step[::Config.GRAPH_POINT_SKIP])
         # if we are showing the force as a function of displacement
         elif(self.view == 1):
-            self.loadStepLines[0].setData(self.data.step, self.data.load)
+            self.loadStepLines[0].setData(self.data.step[::Config.GRAPH_POINT_SKIP], self.data.load[::Config.GRAPH_POINT_SKIP])
         self.lock.release()
         return
 
@@ -127,16 +127,17 @@ class LiveGrapher(Grapher):
             self.data.sample.append(1)
         # else increment the sample number by 1 and append
         else:
-            self.data.sample.append(self.data.sample[-1]+1)
+            self.data.sample.append(self.data.sample[-1] +1)
 
         self.data.step.append(dataPoint[0])
         self.data.load.append(dataPoint[1])
         self.data.phase.append(dataPoint[2])
+
         self.lock.release()
         return
 
 
-    def addDataFromPipe(self, pipe):
+    def addDataFromPipe(self, dataQueue):
         """ Starts a process to add data points to the end of the graph from a pipe.
         Parameters:
             pipe (Pipe): the pipe to read data from """
@@ -150,7 +151,7 @@ class LiveGrapher(Grapher):
         self.signalManager.start()
 
         # start the thread to accept data over the pipe
-        self.pipeManagerhandle= threading.Thread(name = 'pipeManager', target = pipeManager, args=(self, pipe, self.signalManager))
+        self.pipeManagerhandle= threading.Thread(name = 'pipeManager', target = pipeManager, args=(self, dataQueue, self.signalManager))
         self.pipeManagerhandle.start()
         return
 
@@ -199,24 +200,27 @@ class LiveGrapher(Grapher):
 
 
 
-def pipeManager(self, pipe, pipeEndSignal):
+def pipeManager(self, dataQueue, pipeEndSignal):
     """ The thread function responsible for loading data from the pipe and 
     plotting it to the graph area. """
-
+    rawData = None
     done = False # pipe EOF
     while not done:          
         # graph the data waiting in the pipe
         try:
-            data = pipe.recv()
-            rawData = list(data)
-            rawData[0] = rawData[0] / 100 # scale the displacement
-            rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
-            self.addDataPoint(rawData)
+            data = dataQueue.get()
+            if data != None: 
+                rawData = list(data)
+                rawData[0] = rawData[0] / 100 # scale the displacement
+                rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
+                self.addDataPoint(rawData)
+            else:
+                done = True
+        except Exception as e:
+            print(e)
 
-        except EOFError:
-            done = True
     print("closing the pipe")
-    print(list(data))
-    print(list(data)[0]/list(data)[1]*1000)
+    print(rawData)
+    print(rawData[0]/uc.NewtonToRawADC(rawData[1])*1000*100)
     pipeEndSignal.setAsyncSignal()
     return
