@@ -1,5 +1,5 @@
 
-from multiprocessing import Process, Pipe, Event
+from multiprocessing import Process, Event, Queue
 
 #custom class imports
 from firmware.Communicator import *
@@ -115,8 +115,9 @@ class Indenter():
             
             # clear emergency stop state and establish a pipe to send data to the graph
             self.emergencySignal.clear()
-            parentGraphPipe, childGraphPipe = Pipe()
-            self.graph.addDataFromPipe(parentGraphPipe)
+
+            dataQueue = Queue()
+            self.graph.addDataFromPipe(dataQueue)
             
             # pack all of the measurement parameters
             params = MeasurementParams(0,0,0,0,0)
@@ -127,13 +128,13 @@ class Indenter():
             params.stepDelay = int(uc.stepRateToMicros(stepRate))
 
             # launch a process to handle taking the stiffness measurement
-            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(params, self.comm, childGraphPipe, self.emergencySignal, doneSignal))
+            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(params, self.comm, dataQueue, doneSignal))
             self.measurementHandle.start()
         return
 
 
 
-def measurementLoop(params, comm:Communicator, graphPipe, emergencySignal, doneSignal):
+def measurementLoop(params, comm, dataQueue, doneSignal):
     """ The process which performs the stiffness measurement.
     Parameters:
         preload (int): how much preload to apply (newtons)
@@ -150,7 +151,7 @@ def measurementLoop(params, comm:Communicator, graphPipe, emergencySignal, doneS
         command = comm.readCommand()
         while(command != 'C'):
             if(command == 'D'):
-                graphPipe.send(comm.readDataPoint())
+                dataQueue.put(comm.readDataPoint())
             else:
                 print("Got unexpected command while performing measurement! Got command: " + command)
             command = comm.readCommand()
@@ -163,7 +164,8 @@ def measurementLoop(params, comm:Communicator, graphPipe, emergencySignal, doneS
     
     # close the pipe to the graph before quitting the process
     finally:
-        graphPipe.close()
-        doneSignal.set() 
+        dataQueue.put(None)
+        # dataQueue.join()
+        doneSignal.set()
     return
 

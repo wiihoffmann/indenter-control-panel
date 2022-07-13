@@ -20,23 +20,26 @@ MIN_HOLD_TIME = 0               # seconds
 MAX_HOLD_TIME = 15              # seconds
 HOLD_TIME_INCREMENT_SIZE = 1    # seconds
 
-######## step rate settings #######
-EMERGENCY_STOP_STEP_RATE = 500  # steps/second (How fast to retract indenter during an emergency stop.)
-JOG_SPEED = 600                 # steps/second (Manual move up/down speed.)
+#### measurement speed settings ###
 DEFAULT_STEP_RATE = 600         # steps/second (Default rate used when taking a measurement.)
 MIN_STEP_RATE = 200             # steps/second
 MAX_STEP_RATE = 1500            # steps/second
 STEP_RATE_INCREMENT_SIZE = 100  # steps/second
 
-######### misc settings ###########
-GRAPH_REFRESH_DELAY = 250       # milliseconds
+### misc. measurement settings ####
 TOLERANCE = 2.5                 # newtons (Max deviance from target load when holding.)
 HOLD_STEP_UP_RATE = 100         # steps/second (when holding, how fast can we move up to maintain the target load)
 HOLD_STEP_DOWN_RATE = 100       # steps/second (when holding, how fast can we move down to maintain the target load)
 GRAPH_COLORS = 10               # how many colors we can use on the graph comparison screen
 GRAPH_LINE_WIDTH = 3            # width of the graph line
+GRAPH_REFRESH_DELAY = 250       # milliseconds
+GRAPH_POINT_SKIP = 4            # graph 1 in X data points. (A value of 4 would graph a quarter of the collected data.)
+
+######### misc. settings ##########
+EMERGENCY_STOP_STEP_RATE = 800  # steps/second (How fast to retract indenter during an emergency stop.)
+JOG_SPEED = 600                 # steps/second (Manual move up/down speed.)
 SHOW_KEYBOARD = True            # show the keyboard when saving?
-INVERT_DIR = False               # Set to True if the indenter moves up when it should move down
+INVERT_DIR = False              # Set to True if the indenter moves up when it should move down
 
 ####### hardware calibration ######
 """ To calibrate the device, we need to calculate △load / △V (N/V). To do this, apply

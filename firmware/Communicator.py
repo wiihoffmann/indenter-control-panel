@@ -1,5 +1,4 @@
 import time
-from typing import Iterable
 import serial
 import serial.tools.list_ports
 import dataTools.UnitConverter as uc
