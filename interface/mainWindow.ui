@@ -17,7 +17,7 @@
    <widget class="QPushButton" name="clearButton">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>10</x>
       <y>460</y>
       <width>91</width>
       <height>51</height>
@@ -35,7 +35,7 @@
    <widget class="QPushButton" name="saveButton">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>120</x>
       <y>530</y>
       <width>91</width>
       <height>51</height>
@@ -53,7 +53,7 @@
    <widget class="QPushButton" name="loadButton">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>120</x>
       <y>460</y>
       <width>91</width>
       <height>51</height>
@@ -68,12 +68,12 @@
      <string>Load</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="moveUpButton">
+   <widget class="QPushButton" name="positionButton">
     <property name="geometry">
      <rect>
-      <x>230</x>
+      <x>340</x>
       <y>460</y>
-      <width>91</width>
+      <width>161</width>
       <height>51</height>
      </rect>
     </property>
@@ -83,34 +83,7 @@
      </font>
     </property>
     <property name="text">
-     <string> Move Up</string>
-    </property>
-    <property name="autoRepeat">
-     <bool>true</bool>
-    </property>
-    <property name="autoRepeatDelay">
-     <number>30</number>
-    </property>
-    <property name="autoRepeatInterval">
-     <number>30</number>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="moveDownButton">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>530</y>
-      <width>91</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Move Down</string>
+     <string>Positioning</string>
     </property>
     <property name="autoRepeat">
      <bool>true</bool>
@@ -125,9 +98,9 @@
    <widget class="QPushButton" name="startButton">
     <property name="geometry">
      <rect>
-      <x>810</x>
-      <y>530</y>
-      <width>81</width>
+      <x>880</x>
+      <y>460</y>
+      <width>131</width>
       <height>51</height>
      </rect>
     </property>
@@ -143,9 +116,9 @@
    <widget class="QPushButton" name="stopButton">
     <property name="geometry">
      <rect>
-      <x>910</x>
+      <x>880</x>
       <y>530</y>
-      <width>101</width>
+      <width>131</width>
       <height>51</height>
      </rect>
     </property>
@@ -161,7 +134,7 @@
    <widget class="QPushButton" name="preloadIncButton">
     <property name="geometry">
      <rect>
-      <x>570</x>
+      <x>640</x>
       <y>470</y>
       <width>41</width>
       <height>41</height>
@@ -182,7 +155,7 @@
    <widget class="QPushButton" name="preloadDecButton">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>520</x>
       <y>470</y>
       <width>41</width>
       <height>41</height>
@@ -203,7 +176,7 @@
    <widget class="QPushButton" name="exitButton">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>10</x>
       <y>530</y>
       <width>91</width>
       <height>51</height>
@@ -231,7 +204,7 @@
    <widget class="QLineEdit" name="preloadDisplay">
     <property name="geometry">
      <rect>
-      <x>490</x>
+      <x>560</x>
       <y>470</y>
       <width>81</width>
       <height>41</height>
@@ -255,9 +228,9 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>520</x>
       <y>450</y>
-      <width>101</width>
+      <width>151</width>
       <height>17</height>
      </rect>
     </property>
@@ -273,9 +246,9 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>520</x>
       <y>520</y>
-      <width>181</width>
+      <width>151</width>
       <height>17</height>
      </rect>
     </property>
@@ -291,7 +264,7 @@
    <widget class="QPushButton" name="preloadTimeIncButton">
     <property name="geometry">
      <rect>
-      <x>570</x>
+      <x>640</x>
       <y>540</y>
       <width>41</width>
       <height>41</height>
@@ -312,7 +285,7 @@
    <widget class="QPushButton" name="preloadTimeDecButton">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>520</x>
       <y>540</y>
       <width>41</width>
       <height>41</height>
@@ -333,7 +306,7 @@
    <widget class="QLineEdit" name="preloadTimeDisplay">
     <property name="geometry">
      <rect>
-      <x>490</x>
+      <x>560</x>
       <y>540</y>
       <width>81</width>
       <height>41</height>
@@ -357,7 +330,7 @@
    <widget class="QPushButton" name="maxLoadTimeDecButton">
     <property name="geometry">
      <rect>
-      <x>630</x>
+      <x>700</x>
       <y>540</y>
       <width>41</width>
       <height>41</height>
@@ -378,7 +351,7 @@
    <widget class="QPushButton" name="maxLoadIncButton">
     <property name="geometry">
      <rect>
-      <x>750</x>
+      <x>820</x>
       <y>470</y>
       <width>41</width>
       <height>41</height>
@@ -399,7 +372,7 @@
    <widget class="QPushButton" name="maxLoadTimeIncButton">
     <property name="geometry">
      <rect>
-      <x>750</x>
+      <x>820</x>
       <y>540</y>
       <width>41</width>
       <height>41</height>
@@ -420,7 +393,7 @@
    <widget class="QLineEdit" name="maxLoadTimeDisplay">
     <property name="geometry">
      <rect>
-      <x>670</x>
+      <x>740</x>
       <y>540</y>
       <width>81</width>
       <height>41</height>
@@ -444,9 +417,9 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>630</x>
+      <x>700</x>
       <y>520</y>
-      <width>191</width>
+      <width>151</width>
       <height>17</height>
      </rect>
     </property>
@@ -462,9 +435,9 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>630</x>
+      <x>700</x>
       <y>450</y>
-      <width>171</width>
+      <width>151</width>
       <height>17</height>
      </rect>
     </property>
@@ -480,7 +453,7 @@
    <widget class="QPushButton" name="maxLoadDecButton">
     <property name="geometry">
      <rect>
-      <x>630</x>
+      <x>700</x>
       <y>470</y>
       <width>41</width>
       <height>41</height>
@@ -501,7 +474,7 @@
    <widget class="QLineEdit" name="maxLoadDisplay">
     <property name="geometry">
      <rect>
-      <x>670</x>
+      <x>740</x>
       <y>470</y>
       <width>81</width>
       <height>41</height>
@@ -525,9 +498,9 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>810</x>
-      <y>450</y>
-      <width>171</width>
+      <x>340</x>
+      <y>520</y>
+      <width>151</width>
       <height>17</height>
      </rect>
     </property>
@@ -543,8 +516,8 @@
    <widget class="QLineEdit" name="stepRateDisplay">
     <property name="geometry">
      <rect>
-      <x>850</x>
-      <y>470</y>
+      <x>380</x>
+      <y>540</y>
       <width>81</width>
       <height>41</height>
      </rect>
@@ -567,8 +540,8 @@
    <widget class="QPushButton" name="stepRateIncButton">
     <property name="geometry">
      <rect>
-      <x>930</x>
-      <y>470</y>
+      <x>460</x>
+      <y>540</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -588,8 +561,8 @@
    <widget class="QPushButton" name="stepRateDecButton">
     <property name="geometry">
      <rect>
-      <x>810</x>
-      <y>470</y>
+      <x>340</x>
+      <y>540</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -609,7 +582,7 @@
    <widget class="QPushButton" name="viewButton">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>230</x>
       <y>460</y>
       <width>91</width>
       <height>51</height>
@@ -627,7 +600,7 @@
    <widget class="QPushButton" name="compareButton">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>230</x>
       <y>530</y>
       <width>91</width>
       <height>51</height>

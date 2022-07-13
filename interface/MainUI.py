@@ -41,7 +41,7 @@ class MainUI(QMainWindow):
         self.sigHandler.start()
 
         # the buttons to disable during a measurement
-        self.toBlank = [self.clearButton, self.exitButton, self.loadButton, self.saveButton, self.moveUpButton, self.moveDownButton,
+        self.toBlank = [self.clearButton, self.exitButton, self.loadButton, self.saveButton, #self.moveUpButton, self.moveDownButton,
                     self.preloadIncButton, self.preloadDecButton, self.preloadTimeIncButton, self.preloadTimeDecButton,
                     self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton,
                     self.stepRateIncButton, self.stepRateDecButton, self.viewButton, self.compareButton]
@@ -57,13 +57,13 @@ class MainUI(QMainWindow):
         self.startButton.clicked.connect(self.startMeasurement)         # start button
         self.stopButton.clicked.connect(self.indenter.emergencyStop)    # stop button
 
-        self.moveUpButton.pressed.connect(self.indenter.startJogUp)     # jog up button pressed
-        self.moveUpButton.clicked.connect(self.indenter.startJogUp)     # jog up button held down
-        self.moveUpButton.released.connect(self.indenter.stopJogging)   # jog up button released
+        # self.moveUpButton.pressed.connect(self.indenter.startJogUp)     # jog up button pressed
+        # self.moveUpButton.clicked.connect(self.indenter.startJogUp)     # jog up button held down
+        # self.moveUpButton.released.connect(self.indenter.stopJogging)   # jog up button released
 
-        self.moveDownButton.pressed.connect(self.indenter.startJogDown) # jog down button pressed
-        self.moveDownButton.clicked.connect(self.indenter.startJogDown) # jog up button held down
-        self.moveDownButton.released.connect(self.indenter.stopJogging) # jog down button released
+        # self.moveDownButton.pressed.connect(self.indenter.startJogDown) # jog down button pressed
+        # self.moveDownButton.clicked.connect(self.indenter.startJogDown) # jog up button held down
+        # self.moveDownButton.released.connect(self.indenter.stopJogging) # jog down button released
         
         # set up the preload buttons / readout
         self.preloadDisplay.setText(str(Config.DEFAULT_PRELOAD) + " N")
