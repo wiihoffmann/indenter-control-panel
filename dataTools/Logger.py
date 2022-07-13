@@ -17,13 +17,13 @@ class Logger():
             step (int): array of step (displacement) data
             load (float): array of load data
         """
-        data = MeasurementData([],[],[], filename)
-        phaseMessage = ""
+        data = MeasurementData([],[],[],[], filename)
 
         # try opening the file and iterating over the data
         with open(filename, 'r') as csvfile:
             lines = csv.reader(csvfile, delimiter=',')
             for index, row in enumerate(lines):
+                print(row)
                 # discard the first row (column headers)
                 if index == 0:
                     ", ".join(row)
@@ -31,26 +31,11 @@ class Logger():
                     # append the data from the row
                     try:
                         data.sample.append(index)
-                        data.step.append(row[0]/100)
-                        data.load.append(row[1])
-
-                        # load in the phase info (if applicable)
-                        if len(row) >= 3 and row[2] != phaseMessage:
-                            phaseMessage = row[2]
-
-                            if data.initialApproachStart == -1:
-                                data.initialApproachStart = index
-                            elif data.preloadHoldStart == -1:
-                                data.preloadHoldStart = index
-                            elif data.mainApproachStart == -1:
-                                data.mainApproachStart = index              
-                            elif data.mainHoldStart == -1:
-                                data.mainHoldStart = index
-                            elif data.retractStart == -1:
-                                data.retractStart = index        
+                        data.step.append(float(row[0])/100)
+                        data.load.append(float(row[1]))
+                        data.phase.append(int(row[2]))   
                     except:
                         pass
-
         return data
 
 
