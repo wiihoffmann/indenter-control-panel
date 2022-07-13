@@ -2,8 +2,9 @@ from threading import Thread
 import time
 from struct import *
 import sys
-from tracemalloc import start
 from firmware.Communicator import *
+from dataTools.MeasurementParams import *
+import dataTools.UnitConverter as uc
 
 comm = Communicator()
 
@@ -32,7 +33,7 @@ def performMeasurement(params):
             print("point before the error: " + str(point))
         else:
             point = comm.readDataPoint()
-            print(point)
+            # print(point)
             # TODO: process the data point
 
         command = comm.readCommand()
@@ -41,42 +42,44 @@ def performMeasurement(params):
     print(point[0]/point[1]*1000)
 
 
-def testSequence():
-    print("RAW: " + str(comm.getRawADCReading()))
+# def testSequence():
+#     print("RAW: " + str(comm.getRawADCReading()))
 
-    mp = MeasurementParams()
-    performMeasurement(mp)
+#     mp = MeasurementParams()
+#     performMeasurement(mp)
 
-    print("RAW: " + str(comm.getRawADCReading()))
+#     print("RAW: " + str(comm.getRawADCReading()))
 
-    # time.sleep(5)
+#     # time.sleep(5)
 
 
-def testSequence2():
-    startTime = time.time()
-    while(time.time() - startTime < 3):
-        # comm.sendCode("*S", 200)
+# def testSequence2():
+#     startTime = time.time()
+#     while(time.time() - startTime < 3):
+#         # comm.sendCode("*S", 200)
 
-        comm.sendCode("*X", -300)
+#         comm.sendCode("*X", -300)
 
-        comm.sendCode("*Y", 400)
+#         comm.sendCode("*Y", 400)
 
-        comm.sendCode("*Z", 30000)
+#         comm.sendCode("*Z", 30000)
 
-        time.sleep(.04)
+#         time.sleep(.04)
 
 
 
 if __name__ == '__main__':
-    while comm.readCommand() != 'R':
-        time.sleep(0)
     
 
-    for i in range(2):
-        print("iteration " + str(i))
-        testSequence()
-        testSequence2()
-    
+    # for i in range(2):
+    #     print("iteration " + str(i))
+    #     testSequence()
+    #     testSequence2()
+
+    params = MeasurementParams(uc.NewtonToRawADC(8), 1000, uc.NewtonToRawADC(20), 1000, uc.stepRateToMicros(500))
+    params.flipDirection = False
+    performMeasurement(params)
+
 
     kill = False
     x = Thread(target=monitor, args=()).start()

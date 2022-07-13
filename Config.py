@@ -28,17 +28,15 @@ STEP_RATE_INCREMENT_SIZE = 100  # steps/second
 
 ### misc. measurement settings ####
 TOLERANCE = 2.5                 # newtons (Max deviance from target load when holding.)
-HOLD_STEP_UP_RATE = 200         # steps/second (when holding, how fast can we move up to maintain the target load)
-HOLD_STEP_DOWN_RATE = 200       # steps/second (when holding, how fast can we move down to maintain the target load)
-
-######### Graph settings ##########
+HOLD_STEP_UP_RATE = 100         # steps/second (when holding, how fast can we move up to maintain the target load)
+HOLD_STEP_DOWN_RATE = 100       # steps/second (when holding, how fast can we move down to maintain the target load)
 GRAPH_COLORS = 10               # how many colors we can use on the graph comparison screen
 GRAPH_LINE_WIDTH = 3            # width of the graph line
 GRAPH_REFRESH_DELAY = 250       # milliseconds
 GRAPH_POINT_SKIP = 4            # graph 1 in X data points. (A value of 4 would graph a quarter of the collected data.)
 
 ######### misc. settings ##########
-EMERGENCY_STOP_STEP_RATE = 2000 # steps/second (How fast to retract indenter during an emergency stop.)
+EMERGENCY_STOP_STEP_RATE = 800  # steps/second (How fast to retract indenter during an emergency stop.)
 JOG_SPEED = 600                 # steps/second (Manual move up/down speed.)
 SHOW_KEYBOARD = True            # show the keyboard when saving?
 INVERT_DIR = False              # Set to True if the indenter moves up when it should move down
@@ -48,9 +46,9 @@ INVERT_DIR = False              # Set to True if the indenter moves up when it s
 two different loads to the indenter and record the corresponding output voltage. The 
 calculation assumes that a larger load produces a larger output voltage. """
 # first load/voltage calibration pair
-CAL_READING_1 = 1           # newtons
-CAL_VOLTAGE_1 = 50          # raw ADC value
+CAL_READING_1 = 35.18847    # newtons
+CAL_VOLTAGE_1 = 10140       # raw ADC value
 # second load/voltage calibration pair
-CAL_READING_2 = 11          # newtons
-CAL_VOLTAGE_2 = 550         # raw ADC value
+CAL_READING_2 = 92.214      # newtons
+CAL_VOLTAGE_2 = 17500       # raw ADC value
 

@@ -206,20 +206,16 @@ class LiveGrapher(Grapher):
 def pipeManager(self, dataQueue, pipeEndSignal):
     """ The thread function responsible for loading data from the pipe and 
     plotting it to the graph area. """
-    count = 0
     rawData = None
     done = False # pipe EOF
     while not done:          
         # graph the data waiting in the pipe
         try:
-            count +=1
-
             data = dataQueue.get()
             if data == None: 
                 return
-            
-            rawData = list(data)
 
+            rawData = list(data)
             rawData[0] = rawData[0] / 100 # scale the displacement
             rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
             self.addDataPoint(rawData)
@@ -227,7 +223,7 @@ def pipeManager(self, dataQueue, pipeEndSignal):
         except EOFError:
             done = True
     print("closing the pipe")
-    print(count)
-    print(rawData)
+    print(list(data))
+    print(list(data)[0]/list(data)[1]*1000)
     pipeEndSignal.setAsyncSignal()
     return
