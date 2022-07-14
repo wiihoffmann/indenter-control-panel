@@ -11,6 +11,7 @@ import os
 from firmware.Indenter import *
 from interface.SignalConnector import *
 from interface.WarningDialog import *
+from interface.DirectionPanel import *
 import Config
 
 
@@ -57,6 +58,8 @@ class MainUI(QMainWindow):
         self.startButton.clicked.connect(self.startMeasurement)         # start button
         self.stopButton.clicked.connect(self.indenter.emergencyStop)    # stop button
 
+        self.positionButton.clicked.connect(self.__openPositionWindow)
+        
         # self.moveUpButton.pressed.connect(self.indenter.startJogUp)     # jog up button pressed
         # self.moveUpButton.clicked.connect(self.indenter.startJogUp)     # jog up button held down
         # self.moveUpButton.released.connect(self.indenter.stopJogging)   # jog up button released
@@ -116,6 +119,14 @@ class MainUI(QMainWindow):
         
         # set the readout to the new value
         readout.setText(str(newValue) + units)
+        return
+
+
+    def __openPositionWindow(self):
+        self.showMaximized()
+        window = DirectionPanel(self, self.dir)
+        window.exec_()
+        self.showFullScreen()
         return
 
 

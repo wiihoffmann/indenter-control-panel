@@ -86,7 +86,7 @@
      <string>Positioning</string>
     </property>
     <property name="autoRepeat">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="autoRepeatDelay">
      <number>30</number>
