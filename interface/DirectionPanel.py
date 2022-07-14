@@ -24,13 +24,10 @@ class DirectionPanel(QDialog):
         self.upButton.clicked.connect(self.__moveUp)
         self.downButton.clicked.connect(self.__moveDown)
         self.doneButton.clicked.connect(self.__done)
-
-        print("here")
         return
 
 
     def __moveLeft(self):
-        print("left")
         if self.flipLeftRightCheck.isChecked():
             self.comm.moveYAxisUp(Config.JOG_SPEED)
         else:
@@ -39,7 +36,6 @@ class DirectionPanel(QDialog):
 
 
     def __moveRight(self):
-        print("right")
         if self.flipLeftRightCheck.isChecked():
             self.comm.moveYAxisDown(Config.JOG_SPEED)
         else:
@@ -48,7 +44,6 @@ class DirectionPanel(QDialog):
 
 
     def __moveForward(self):
-        print("forward")
         if self.flipFrontBackCheck.isChecked():
             self.comm.moveXAxisUp(Config.JOG_SPEED)
         else:
@@ -57,7 +52,6 @@ class DirectionPanel(QDialog):
 
 
     def __moveBackward(self):
-        print("back")
         if self.flipFrontBackCheck.isChecked():
             self.comm.moveXAxisDown(Config.JOG_SPEED)
         else:
@@ -66,7 +60,6 @@ class DirectionPanel(QDialog):
 
 
     def __moveDown(self):
-        print("down")
         if Config.INVERT_DIR:
             self.comm.moveZAxisDown(Config.JOG_SPEED)
         else:
@@ -75,7 +68,6 @@ class DirectionPanel(QDialog):
     
 
     def __moveUp(self):
-        print("up")
         if Config.INVERT_DIR:
             self.comm.moveZAxisUp(Config.JOG_SPEED)
         else:
