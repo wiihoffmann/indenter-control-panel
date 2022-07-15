@@ -11,6 +11,7 @@ import os
 from firmware.Indenter import *
 from interface.SignalConnector import *
 from interface.WarningDialog import *
+from interface.DirectionPanel import *
 import Config
 
 
@@ -41,7 +42,7 @@ class MainUI(QMainWindow):
         self.sigHandler.start()
 
         # the buttons to disable during a measurement
-        self.toBlank = [self.clearButton, self.exitButton, self.loadButton, self.saveButton, self.moveUpButton, self.moveDownButton,
+        self.toBlank = [self.clearButton, self.exitButton, self.loadButton, self.saveButton, self.positionButton,
                     self.preloadIncButton, self.preloadDecButton, self.preloadTimeIncButton, self.preloadTimeDecButton,
                     self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton,
                     self.stepRateIncButton, self.stepRateDecButton, self.viewButton, self.compareButton]
@@ -53,18 +54,10 @@ class MainUI(QMainWindow):
         self.saveButton.clicked.connect(self.saveFile)                  # save button
         self.compareButton.clicked.connect(compareCallback)             # compare button
         self.exitButton.clicked.connect(self.exitProgram)               # exit button
-        
+        self.positionButton.clicked.connect(self.__openPositionWindow)  # positioning button
         self.startButton.clicked.connect(self.startMeasurement)         # start button
         self.stopButton.clicked.connect(self.indenter.emergencyStop)    # stop button
 
-        self.moveUpButton.pressed.connect(self.indenter.startJogUp)     # jog up button pressed
-        self.moveUpButton.clicked.connect(self.indenter.startJogUp)     # jog up button held down
-        self.moveUpButton.released.connect(self.indenter.stopJogging)   # jog up button released
-
-        self.moveDownButton.pressed.connect(self.indenter.startJogDown) # jog down button pressed
-        self.moveDownButton.clicked.connect(self.indenter.startJogDown) # jog up button held down
-        self.moveDownButton.released.connect(self.indenter.stopJogging) # jog down button released
-        
         # set up the preload buttons / readout
         self.preloadDisplay.setText(str(Config.DEFAULT_PRELOAD) + " N")
         self.preloadIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_PRELOAD, Config.MAX_PRELOAD, Config.PRELOAD_INCREMENT_SIZE, self.preloadDisplay))
@@ -116,6 +109,12 @@ class MainUI(QMainWindow):
         
         # set the readout to the new value
         readout.setText(str(newValue) + units)
+        return
+
+
+    def __openPositionWindow(self):
+        window = DirectionPanel(self, self.dir)
+        window.exec_()
         return
 
 
