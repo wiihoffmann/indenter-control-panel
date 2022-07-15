@@ -218,9 +218,5 @@ def pipeManager(self, dataQueue, pipeEndSignal):
                 done = True
         except Exception as e:
             print(e)
-
-    print("closing the pipe")
-    print(rawData)
-    print(rawData[0]/uc.NewtonToRawADC(rawData[1])*1000*100)
     pipeEndSignal.setAsyncSignal()
     return
