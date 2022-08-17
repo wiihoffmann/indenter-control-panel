@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # line above lets us launch the program with ./Main.py instead of "python3 Main.py"
 
-from interface.MainUI import *
-from interface.CompareWindow import *
+from interface.mainWindows.MainUI import *
+from interface.mainWindows.CompareWindow import *
 import os
 
 

@@ -23,7 +23,7 @@ class CompareWindow(QMainWindow):
 
         # initialize Qt for the GUI
         QMainWindow.__init__(self)
-        loadUi(os.path.join(self.dir, "interface/compareWindow.ui"), self)
+        loadUi(os.path.join(self.dir, "interface/mainWindows/compareWindow.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
         self.showFullScreen()
 

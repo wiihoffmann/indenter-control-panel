@@ -10,8 +10,8 @@ import os
 #custom class imports
 from firmware.Indenter import *
 from interface.SignalConnector import *
-from interface.WarningDialog import *
-from interface.DirectionPanel import *
+from interface.dialogs.WarningDialog import *
+from interface.dialogs.DirectionPanel import *
 import Config
 
 
@@ -29,7 +29,7 @@ class MainUI(QMainWindow):
 
         # initialize Qt for the GUI
         QMainWindow.__init__(self)
-        loadUi(os.path.join(self.dir, "interface/mainWindow.ui"), self)
+        loadUi(os.path.join(self.dir, "interface/mainWindows/mainWindow.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
         self.showFullScreen()
 
@@ -82,6 +82,7 @@ class MainUI(QMainWindow):
         self.stepRateDisplay.setText(str(Config.DEFAULT_STEP_RATE))
         self.stepRateIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
         self.stepRateDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, -1 * Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
+
         return
 
 

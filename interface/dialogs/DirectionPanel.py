@@ -13,7 +13,7 @@ class DirectionPanel(QDialog):
 
         # initialize Qt for the GUI
         super().__init__(parent)
-        loadUi(os.path.join(self.dir, "interface/directionPad.ui"), self)
+        loadUi(os.path.join(self.dir, "interface/dialogs/directionPad.ui"), self)
         self.setWindowTitle("Position control panel")
 
         # set up button actions
