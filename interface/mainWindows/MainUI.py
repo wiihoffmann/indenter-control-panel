@@ -13,6 +13,9 @@ from interface.SignalConnector import *
 from interface.dialogs.WarningDialog import *
 from interface.dialogs.DirectionPanel import *
 import Config
+from interface.widgets.basicTestSetup import basicTestSetupWidget
+
+from interface.widgets.mainControl import *
 
 
 class MainUI(QMainWindow):
@@ -36,18 +39,29 @@ class MainUI(QMainWindow):
         # initialize the firmware/back end functionality
         self.indenter = Indenter(self.plotWidget)
 
+
+        
+        self.temp2 = basicTestSetupWidget(self)
+        self.temp = MainControl(self)
+        self.buttonStack.addWidget(self.temp)
+        self.buttonStack.addWidget(self.temp2)
+        print(self.buttonStack.count())
+        print(self.buttonStack.indexOf(self.temp))
+        self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.temp))
+
+
         # set up the signal handler for the "done" signal from the measurement loop
         self.sigHandler = SignalConnector()
         self.sigHandler.connect(self.enableButtons)
         self.sigHandler.start()
+        
+        # # the buttons to disable during a measurement
+        # self.toBlank = [self.clearButton, self.exitButton, self.loadButton, self.saveButton, self.positionButton,
+        #             self.preloadIncButton, self.preloadDecButton, self.preloadTimeIncButton, self.preloadTimeDecButton,
+        #             self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton,
+        #             self.stepRateIncButton, self.stepRateDecButton, self.viewButton, self.compareButton]
 
-        # the buttons to disable during a measurement
-        self.toBlank = [self.clearButton, self.exitButton, self.loadButton, self.saveButton, self.positionButton,
-                    self.preloadIncButton, self.preloadDecButton, self.preloadTimeIncButton, self.preloadTimeDecButton,
-                    self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton,
-                    self.stepRateIncButton, self.stepRateDecButton, self.viewButton, self.compareButton]
-
-        # set up bindings for the buttons
+        # # set up bindings for the buttons
         self.clearButton.clicked.connect(self.indenter.clearResults)    # clear button
         self.viewButton.clicked.connect(self.indenter.changeView)       # view button
         self.loadButton.clicked.connect(self.loadFile)                  # load button
@@ -55,33 +69,37 @@ class MainUI(QMainWindow):
         self.compareButton.clicked.connect(compareCallback)             # compare button
         self.exitButton.clicked.connect(self.exitProgram)               # exit button
         self.positionButton.clicked.connect(self.__openPositionWindow)  # positioning button
-        self.startButton.clicked.connect(self.startMeasurement)         # start button
-        self.stopButton.clicked.connect(self.indenter.emergencyStop)    # stop button
-
-        # set up the preload buttons / readout
-        self.preloadDisplay.setText(str(Config.DEFAULT_PRELOAD) + " N")
-        self.preloadIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_PRELOAD, Config.MAX_PRELOAD, Config.PRELOAD_INCREMENT_SIZE, self.preloadDisplay))
-        self.preloadDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_PRELOAD, Config.MAX_PRELOAD, -1 * Config.PRELOAD_INCREMENT_SIZE, self.preloadDisplay))
         
-        # set up the preload time buttons / readout
-        self.preloadTimeDisplay.setText(str(Config.DEFAULT_PRELOAD_TIME) + " s")
-        self.preloadTimeIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, Config.HOLD_TIME_INCREMENT_SIZE, self.preloadTimeDisplay))
-        self.preloadTimeDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, -1 * Config.HOLD_TIME_INCREMENT_SIZE, self.preloadTimeDisplay))
-
-        # set up the max load buttons / readout
-        self.maxLoadDisplay.setText(str(Config.DEFAULT_MAX_LOAD) + " N")
-        self.maxLoadIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_LOAD, Config.MAX_LOAD, Config.MAX_LOAD_INCREMENT_SIZE, self.maxLoadDisplay))
-        self.maxLoadDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_LOAD, Config.MAX_LOAD, -1 * Config.MAX_LOAD_INCREMENT_SIZE, self.maxLoadDisplay))
         
-        # set up the max load time buttons / readout
-        self.maxLoadTimeDisplay.setText(str(Config.DEFAULT_MAX_LOAD_TIME) + " s")
-        self.maxLoadTimeIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, Config.HOLD_TIME_INCREMENT_SIZE, self.maxLoadTimeDisplay))
-        self.maxLoadTimeDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, -1 * Config.HOLD_TIME_INCREMENT_SIZE, self.maxLoadTimeDisplay))
+        # self.startButton.clicked.connect(self.startMeasurement)         # start button
+        # self.stopButton.clicked.connect(self.indenter.emergencyStop)    # stop button
 
-        # set up the step rate buttons / readout
-        self.stepRateDisplay.setText(str(Config.DEFAULT_STEP_RATE))
-        self.stepRateIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
-        self.stepRateDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, -1 * Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
+        # # set up the preload buttons / readout
+        # self.preloadDisplay.setText(str(Config.DEFAULT_PRELOAD) + " N")
+        # self.preloadIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_PRELOAD, Config.MAX_PRELOAD, Config.PRELOAD_INCREMENT_SIZE, self.preloadDisplay))
+        # self.preloadDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_PRELOAD, Config.MAX_PRELOAD, -1 * Config.PRELOAD_INCREMENT_SIZE, self.preloadDisplay))
+        
+        # # set up the preload time buttons / readout
+        # self.preloadTimeDisplay.setText(str(Config.DEFAULT_PRELOAD_TIME) + " s")
+        # self.preloadTimeIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, Config.HOLD_TIME_INCREMENT_SIZE, self.preloadTimeDisplay))
+        # self.preloadTimeDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, -1 * Config.HOLD_TIME_INCREMENT_SIZE, self.preloadTimeDisplay))
+
+        # # set up the max load buttons / readout
+        # self.maxLoadDisplay.setText(str(Config.DEFAULT_MAX_LOAD) + " N")
+        # self.maxLoadIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_LOAD, Config.MAX_LOAD, Config.MAX_LOAD_INCREMENT_SIZE, self.maxLoadDisplay))
+        # self.maxLoadDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_LOAD, Config.MAX_LOAD, -1 * Config.MAX_LOAD_INCREMENT_SIZE, self.maxLoadDisplay))
+        
+        # # set up the max load time buttons / readout
+        # self.maxLoadTimeDisplay.setText(str(Config.DEFAULT_MAX_LOAD_TIME) + " s")
+        # self.maxLoadTimeIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, Config.HOLD_TIME_INCREMENT_SIZE, self.maxLoadTimeDisplay))
+        # self.maxLoadTimeDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, -1 * Config.HOLD_TIME_INCREMENT_SIZE, self.maxLoadTimeDisplay))
+
+        # # set up the step rate buttons / readout
+        # self.stepRateDisplay.setText(str(Config.DEFAULT_STEP_RATE))
+        # self.stepRateIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
+        # self.stepRateDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, -1 * Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
+
+
 
         return
 
@@ -219,3 +237,5 @@ class MainUI(QMainWindow):
         sys.exit()
         return
 
+    def returnToMain(self):
+        self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.temp))

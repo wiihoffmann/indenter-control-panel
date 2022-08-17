@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1024</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="PlotWidget" name="plotWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>1001</width>
+      <height>431</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QStackedWidget" name="buttonStack">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>450</y>
+      <width>1001</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>-1</number>
+    </property>
+   </widget>
+  </widget>
+  <action name="actionSave_as_settings_as_default">
+   <property name="text">
+    <string>Save settings as default</string>
+   </property>
+  </action>
+  <action name="actionBegin_calibration">
+   <property name="text">
+    <string>Begin calibration</string>
+   </property>
+  </action>
+  <action name="actionExit_to_desktop">
+   <property name="text">
+    <string>Exit to desktop</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlotWidget</class>
+   <extends>QWidget</extends>
+   <header>pyqtgraph</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
