@@ -37,9 +37,11 @@ GRAPH_POINT_SKIP = 4            # graph 1 in X data points. (A value of 4 would 
 
 ######### misc. settings ##########
 EMERGENCY_STOP_STEP_RATE = 800  # steps/second (How fast to retract indenter during an emergency stop.)
-JOG_SPEED = 600                 # steps/second (Manual move up/down speed.)
+JOG_SPEED_X = 1200                 # steps/second (Manual move up/down speed.)
+JOG_SPEED_Y = 1200                 # steps/second (Manual move up/down speed.)
+JOG_SPEED_Z = 1200                 # steps/second (Manual move up/down speed.)
 SHOW_KEYBOARD = True            # show the keyboard when saving?
-INVERT_DIR = False              # Set to True if the indenter moves up when it should move down
+INVERT_DIR = True              # Set to True if the indenter moves up when it should move down
 
 ####### hardware calibration ######
 """ To calibrate the device, we need to calculate △load / △V (N/V). To do this, apply
