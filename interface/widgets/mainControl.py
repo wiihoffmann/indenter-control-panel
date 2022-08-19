@@ -1,34 +1,119 @@
 
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import QWidget
+from threading import Timer
+from datetime import datetime
+import subprocess
+import Config
 import sys
 import os
+
+# custom class imports
+from interface.dialogs.DirectionPanel import *
+
 
 class MainControl(QWidget):
 
 
-    def __init__(self, parent):
+    def __init__(self, parent, indenter, compareCallback):
         """ Make a new instance of the error window. """
         self.dir = parent.dir
         self.parent = parent
+        self.indenter = indenter
         
         super().__init__()
         loadUi(os.path.join(self.dir, "interface/widgets/mainControlWidget.ui"), self)
 
+        # set up bindings for the buttons
+        self.clearButton.clicked.connect(self.indenter.clearResults)    # clear button
+        self.viewButton.clicked.connect(self.indenter.changeView)       # view button
+        self.loadButton.clicked.connect(self.loadFile)                  # load button
+        self.saveButton.clicked.connect(self.saveFile)                  # save button
+        self.compareButton.clicked.connect(compareCallback)             # compare button
         self.exitButton.clicked.connect(self.exitProgram)               # exit button
-        self.normalTestButton.clicked.connect(self.normal)
-
-        print("here")
+        self.positionButton.clicked.connect(self.__openPositionWindow)  # positioning button
+        self.setupButton.clicked.connect(self.goToSetup)
+        
         return
 
-    def normal(self):
-        print(self.parent.buttonStack.indexOf(self.parent.temp))
-        self.parent.buttonStack.setCurrentIndex(self.parent.buttonStack.indexOf(self.parent.temp2))
-        print("swapping to default")
+
+    def __openPositionWindow(self):
+        window = DirectionPanel(self, self.dir)
+        window.exec_()
+        return
+
+
+    def goToSetup(self):
+        if self.regularTestRadioButton.isChecked():
+            print("regular")
+        elif self.regularRepeatedTestRadioButton.isChecked():
+            print("repeated regular")   
+        return
+
+
+    def launchKeyboard(self):
+        self.showMaximized()
+        subprocess.run(["xvkbd", "-no-keypad", "-window", "Save measurement to file"])
+        self.showFullScreen()
+        return
+
+
+    def getDirectory(self):
+        """Returns a string to the directory in which files should be stored.
+        Attempts to store to a USB stick before storing locally."""
+
+        # check if a USB stick is inserted and set default path to it
+        dirs = os.listdir("/media/pi")
+        if len(dirs) != 0:
+            directory = os.path.join("/media/pi", dirs[0]) + "/"
+        # else save locally
+        else:
+            directory = os.path.join(self.dir, "Collected Data/")
+        return directory
+
+
+    def saveFile(self):
+        """ Start a dialog to save the current graph data into a CSV file. """
+        
+        # open the on screen keyboard once the next window has had a chance to open
+        if Config.SHOW_KEYBOARD:
+            Timer(.25, self.launchKeyboard).start()
+        
+        # set default file name to the current date/time
+        now = datetime.now()
+        # dd-mm-YY H-M-S
+        dt_string = now.strftime("%Y-%m-%d %H-%M-%S")
+
+        # start the dialog for picking a directory and file name
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        filename, _ = QFileDialog.getSaveFileName(
+            self, "Save measurement to file", self.getDirectory() + dt_string + ".csv", "CSV File (*.csv)", options=options)
+        
+        # save data if the file name is valid
+        if filename:
+            self.indenter.saveResults(filename)
+        return
+
+
+    def loadFile(self):
+        """ Start a dialog to load data from a CSV file. """
+
+        # start the dialog for picking a directory and file name
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        filename, _ = QFileDialog.getOpenFileName(
+            self, "Load measurement from file", self.getDirectory(), "CSV Files (*.csv);;All Files (*)", options=options)
+       
+        # load data if the file name is valid
+        if filename:
+            self.indenter.loadAndShowResults(filename)
+        return
+
 
     def exitProgram(self):
         """ Quits the program. """
+
+        self.indenter.emergencyStop()
         sys.exit()
         return
-
-
