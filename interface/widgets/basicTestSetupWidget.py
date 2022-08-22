@@ -56,8 +56,6 @@ class BasicTestSetupWidget(QWidget):
 
         # set up the signal handler for the "done" signal from the measurement loop
         self.sigHandler = SignalConnector()
-        self.sigHandler.connect(self.enableButtons)
-        self.sigHandler.start()
         
         print("init basic test setup complete")
         return
@@ -114,6 +112,10 @@ class BasicTestSetupWidget(QWidget):
 
         # else start the measurement
         else:
+            # set up the signal handler for the done signal
+            self.sigHandler.connect(self.enableButtons)
+            self.sigHandler.start()
+
             # disable some buttons during the measurement
             for i in self.toBlank:
                 i.setEnabled(False)

@@ -66,8 +66,6 @@ class BasicRepeatedTestSetupWidget(QWidget):
 
         # set up the signal handler for the "done" signal from the measurement loop
         self.sigHandler = SignalConnector()
-        self.sigHandler.connect(self.startMeasurement)
-        self.sigHandler.start()
  
         
         print("init basic repeated test setup complete")
@@ -126,7 +124,7 @@ class BasicRepeatedTestSetupWidget(QWidget):
         testIterations = int(self.repeatCountDisplay.text())
         
         # reset variables after performing the required number of tests
-        if self.testCount == testIterations:
+        if self.testCount >= testIterations:
             print("here 1")
             self.testCount = 0
             self.enableButtons()
@@ -140,6 +138,11 @@ class BasicRepeatedTestSetupWidget(QWidget):
         else:
             print("here 3")
             self.testCount += 1
+
+            # set up the signal handler for the done signal
+            self.sigHandler.connect(self.startMeasurement)
+            self.sigHandler.start()
+
             # disable some buttons during the measurement
             for i in self.toBlank:
                 i.setEnabled(False)
