@@ -10,7 +10,8 @@ import os
 #custom class imports
 from firmware.Indenter import *
 from interface.dialogs.DirectionPanel import *
-from interface.widgets.basicTestSetup import *
+from interface.widgets.basicTestSetupWidget import *
+from interface.widgets.basicRepeatedTestSetup import *
 import Config
 
 
@@ -34,9 +35,11 @@ class MainUI(QMainWindow):
 
         # build the control widgets
         self.basicTestSetupWidget = BasicTestSetupWidget(self.indenter, lambda: self.buttonStack.setCurrentIndex(0))
-        
+        self.basicRepeatedTestWidget  = BasicRepeatedTestSetupWidget(self.indenter, lambda: self.buttonStack.setCurrentIndex(0))
+
         # add widgets to the stack and show the main widget
         self.buttonStack.addWidget(self.basicTestSetupWidget)
+        self.buttonStack.addWidget(self.basicRepeatedTestWidget)
 
         # set up bindings for the buttons
         self.clearButton.clicked.connect(self.indenter.clearResults)    # clear button
@@ -61,7 +64,8 @@ class MainUI(QMainWindow):
             print("regular")
             self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.basicTestSetupWidget))
         elif self.regularRepeatedTestRadioButton.isChecked():
-            print("repeated regular")   
+            print("repeated regular")
+            self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.basicRepeatedTestWidget))
         return
 
 

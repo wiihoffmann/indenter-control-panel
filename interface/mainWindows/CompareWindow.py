@@ -13,17 +13,14 @@ class CompareWindow(QMainWindow):
     """ The class responsible for managing the main interface window.
     This class also defines what happend when buttons are pressed. """
 
-    def __init__(self, dir, mainUIcallback):
+    def __init__(self, mainUIcallback):
         """ Create a new instance of the main window of the indenter controller.
         Parameters:
             dir (str): the directory the program was launched from """
 
-        # the directory we launched from
-        self.dir = dir
-
         # initialize Qt for the GUI
         QMainWindow.__init__(self)
-        loadUi(os.path.join(self.dir, "interface/mainWindows/compareWindow.ui"), self)
+        loadUi(os.path.join(os.getcwd(), "interface/mainWindows/compareWindow.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
         self.showFullScreen()
 

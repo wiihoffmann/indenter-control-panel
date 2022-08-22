@@ -14,7 +14,7 @@ window = None
 def openCompareWindow(self):
     global window
     window.close()
-    window = CompareWindow(dir, openMainWindow)
+    window = CompareWindow(openMainWindow)
     window.show()
     return
 
