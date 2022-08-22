@@ -22,7 +22,7 @@ def openCompareWindow(self):
 def openMainWindow(self):
     global window
     window.close()
-    window = MainUI(dir, openCompareWindow)
+    window = MainUI(openCompareWindow)
     window.show()
     return
 
@@ -30,7 +30,7 @@ def openMainWindow(self):
 if __name__ == "__main__":
     # launch the main program
     app = QApplication([])
-    window = MainUI(dir, openCompareWindow)
+    window = MainUI(openCompareWindow)
     window.show()
     app.exec_()
 
