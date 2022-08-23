@@ -97,9 +97,9 @@
      <widget class="QGroupBox" name="groupBox">
       <property name="geometry">
        <rect>
-        <x>680</x>
+        <x>540</x>
         <y>0</y>
-        <width>221</width>
+        <width>361</width>
         <height>131</height>
        </rect>
       </property>
@@ -112,12 +112,12 @@
       <property name="title">
        <string>test type:</string>
       </property>
-      <widget class="QRadioButton" name="radioButton_3">
+      <widget class="QRadioButton" name="thresholdTestRadioButton">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>90</y>
-         <width>112</width>
+         <width>181</width>
          <height>23</height>
         </rect>
        </property>
@@ -128,7 +128,7 @@
         </font>
        </property>
        <property name="text">
-        <string>RadioButton</string>
+        <string>Pain threshold test</string>
        </property>
       </widget>
       <widget class="QRadioButton" name="regularRepeatedTestRadioButton">
@@ -136,7 +136,7 @@
         <rect>
          <x>10</x>
          <y>60</y>
-         <width>171</width>
+         <width>181</width>
          <height>23</height>
         </rect>
        </property>
@@ -155,7 +155,7 @@
         <rect>
          <x>10</x>
          <y>30</y>
-         <width>112</width>
+         <width>181</width>
          <height>23</height>
         </rect>
        </property>
@@ -167,6 +167,25 @@
        </property>
        <property name="text">
         <string>Regular test</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="toleranceTestRadioButton">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>30</y>
+         <width>161</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Roboto</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Pain tolerance test</string>
        </property>
       </widget>
      </widget>

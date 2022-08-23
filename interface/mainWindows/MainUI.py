@@ -28,7 +28,7 @@ class MainUI(QMainWindow):
         QMainWindow.__init__(self)
         loadUi(os.path.join(os.getcwd(), "interface/mainWindows/mainWindow.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
-        self.showFullScreen()
+        # self.showFullScreen()
 
         # initialize the firmware/back end functionality
         self.indenter = Indenter(self.plotWidget)
@@ -66,6 +66,12 @@ class MainUI(QMainWindow):
         elif self.regularRepeatedTestRadioButton.isChecked():
             print("repeated regular")
             self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.basicRepeatedTestWidget))
+        elif self.thresholdTestRadioButton.isChecked():
+            print("threshold test")
+
+        elif self.toleranceTestRadioButton.isChecked():
+            print("tolerance test")
+            
         return
 
 

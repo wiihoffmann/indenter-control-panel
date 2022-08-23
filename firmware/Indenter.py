@@ -123,9 +123,11 @@ def measurementLoop(params, comm, dataQueue, doneSignal):
         comm.sendMeasurementBegin(params)
 
         command = comm.readCommand()
-        while(command != 'C'):
-            if(command == 'D'):
+        while command != 'C':
+            if command == 'D':
                 dataQueue.put(comm.readDataPoint())
+            elif command == 'N':
+                dataQueue.put('N')
             else:
                 print("Got unexpected command while performing measurement! Got command: " + command)
             command = comm.readCommand()

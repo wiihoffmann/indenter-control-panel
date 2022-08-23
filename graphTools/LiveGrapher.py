@@ -24,11 +24,12 @@ class LiveGrapher(Grapher):
         self.redPen = pg.mkPen('r', width=Config.GRAPH_LINE_WIDTH)
         self.bluePen = pg.mkPen('b', width=Config.GRAPH_LINE_WIDTH)
 
-        self.data = MeasurementData([],[],[],[])
+        self.data = [MeasurementData([],[],[],[])]
+        self.testIndex = 0
         # add the two data series for load and displacement data
-        self.loadLines.append(self.graph.plot(self.data.sample, self.data.load, pen=self.redPen))
-        self.stepLines.append(self.graph.plot(self.data.sample, self.data.step, pen=self.bluePen))
-        self.loadStepLines.append(self.graph.plot(self.data.step, self.data.load, pen=self.redPen))
+        self.loadLines.append(self.graph.plot(self.data[self.testIndex].sample, self.data[self.testIndex].load, pen=self.redPen))
+        self.stepLines.append(self.graph.plot(self.data[self.testIndex].sample, self.data[self.testIndex].step, pen=self.bluePen))
+        self.loadStepLines.append(self.graph.plot(self.data[self.testIndex].step, self.data[self.testIndex].load, pen=self.redPen))
         self.lock = threading.Lock() # lock for controlling access to graph data
 
         # default to time series when setting up the graph axes
@@ -68,49 +69,49 @@ class LiveGrapher(Grapher):
         self.lock.acquire()
         # if we are showing a time series
         if(self.view == 0):
-            self.loadLines[0].setData(self.data.sample[::Config.GRAPH_POINT_SKIP], self.data.load[::Config.GRAPH_POINT_SKIP])
-            self.stepLines[0].setData(self.data.sample[::Config.GRAPH_POINT_SKIP], self.data.step[::Config.GRAPH_POINT_SKIP])
+            self.loadLines[0].setData(self.data[0].sample[::Config.GRAPH_POINT_SKIP], self.data[0].load[::Config.GRAPH_POINT_SKIP])
+            self.stepLines[0].setData(self.data[0].sample[::Config.GRAPH_POINT_SKIP], self.data[0].step[::Config.GRAPH_POINT_SKIP])
         # if we are showing the force as a function of displacement
         elif(self.view == 1):
-            self.loadStepLines[0].setData(self.data.step[::Config.GRAPH_POINT_SKIP], self.data.load[::Config.GRAPH_POINT_SKIP])
+            self.loadStepLines[0].setData(self.data[0].step[::Config.GRAPH_POINT_SKIP], self.data[0].load[::Config.GRAPH_POINT_SKIP])
         self.lock.release()
         return
 
 
     def markInitialApproachStart(self):
         self.lock.acquire()
-        if self.data.step == []:
-            self.data.initialApproachStart = 1
+        if self.data[self.testIndex].step == []:
+            self.data[self.testIndex].initialApproachStart = 1
         else:
-            self.data.initialApproachStart = self.data.sample[-1]
+            self.data[self.testIndex].initialApproachStart = self.data[self.testIndex].sample[-1]
         self.lock.release()
         return
 
 
     def markPreloadHoldStart(self):
         self.lock.acquire()        
-        self.data.preloadHoldStart = self.data.sample[-1]
+        self.data[self.testIndex].preloadHoldStart = self.data[self.testIndex].sample[-1]
         self.lock.release()
         return
 
 
     def markMainApproachStart(self):
         self.lock.acquire()
-        self.data.mainApproachStart = self.data.sample[-1]
+        self.data[self.testIndex].mainApproachStart = self.data[self.testIndex].sample[-1]
         self.lock.release()
         return
 
 
     def markMainHoldStart(self):
         self.lock.acquire()
-        self.data.mainHoldStart = self.data.sample[-1]
+        self.data[self.testIndex].mainHoldStart = self.data[self.testIndex].sample[-1]
         self.lock.release()
         return
 
 
     def markRetractStart(self):
         self.lock.acquire()
-        self.data.retractStart = self.data.sample[-1]
+        self.data[self.testIndex].retractStart = self.data[self.testIndex].sample[-1]
         self.lock.release()
         return
 
@@ -123,15 +124,15 @@ class LiveGrapher(Grapher):
 
         self.lock.acquire()
         # if this is the first data point in the series
-        if self.data.sample == []:
-            self.data.sample.append(1)
+        if self.data[self.testIndex].sample == []:
+            self.data[self.testIndex].sample.append(1)
         # else increment the sample number by 1 and append
         else:
-            self.data.sample.append(self.data.sample[-1] +1)
+            self.data[self.testIndex].sample.append(self.data[self.testIndex].sample[-1] +1)
 
-        self.data.step.append(dataPoint[0])
-        self.data.load.append(dataPoint[1])
-        self.data.phase.append(dataPoint[2])
+        self.data[self.testIndex].step.append(dataPoint[0])
+        self.data[self.testIndex].load.append(dataPoint[1])
+        self.data[self.testIndex].phase.append(dataPoint[2])
 
         self.lock.release()
         return
@@ -185,15 +186,23 @@ class LiveGrapher(Grapher):
         return self.data
 
 
+    def splitTestData(self):
+        print("live grapher got the N")
+        self.data.append(MeasurementData([],[],[],[]))
+        self.testIndex += 1
+        return
+
+
     def clear(self):
         """ Clears the collected data and the graph area. """
 
         self.lock.acquire()
         super().clear()
-        self.data = MeasurementData([],[],[],[])
-        self.loadLines.append(self.graph.plot(self.data.sample, self.data.load, pen=self.redPen))
-        self.stepLines.append(self.graph.plot(self.data.sample, self.data.step, pen=self.bluePen))
-        self.loadStepLines.append(self.graph.plot(self.data.step, self.data.load, pen=self.redPen))
+        self.data = [MeasurementData([],[],[],[])]
+        self.testIndex = 0
+        self.loadLines.append(self.graph.plot(self.data[self.testIndex].sample, self.data[self.testIndex].load, pen=self.redPen))
+        self.stepLines.append(self.graph.plot(self.data[self.testIndex].sample, self.data[self.testIndex].step, pen=self.bluePen))
+        self.loadStepLines.append(self.graph.plot(self.data[self.testIndex].step, self.data[self.testIndex].load, pen=self.redPen))
         self.lock.release()
         self.refreshPlot()
         return
@@ -209,13 +218,16 @@ def pipeManager(self, dataQueue, pipeEndSignal):
         # graph the data waiting in the pipe
         try:
             data = dataQueue.get()
-            if data != None: 
+            if data == None: 
+                done = True
+            elif data != 'N':
                 rawData = list(data)
                 rawData[0] = rawData[0] / 100 # scale the displacement
                 rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
                 self.addDataPoint(rawData)
-            else:
-                done = True
+            elif data == 'N':
+                self.splitTestData()
+
         except Exception as e:
             print(e)
     pipeEndSignal.setAsyncSignal()
