@@ -74,7 +74,7 @@ class Indenter():
         return self.measurementHandle != None and self.measurementHandle.is_alive()
 
 
-    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal):
+    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal, iterations = 1, isThresholdTest = False):
         """ Initiates the process of taking a new stffness measurement.
         Parameters:
             preload (int): how much preload to apply (newtons)
@@ -98,6 +98,8 @@ class Indenter():
             params.maxLoad = int(uc.NewtonToRawADC(maxLoad))
             params.maxLoadTime = int(maxLoadTime * 1000) # convert seconds to millis
             params.stepDelay = int(uc.stepRateToMicros(stepRate))
+            params.isThresholdTest = isThresholdTest
+            params.iterations = iterations
 
             # launch a process to handle taking the stiffness measurement
             self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(params, self.comm, dataQueue, doneSignal))

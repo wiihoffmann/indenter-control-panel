@@ -14,7 +14,7 @@ class BasicRepeatedTestSetupWidget(BasicTestSetupWidget):
         super().__init__(indenter, backButtonCallback, "interface/widgets/basicRepeatedTestControls.ui")
 
         # add buttons to disable during a measurement
-        self.toBlank.append([self.repeatCountIncButton, self.repeatCountDecButton])
+        self.toBlank.extend([self.repeatCountIncButton, self.repeatCountDecButton])
 
         # set up repeat count buttons
         self.repeatCountDisplay.setText(str(Config.DEFAULT_REPEAT_COUNT))
@@ -28,43 +28,29 @@ class BasicRepeatedTestSetupWidget(BasicTestSetupWidget):
     def startMeasurement(self):
         """ Initiates a stiffness measurement. """
 
-        print(self.testCount)
-
         # get the measurement parameters from the readouts
         preload = int(self.preloadDisplay.text()[:-2])
         maxLoad = int(self.maxLoadDisplay.text()[:-2])
         preloadTime = int(self.preloadTimeDisplay.text()[:-2])
         maxLoadTime = int(self.maxLoadTimeDisplay.text()[:-2])
         stepRate = int(self.stepRateDisplay.text())
-        testIterations = int(self.repeatCountDisplay.text())
-        
-        # reset variables after performing the required number of tests
-        if self.testCount >= testIterations:
-            print("here 1")
-            self.testCount = 0
-            self.enableButtons()
+        repeatCount = int(self.repeatCountDisplay.text())
+
         # if the preload is larger than the max load, issue a warning
-        elif preload >= maxLoad:
-            print("here 2")
+        if preload >= maxLoad:
             dlg = WarningDialog(self)
             dlg.exec()
             dlg.raise_()
+
         # else start the measurement
         else:
-            print("here 3")
-            self.testCount += 1
-
             # set up the signal handler for the done signal
-            self.sigHandler.connect(self.startMeasurement)
+            self.sigHandler.connect(self.enableButtons)
             self.sigHandler.start()
 
             # disable some buttons during the measurement
             for i in self.toBlank:
                 i.setEnabled(False)
 
-            # wait for previous measurement thread to close
-            while(self.indenter.measurementInProgress()):
-                time.sleep(0)
-            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal())
-        return
+            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal(), iterations = repeatCount)
 
