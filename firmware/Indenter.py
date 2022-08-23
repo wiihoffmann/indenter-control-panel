@@ -27,8 +27,6 @@ class Indenter():
         self.comm = Communicator()
         self.Logger = Logger()
 
-        # used to kill a measurement in an emergency
-        self.emergencySignal = Event()
         # process handle for the measurement loop
         self.measurementHandle = None
         return
@@ -69,9 +67,11 @@ class Indenter():
     def emergencyStop(self, *args):
         """ Defines the emergency stop procedure. """
         self.comm.emergencyStop(Config.EMERGENCY_STOP_STEP_RATE)
-        # terminate the process doing the stiffness measurement
-        self.emergencySignal.set()
         return
+
+
+    def measurementInProgress(self):
+        return self.measurementHandle != None and self.measurementHandle.is_alive()
 
 
     def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal):
@@ -87,9 +87,6 @@ class Indenter():
         if self.measurementHandle == None or not self.measurementHandle.is_alive():
             self.graph.setupTimeSeries()
             self.graph.clear()
-            
-            # clear emergency stop state and establish a pipe to send data to the graph
-            self.emergencySignal.clear()
 
             dataQueue = Queue()
             self.graph.addDataFromPipe(dataQueue)

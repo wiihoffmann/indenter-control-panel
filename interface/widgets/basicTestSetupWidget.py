@@ -12,14 +12,14 @@ from interface.SignalConnector import *
 class BasicTestSetupWidget(QWidget):
 
 
-    def __init__(self, indenter, backButtonCallback):
+    def __init__(self, indenter, backButtonCallback, uiLocation = "interface/widgets/basicTestControls.ui"):
         self.indenter = indenter
         
         super().__init__()
-        loadUi(os.path.join(os.getcwd(), "interface/widgets/basicTestControls.ui"), self)
+        loadUi(os.path.join(os.getcwd(), uiLocation), self)
 
         # the buttons to disable during a measurement
-        self.toBlank = [self.backButton, self.positionButton, self.stepRateIncButton, self.stepRateDecButton, 
+        self.toBlank = [self.backButton, self.startButton, self.positionButton, self.stepRateIncButton, self.stepRateDecButton, 
                     self.preloadIncButton, self.preloadDecButton, self.preloadTimeIncButton, self.preloadTimeDecButton,
                     self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton]
 

@@ -8,6 +8,7 @@ import os
 
 # get the path the program was launched from
 dir = os.path.dirname(__file__)
+os.chdir(dir)
 window = None
 
 

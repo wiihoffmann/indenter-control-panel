@@ -16,3 +16,5 @@ class MeasurementParams:
     eStopStepDelay = int(uc.stepRateToMicros(Config.EMERGENCY_STOP_STEP_RATE) )  #     uint16_t eStopStepDelay;
     tolerance = int(uc.NewtonToRawADC(Config.TOLERANCE))                         #     uint16_t targetTolerance;
     flipDirection = Config.INVERT_DIR                                       #     bool flip indenter direction
+    isThresholdTest = False                                                 # is this a pain threshold/tolerance test?
+    iterations = 1                                                          # how many times to run the test

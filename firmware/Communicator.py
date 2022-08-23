@@ -71,7 +71,7 @@ class Communicator:
 
     def sendMeasurementBegin(self, params: dataTools.MeasurementParams):
         # convert from steps/second to micros/step
-        dataToSend = pack("<%dshHhHHHHHH?" % (len(params.preamble)), params.preamble, params.preload, params.preloadTime, params.maxLoad, params.maxLoadTime, params.stepDelay, params.holdDownDelay, params.holdUpDelay, params.eStopStepDelay, params.tolerance, params.flipDirection)
+        dataToSend = pack("<%dshHhHHHHHH??H" % (len(params.preamble)), params.preamble, params.preload, params.preloadTime, params.maxLoad, params.maxLoadTime, params.stepDelay, params.holdDownDelay, params.holdUpDelay, params.eStopStepDelay, params.tolerance, params.flipDirection, params.isThresholdTest, params.iterations)
         arduino.write(dataToSend)
 
 

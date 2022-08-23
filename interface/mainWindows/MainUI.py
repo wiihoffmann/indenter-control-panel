@@ -86,7 +86,7 @@ class MainUI(QMainWindow):
             directory = os.path.join("/media/pi", dirs[0]) + "/"
         # else save locally
         else:
-            directory = os.path.join(self.dir, "Collected Data/")
+            directory = os.path.join(os.getcwd(), "Collected Data/")
         return directory
 
 
