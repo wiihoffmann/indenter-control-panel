@@ -15,6 +15,7 @@ class MeasurementParams:
     holdUpDelay = int(uc.stepRateToMicros(Config.HOLD_STEP_UP_RATE))             #     uint16_t holdUpDelay;
     eStopStepDelay = int(uc.stepRateToMicros(Config.EMERGENCY_STOP_STEP_RATE) )  #     uint16_t eStopStepDelay;
     tolerance = int(uc.NewtonToRawADC(Config.TOLERANCE))                         #     uint16_t targetTolerance;
+    iterations = 1                                                          # how many times to run the test
     flipDirection = Config.INVERT_DIR                                       #     bool flip indenter direction
     isThresholdTest = False                                                 # is this a pain threshold/tolerance test?
-    iterations = 1                                                          # how many times to run the test
+    doVASScoring = False                                                    # should we report VAS scores?
