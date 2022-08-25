@@ -49,8 +49,19 @@ class Indenter():
         Parameters:
             filename (str): the name of the file to save data to """
 
-        data = self.graph.getData()
-        self.Logger.saveFile(filename, data)
+        dataset = self.graph.getData()
+        
+        if len(dataset) > 1:
+            count = 0
+            for data in dataset:
+                if count == 0:
+                    data.filename = filename + "-full"
+                else:
+                    data.filename = filename + "-trial" + str(count)
+                count += 1
+        else:
+            dataset[0].filename = filename
+        self.Logger.saveFile(dataset)
         return
 
 

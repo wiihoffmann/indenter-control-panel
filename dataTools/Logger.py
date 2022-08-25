@@ -38,7 +38,7 @@ class Logger():
         return data
 
 
-    def saveFile(self, filename, data):
+    def saveFile(self, dataset):
         """ Save the results of a measurement to a CSV file.
         Parameters:
             filename (str): the path/filename of the CSV file to load data from
@@ -46,17 +46,18 @@ class Logger():
             step (int): array of step (displacement) data
             load (float): array of load data
         """
-        # make sure we have a .csv file ending
-        if not filename.endswith(".csv"):
-            filename += ".csv"
+        for data in dataset:
+            # make sure we have a .csv file ending
+            if not data.filename.endswith(".csv"):
+                data.filename += ".csv"
 
-        # open the file for writing the data
-        with open(filename, mode='w') as csvfile:
-            lines = csv.writer(csvfile, delimiter=',')
-            lines.writerow(["Step (steps)", "Load (N)", "Stage"])
+            # open the file for writing the data
+            with open(data.filename, mode='w') as csvfile:
+                lines = csv.writer(csvfile, delimiter=',')
+                lines.writerow(["Step (steps)", "Load (N)", "Stage"])
 
-            # insert the data
-            for i in range(min(len(data.sample), len(data.step), len(data.load), len(data.phase))):                                  
-                lines.writerow([int(round(data.step[i]*100)), data.load[i], data.phase[i]])
+                # insert the data
+                for i in range(min(len(data.sample), len(data.step), len(data.load), len(data.phase))):                                  
+                    lines.writerow([int(round(data.step[i]*100)), data.load[i], data.phase[i]])
         return
 

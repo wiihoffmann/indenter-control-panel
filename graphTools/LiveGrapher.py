@@ -1,8 +1,9 @@
 
 from PyQt5 import QtCore
 import threading
-import dataTools.UnitConverter as uc
+import copy
 
+import dataTools.UnitConverter as uc
 from graphTools.Grapher import *
 from interface.SignalConnector import *
 import Config
@@ -65,7 +66,6 @@ class LiveGrapher(Grapher):
 
     def refreshPlot(self):
         """ Refreshes the graph display with any newly collected data. """
-
         self.lock.acquire()
         # if we are showing a time series
         if(self.view == 0):
@@ -123,16 +123,31 @@ class LiveGrapher(Grapher):
             load (float): the load value for this data point """
 
         self.lock.acquire()
+
         # if this is the first data point in the series
-        if self.data[self.testIndex].sample == []:
-            self.data[self.testIndex].sample.append(1)
+        if self.data[0].sample == []:
+            self.data[0].sample.append(1)
         # else increment the sample number by 1 and append
         else:
-            self.data[self.testIndex].sample.append(self.data[self.testIndex].sample[-1] +1)
+            self.data[0].sample.append(self.data[0].sample[-1] +1)
+        
+        self.data[0].step.append(dataPoint[0])
+        self.data[0].load.append(dataPoint[1])
+        self.data[0].phase.append(dataPoint[2])
 
-        self.data[self.testIndex].step.append(dataPoint[0])
-        self.data[self.testIndex].load.append(dataPoint[1])
-        self.data[self.testIndex].phase.append(dataPoint[2])
+
+        # if we are doing multiple tests, add the data into its own trial too
+        if self.testIndex > 0:
+            # if this is the first data point in the series
+            if self.data[self.testIndex].sample == []:
+                self.data[self.testIndex].sample.append(1)
+            # else increment the sample number by 1 and append
+            else:
+                self.data[self.testIndex].sample.append(self.data[self.testIndex].sample[-1] +1)
+            
+            self.data[self.testIndex].step.append(dataPoint[0])
+            self.data[self.testIndex].load.append(dataPoint[1])
+            self.data[self.testIndex].phase.append(dataPoint[2])
 
         self.lock.release()
         return
@@ -165,10 +180,10 @@ class LiveGrapher(Grapher):
             load (float): array of load data to be graphed """
 
         self.lock.acquire()
-        self.data = graphData
-        self.loadLines[0].setData(self.data.sample, self.data.load)
-        self.stepLines[0].setData(self.data.sample, self.data.step)
-        self.loadStepLines[0].setData(self.data.step, self.data.load)
+        self.data = [graphData]
+        self.loadLines[0].setData(self.data[0].sample, self.data[0].load)
+        self.stepLines[0].setData(self.data[0].sample, self.data[0].step)
+        self.loadStepLines[0].setData(self.data[0].step, self.data[0].load)
         self.lock.release()
         
         # default back to a time series
@@ -188,6 +203,11 @@ class LiveGrapher(Grapher):
 
     def splitTestData(self):
         print("live grapher got the N")
+        # if this is the first split, copy the first trial before splitting
+        if self.testIndex == 0:
+            self.data.append(copy.deepcopy(self.data[0]))
+            self.testIndex += 1
+
         self.data.append(MeasurementData([],[],[],[]))
         self.testIndex += 1
         return

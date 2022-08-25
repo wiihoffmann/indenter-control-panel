@@ -42,14 +42,14 @@ class CompareWindow(QMainWindow):
         Attempts to store to a USB stick before storing locally."""
 
         # check if a USB stick is inserted and set default path to it
-        dirs = os.listdir("/media/pi")
-        if len(dirs) != 0:
-            directory = os.path.join("/media/pi", dirs[0]) + "/"
+        if os.path.isdir("/media/pi"):
+            dirs = os.listdir("/media/pi")
+            if len(dirs) != 0:
+                directory = os.path.join("/media/pi", dirs[0]) + "/"
         # else save locally
         else:
-            directory = os.path.join(self.dir, "Collected Data/")
+            directory = os.path.join(os.getcwd(), "Collected Data/")
         return directory
-
 
     def loadFile(self):
         """ Start a dialog to load data from a CSV file. """
