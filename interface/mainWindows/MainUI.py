@@ -60,15 +60,16 @@ class MainUI(QMainWindow):
         if self.regularTestRadioButton.isChecked():
             print("regular")
             self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.regularTestSetupWidget))
-        elif self.regularRepeatedTestRadioButton.isChecked():
-            print("repeated regular")
 
-        elif self.thresholdTestRadioButton.isChecked():
-            print("threshold test")
+        elif self.PPITestRadioButton.isChecked():
+            print("PPI test")
 
-        elif self.toleranceTestRadioButton.isChecked():
-            print("tolerance test")
-            
+        elif self.PPTTestRadioButton.isChecked():
+            print("PPT test")
+
+        elif self.temporalSummationTestRadioButton.isChecked():
+            print("temporal summation test")
+
         return
 
 

@@ -27,7 +27,7 @@ MAX_STEP_RATE = 1500            # steps/second
 STEP_RATE_INCREMENT_SIZE = 100  # steps/second
 
 #### repeat measurement settings ###
-DEFAULT_REPEAT_COUNT = 3           # default number of times to repeat a measurement
+DEFAULT_REPEAT_COUNT = 1           # default number of times to repeat a measurement
 MIN_REPEAT_COUNT = 1               # steps/second
 MAX_REPEAT_COUNT = 10              # steps/second
 REPEAT_COUNT_INCREMENT_SIZE = 1    # steps/second

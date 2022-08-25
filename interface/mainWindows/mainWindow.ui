@@ -112,7 +112,7 @@
       <property name="title">
        <string>test type:</string>
       </property>
-      <widget class="QRadioButton" name="thresholdTestRadioButton">
+      <widget class="QRadioButton" name="PPTTestRadioButton">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -147,10 +147,10 @@
         </font>
        </property>
        <property name="text">
-        <string>Regular test</string>
+        <string>Regular stiffness test</string>
        </property>
       </widget>
-      <widget class="QRadioButton" name="toleranceTestRadioButton">
+      <widget class="QRadioButton" name="PPITestRadioButton">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -169,7 +169,7 @@
         <string>Regular with VAS score (PPI)</string>
        </property>
       </widget>
-      <widget class="QRadioButton" name="thresholdTestRadioButton_2">
+      <widget class="QRadioButton" name="temporalSummationTestRadioButton">
        <property name="geometry">
         <rect>
          <x>10</x>
