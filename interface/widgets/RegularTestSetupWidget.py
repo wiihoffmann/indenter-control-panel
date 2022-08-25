@@ -9,19 +9,20 @@ from interface.dialogs.WarningDialog import *
 from interface.SignalConnector import *
 
 
-class BasicTestSetupWidget(QWidget):
+class RegularTestSetupWidget(QWidget):
 
 
-    def __init__(self, indenter, backButtonCallback, uiLocation = "interface/widgets/basicTestControls.ui"):
+    def __init__(self, indenter, backButtonCallback):
         self.indenter = indenter
         
         super().__init__()
-        loadUi(os.path.join(os.getcwd(), uiLocation), self)
+        loadUi(os.path.join(os.getcwd(), "interface/widgets/regularTestControls.ui"), self)
 
         # the buttons to disable during a measurement
         self.toBlank = [self.backButton, self.startButton, self.positionButton, self.stepRateIncButton, self.stepRateDecButton, 
                     self.preloadIncButton, self.preloadDecButton, self.preloadTimeIncButton, self.preloadTimeDecButton,
-                    self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton]
+                    self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton,
+                    self.repeatCountIncButton, self.repeatCountDecButton]
 
         # set up interface buttons
         self.backButton.clicked.connect(backButtonCallback)             # back button
@@ -53,6 +54,12 @@ class BasicTestSetupWidget(QWidget):
         self.stepRateDisplay.setText(str(Config.DEFAULT_STEP_RATE))
         self.stepRateIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
         self.stepRateDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, -1 * Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
+
+        # set up repeat count buttons
+        self.repeatCountDisplay.setText(str(Config.DEFAULT_REPEAT_COUNT))
+        self.repeatCountIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_REPEAT_COUNT, Config.MAX_REPEAT_COUNT, Config.REPEAT_COUNT_INCREMENT_SIZE, self.repeatCountDisplay))
+        self.repeatCountDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_REPEAT_COUNT, Config.MAX_REPEAT_COUNT, -1 * Config.REPEAT_COUNT_INCREMENT_SIZE, self.repeatCountDisplay))
+ 
 
         # set up the signal handler for the "done" signal from the measurement loop
         self.sigHandler = SignalConnector()
@@ -103,7 +110,8 @@ class BasicTestSetupWidget(QWidget):
         preloadTime = int(self.preloadTimeDisplay.text()[:-2])
         maxLoadTime = int(self.maxLoadTimeDisplay.text()[:-2])
         stepRate = int(self.stepRateDisplay.text())
-        
+        repeatCount = int(self.repeatCountDisplay.text())
+
         # if the preload is larger than the max load, issue a warning
         if preload >= maxLoad:
             dlg = WarningDialog(self)
@@ -120,7 +128,7 @@ class BasicTestSetupWidget(QWidget):
             for i in self.toBlank:
                 i.setEnabled(False)
 
-            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal())
+            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal(), iterations = repeatCount)
 
 
     def enableButtons(self):

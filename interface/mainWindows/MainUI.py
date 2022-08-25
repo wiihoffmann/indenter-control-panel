@@ -10,8 +10,7 @@ import os
 #custom class imports
 from firmware.Indenter import *
 from interface.dialogs.DirectionPanel import *
-from interface.widgets.basicTestSetupWidget import *
-from interface.widgets.basicRepeatedTestSetup import *
+from interface.widgets.RegularTestSetupWidget import *
 import Config
 
 
@@ -34,12 +33,10 @@ class MainUI(QMainWindow):
         self.indenter = Indenter(self.plotWidget)
 
         # build the control widgets
-        self.basicTestSetupWidget = BasicTestSetupWidget(self.indenter, lambda: self.buttonStack.setCurrentIndex(0))
-        self.basicRepeatedTestWidget  = BasicRepeatedTestSetupWidget(self.indenter, lambda: self.buttonStack.setCurrentIndex(0))
+        self.regularTestSetupWidget = RegularTestSetupWidget(self.indenter, lambda: self.buttonStack.setCurrentIndex(0))
 
         # add widgets to the stack and show the main widget
-        self.buttonStack.addWidget(self.basicTestSetupWidget)
-        self.buttonStack.addWidget(self.basicRepeatedTestWidget)
+        self.buttonStack.addWidget(self.regularTestSetupWidget)
 
         # set up bindings for the buttons
         self.clearButton.clicked.connect(self.indenter.clearResults)    # clear button
@@ -62,10 +59,10 @@ class MainUI(QMainWindow):
     def goToSetup(self):
         if self.regularTestRadioButton.isChecked():
             print("regular")
-            self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.basicTestSetupWidget))
+            self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.regularTestSetupWidget))
         elif self.regularRepeatedTestRadioButton.isChecked():
             print("repeated regular")
-            self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.basicRepeatedTestWidget))
+
         elif self.thresholdTestRadioButton.isChecked():
             print("threshold test")
 

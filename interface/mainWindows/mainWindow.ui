@@ -97,10 +97,10 @@
      <widget class="QGroupBox" name="groupBox">
       <property name="geometry">
        <rect>
-        <x>540</x>
-        <y>0</y>
-        <width>361</width>
-        <height>131</height>
+        <x>440</x>
+        <y>10</y>
+        <width>461</width>
+        <height>121</height>
        </rect>
       </property>
       <property name="font">
@@ -116,27 +116,8 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>90</y>
-         <width>181</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Roboto</family>
-         <pointsize>11</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Pain threshold test</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="regularRepeatedTestRadioButton">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
          <y>60</y>
-         <width>181</width>
+         <width>251</width>
          <height>23</height>
         </rect>
        </property>
@@ -147,13 +128,13 @@
         </font>
        </property>
        <property name="text">
-        <string>Regular repeated test</string>
+        <string>Single pressure indentation (PPT)</string>
        </property>
       </widget>
       <widget class="QRadioButton" name="regularTestRadioButton">
        <property name="geometry">
         <rect>
-         <x>10</x>
+         <x>280</x>
          <y>30</y>
          <width>181</width>
          <height>23</height>
@@ -172,9 +153,9 @@
       <widget class="QRadioButton" name="toleranceTestRadioButton">
        <property name="geometry">
         <rect>
-         <x>200</x>
+         <x>10</x>
          <y>30</y>
-         <width>161</width>
+         <width>221</width>
          <height>23</height>
         </rect>
        </property>
@@ -185,7 +166,26 @@
         </font>
        </property>
        <property name="text">
-        <string>Pain tolerance test</string>
+        <string>Regular with VAS score (PPI)</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="thresholdTestRadioButton_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>90</y>
+         <width>251</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Roboto</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Temporal summation test</string>
        </property>
       </widget>
      </widget>
