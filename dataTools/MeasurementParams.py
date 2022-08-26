@@ -22,5 +22,4 @@ class MeasurementParams:
     tolerance = int(uc.NewtonToRawADC(Config.TOLERANCE))                        #   uint16_t targetTolerance;
     iterations = 1                                                              #   how many times to run the test
     flipDirection = Config.INVERT_DIR                                           #   bool flip indenter direction
-    isThresholdTest = False                                                     #   is this a pain threshold/tolerance test?
-    doVASScoring = False                                                        #   should we report VAS scores?
+    testType = regularTestCode                                                  #   which type of test to run
