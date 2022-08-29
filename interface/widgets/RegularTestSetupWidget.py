@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QWidget
 import os
 
 import Config
+from dataTools.MeasurementParams import *
 from interface.dialogs.DirectionPanel import *
 from interface.dialogs.WarningDialog import *
 from interface.SignalConnector import *
@@ -128,7 +129,7 @@ class RegularTestSetupWidget(QWidget):
             for i in self.toBlank:
                 i.setEnabled(False)
 
-            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal(), iterations = repeatCount)
+            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal(), repeatCount, REGULAR_TEST_CODE)
 
 
     def enableButtons(self):

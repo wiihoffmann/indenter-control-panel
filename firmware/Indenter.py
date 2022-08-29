@@ -1,5 +1,5 @@
 
-from multiprocessing import Process, Event, Queue
+from multiprocessing import Process, Queue
 
 #custom class imports
 from firmware.Communicator import *
@@ -85,7 +85,7 @@ class Indenter():
         return self.measurementHandle != None and self.measurementHandle.is_alive()
 
 
-    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal, iterations = 1):
+    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal, iterations, measurementType):
         """ Initiates the process of taking a new stffness measurement.
         Parameters:
             preload (int): how much preload to apply (newtons)
@@ -110,6 +110,7 @@ class Indenter():
             params.maxLoadTime = int(maxLoadTime * 1000) # convert seconds to millis
             params.stepDelay = int(uc.stepRateToMicros(stepRate))
             params.iterations = iterations
+            params.testType = measurementType
 
             # launch a process to handle taking the stiffness measurement
             self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(params, self.comm, dataQueue, doneSignal))

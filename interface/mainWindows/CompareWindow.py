@@ -22,7 +22,7 @@ class CompareWindow(QMainWindow):
         QMainWindow.__init__(self)
         loadUi(os.path.join(os.getcwd(), "interface/mainWindows/compareWindow.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
-        self.showFullScreen()
+        # self.showFullScreen()
 
         # initialize the grapher functionality
         self.grapher = ComparisonGrapher(self.plotWidget)

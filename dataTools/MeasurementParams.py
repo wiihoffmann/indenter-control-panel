@@ -3,10 +3,10 @@ from dataclasses import dataclass
 import dataTools.UnitConverter as uc
 import Config
 
-regularTestCode = bytes("R", 'utf-8')
-PPTTestCode = bytes("T", 'utf-8')
-PPITestCode = bytes("I", 'utf-8')
-TemportalSummationTestCode = bytes("S", 'utf-8')
+REGULAR_TEST_CODE = bytes("R", 'utf-8')
+PPT_TEST_CODE = bytes("T", 'utf-8')
+PPI_TEST_CODE = bytes("I", 'utf-8')
+TEMPORAL_SUMMATION_TEST_CODE = bytes("S", 'utf-8')
 
 @dataclass
 class MeasurementParams:
@@ -22,4 +22,4 @@ class MeasurementParams:
     tolerance = int(uc.NewtonToRawADC(Config.TOLERANCE))                        #   uint16_t targetTolerance;
     iterations = 1                                                              #   how many times to run the test
     flipDirection = Config.INVERT_DIR                                           #   bool flip indenter direction
-    testType = regularTestCode                                                  #   which type of test to run
+    testType = REGULAR_TEST_CODE                                                  #   which type of test to run
