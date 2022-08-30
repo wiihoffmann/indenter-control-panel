@@ -131,8 +131,11 @@ def measurementLoop(params, comm, dataQueue, doneSignal):
 
         command = comm.readCommand()
         while command != 'C':
+            # data point
             if command == 'D':
+                dataQueue.put('D')
                 dataQueue.put(comm.readDataPoint())
+            # split collected data
             elif command == 'N':
                 dataQueue.put('N')
             else:
@@ -141,14 +144,11 @@ def measurementLoop(params, comm, dataQueue, doneSignal):
 
     # stop the indenter if any exceptions occur
     except Exception as e:
-        # displacement += stepper.stopMoving()
-        # stepper.emergencyStop(displacement, Config.EMERGENCY_STOP_STEP_RATE)
         print(e)
     
     # close the pipe to the graph before quitting the process
     finally:
         dataQueue.put(None)
-        # dataQueue.join()
         doneSignal.set()
     return
 

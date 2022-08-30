@@ -202,8 +202,8 @@ def pipeManager(self, dataQueue, pipeEndSignal):
             data = dataQueue.get()
             if data == None: 
                 done = True
-            elif data != 'N':
-                rawData = list(data)
+            elif data == 'D':
+                rawData = list(dataQueue.get())
                 rawData[0] = rawData[0] / 100 # scale the displacement
                 rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
                 self.addDataPoint(rawData)
