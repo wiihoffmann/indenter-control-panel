@@ -112,15 +112,15 @@ class MainUI(QMainWindow):
         now = datetime.now()
         # dd-mm-YY H-M-S
         dt_string = now.strftime("%Y-%m-%d %H-%M-%S")
-        
-        if(self.indenter.getLastTestType == REGULAR_TEST_CODE):
-            return dt_string + "-regular"
-        elif(self.indenter.getLastTestType == PPI_TEST_CODE):
-            dt_string + "-PPI"
-        elif(self.indenter.getLastTestType == PPT_TEST_CODE):
-            dt_string + "-PPT"
-        elif(self.indenter.getLastTestType == TEMPORAL_SUMMATION_TEST_CODE):
-            dt_string + "-Temporal-Summation"
+        print(self.indenter.getLastTestType())
+        if(self.indenter.getLastTestType() == REGULAR_TEST_CODE):
+            return dt_string + " regular"
+        elif(self.indenter.getLastTestType() == PPI_TEST_CODE):
+            return dt_string + " PPI"
+        elif(self.indenter.getLastTestType() == PPT_TEST_CODE):
+            return dt_string + " PPT"
+        elif(self.indenter.getLastTestType() == TEMPORAL_SUMMATION_TEST_CODE):
+            return dt_string + " Temporal Summation"
         return dt_string
 
 
