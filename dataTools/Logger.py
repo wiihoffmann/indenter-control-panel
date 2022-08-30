@@ -38,7 +38,7 @@ class Logger():
         return data
 
 
-    def saveFile(self, dataset):
+    def saveFile(self, dataset, filename):
         """ Save the results of a measurement to a CSV file.
         Parameters:
             filename (str): the path/filename of the CSV file to load data from
@@ -46,6 +46,17 @@ class Logger():
             step (int): array of step (displacement) data
             load (float): array of load data
         """
+        if len(dataset) > 1:
+            count = 0
+            for data in dataset:
+                if count == 0:
+                    data.filename += "-full"
+                else:
+                    data.filename += "-trial" + str(count)
+                count += 1
+        else:
+            dataset[0].filename = filename
+        
         for data in dataset:
             # make sure we have a .csv file ending
             if not data.filename.endswith(".csv"):

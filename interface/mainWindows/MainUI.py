@@ -11,6 +11,9 @@ import os
 from firmware.Indenter import *
 from interface.dialogs.DirectionPanel import *
 from interface.widgets.RegularTestSetupWidget import *
+from interface.widgets.PPTTestSetupWidget import *
+from interface.widgets.PPITestSetupWidget import *
+from interface.widgets.TemporalSummationTestSetupWidget import *
 import Config
 
 
@@ -34,9 +37,15 @@ class MainUI(QMainWindow):
 
         # build the control widgets
         self.regularTestSetupWidget = RegularTestSetupWidget(self.indenter, lambda: self.buttonStack.setCurrentIndex(0))
+        self.PPTTestSetupWidget = PPTTestSetupWidget(self.indenter, lambda: self.buttonStack.setCurrentIndex(0))
+        self.PPITestSetupWidget = PPITestSetupWidget(self.indenter, lambda: self.buttonStack.setCurrentIndex(0))
+        self.TemporalSummationTestSetupWidget = TemporalSummationTestSetupWidget(self.indenter, lambda: self.buttonStack.setCurrentIndex(0))
 
         # add widgets to the stack and show the main widget
         self.buttonStack.addWidget(self.regularTestSetupWidget)
+        self.buttonStack.addWidget(self.PPTTestSetupWidget)
+        self.buttonStack.addWidget(self.PPITestSetupWidget)
+        self.buttonStack.addWidget(self.TemporalSummationTestSetupWidget)
 
         # set up bindings for the buttons
         self.clearButton.clicked.connect(self.indenter.clearResults)    # clear button
@@ -62,12 +71,15 @@ class MainUI(QMainWindow):
             self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.regularTestSetupWidget))
 
         elif self.PPITestRadioButton.isChecked():
+            self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.PPITestSetupWidget))
             print("PPI test")
 
         elif self.PPTTestRadioButton.isChecked():
             print("PPT test")
+            self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.PPTTestSetupWidget))
 
         elif self.temporalSummationTestRadioButton.isChecked():
+            self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.TemporalSummationTestSetupWidget))
             print("temporal summation test")
 
         return
@@ -95,23 +107,35 @@ class MainUI(QMainWindow):
         return directory
 
 
+    def buildFileName(self):
+        # set default file name to the current date/time
+        now = datetime.now()
+        # dd-mm-YY H-M-S
+        dt_string = now.strftime("%Y-%m-%d %H-%M-%S")
+        
+        if(self.indenter.getLastTestType == REGULAR_TEST_CODE):
+            return dt_string + "-regular"
+        elif(self.indenter.getLastTestType == PPI_TEST_CODE):
+            dt_string + "-PPI"
+        elif(self.indenter.getLastTestType == PPT_TEST_CODE):
+            dt_string + "-PPT"
+        elif(self.indenter.getLastTestType == TEMPORAL_SUMMATION_TEST_CODE):
+            dt_string + "-Temporal-Summation"
+        return dt_string
+
+
     def saveFile(self):
         """ Start a dialog to save the current graph data into a CSV file. """
         
         # open the on screen keyboard once the next window has had a chance to open
         if Config.SHOW_KEYBOARD:
             Timer(.25, self.launchKeyboard).start()
-        
-        # set default file name to the current date/time
-        now = datetime.now()
-        # dd-mm-YY H-M-S
-        dt_string = now.strftime("%Y-%m-%d %H-%M-%S")
 
         # start the dialog for picking a directory and file name
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filename, _ = QFileDialog.getSaveFileName(
-            self, "Save measurement to file", self.getDirectory() + dt_string, "CSV File (*.csv)", options=options)
+            self, "Save measurement to file", self.getDirectory() + self.buildFileName(), "CSV File (*.csv)", options=options)
         
         # save data if the file name is valid
         if filename:

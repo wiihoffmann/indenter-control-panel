@@ -78,44 +78,6 @@ class LiveGrapher(Grapher):
         return
 
 
-    def markInitialApproachStart(self):
-        self.lock.acquire()
-        if self.data[self.testIndex].step == []:
-            self.data[self.testIndex].initialApproachStart = 1
-        else:
-            self.data[self.testIndex].initialApproachStart = self.data[self.testIndex].sample[-1]
-        self.lock.release()
-        return
-
-
-    def markPreloadHoldStart(self):
-        self.lock.acquire()        
-        self.data[self.testIndex].preloadHoldStart = self.data[self.testIndex].sample[-1]
-        self.lock.release()
-        return
-
-
-    def markMainApproachStart(self):
-        self.lock.acquire()
-        self.data[self.testIndex].mainApproachStart = self.data[self.testIndex].sample[-1]
-        self.lock.release()
-        return
-
-
-    def markMainHoldStart(self):
-        self.lock.acquire()
-        self.data[self.testIndex].mainHoldStart = self.data[self.testIndex].sample[-1]
-        self.lock.release()
-        return
-
-
-    def markRetractStart(self):
-        self.lock.acquire()
-        self.data[self.testIndex].retractStart = self.data[self.testIndex].sample[-1]
-        self.lock.release()
-        return
-
-
     def addDataPoint(self, dataPoint):
         """ Adds a single data point to the end of the graph.
         Parameters:

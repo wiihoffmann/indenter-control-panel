@@ -29,7 +29,13 @@ class Indenter():
 
         # process handle for the measurement loop
         self.measurementHandle = None
+        
+        self.lastTestType = bytes("", 'utf-8')
         return
+
+
+    def getLastTestType(self):
+        return self.lastTestType
 
 
     def loadAndShowResults(self, filename):
@@ -48,22 +54,10 @@ class Indenter():
         """ Saves the measurement data to a file.
         Parameters:
             filename (str): the name of the file to save data to """
-
         dataset = self.graph.getData()
-        
-        if len(dataset) > 1:
-            count = 0
-            for data in dataset:
-                if count == 0:
-                    data.filename = filename + "-full"
-                else:
-                    data.filename = filename + "-trial" + str(count)
-                count += 1
-        else:
-            dataset[0].filename = filename
-        self.Logger.saveFile(dataset)
+        self.Logger.saveFile(dataset, filename)
         return
-
+    
 
     def clearResults(self):
         """ Clears the graph area of the UI. """
@@ -96,6 +90,8 @@ class Indenter():
 
         # only start a measurement if one is not currently running
         if self.measurementHandle == None or not self.measurementHandle.is_alive():
+            self.lastTestType = measurementType
+            
             self.graph.setupTimeSeries()
             self.graph.clear()
 
