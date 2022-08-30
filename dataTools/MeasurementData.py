@@ -10,6 +10,5 @@ class MeasurementData:
     step: List[float]
     load: List[float]
     phase: List[int]
-    measurementType: bytes
     filename: str = ""
 
