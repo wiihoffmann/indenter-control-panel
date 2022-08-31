@@ -6,6 +6,7 @@ import copy
 import dataTools.UnitConverter as uc
 from graphTools.Grapher import *
 from interface.SignalConnector import *
+import firmware.Communicator
 import Config
 
 
@@ -129,7 +130,7 @@ class LiveGrapher(Grapher):
         self.signalManager.start()
 
         # start the thread to accept data over the pipe
-        self.pipeManagerhandle= threading.Thread(name = 'pipeManager', target = pipeManager, args=(self, dataQueue, self.signalManager))
+        self.pipeManagerhandle= threading.Thread(name = 'pipeManager', target = self.pipeManager, args=(dataQueue, self.signalManager))
         self.pipeManagerhandle.start()
         return
 
@@ -191,26 +192,32 @@ class LiveGrapher(Grapher):
 
 
 
-def pipeManager(self, dataQueue, pipeEndSignal):
-    """ The thread function responsible for loading data from the pipe and 
-    plotting it to the graph area. """
-    rawData = None
-    done = False # pipe EOF
-    while not done:          
-        # graph the data waiting in the pipe
-        try:
-            data = dataQueue.get()
-            if data == None: 
-                done = True
-            elif data == 'D':
-                rawData = list(dataQueue.get())
-                rawData[0] = rawData[0] / 100 # scale the displacement
-                rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
-                self.addDataPoint(rawData)
-            elif data == 'N':
-                self.splitTestData()
+    def pipeManager(self, dataQueue, pipeEndSignal):
+        """ The thread function responsible for loading data from the pipe and 
+        plotting it to the graph area. """
+        rawData = None
+        done = False # pipe EOF
+        while not done:          
+            # graph the data waiting in the pipe
+            try:
+                data = dataQueue.get()
+                if data == None: 
+                    done = True
+                elif data == firmware.Communicator.REGULAR_DATA_POINT_CODE:
+                    rawData = list(dataQueue.get())
+                    rawData[0] = rawData[0] / 100 # scale the displacement
+                    rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
+                    self.addDataPoint(rawData)
+                elif data == firmware.Communicator.DATA_POINT_WITH_BUTTON_STATE_CODE:
+                    # TODO: implement me
+                    pass
+                elif data == firmware.Communicator.DATA_POINT_WITH_VAS_CODE:
+                    # TODO: implement me
+                    pass
+                elif data == firmware.Communicator.NEW_TEST_BEGIN_CODE:
+                    self.splitTestData()
 
-        except Exception as e:
-            print(e)
-    pipeEndSignal.setAsyncSignal()
-    return
+            except Exception as e:
+                print(e)
+        pipeEndSignal.setAsyncSignal()
+        return

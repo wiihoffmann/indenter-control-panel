@@ -99,7 +99,7 @@ class Indenter():
             self.graph.addDataFromPipe(dataQueue)
             
             # pack all of the measurement parameters
-            params = MeasurementParams(0,0,0,0,0)
+            params = MeasurementParams(0,0,0,0,0, firmware.Communicator.REGULAR_TEST_CODE)
             params.preload = int(uc.NewtonToRawADC(preload))
             params.preloadTime = int(preloadTime * 1000) # convert seconds to millis
             params.maxLoad = int(uc.NewtonToRawADC(maxLoad))
@@ -130,14 +130,27 @@ def measurementLoop(params, comm, dataQueue, doneSignal):
         comm.sendMeasurementBegin(params)
 
         command = comm.readCommand()
-        while command != 'C':
+        while command != MEASUREMENT_COMPLETE_CODE:
             # data point
-            if command == 'D':
-                dataQueue.put('D')
+            if command == REGULAR_DATA_POINT_CODE:
+                dataQueue.put(REGULAR_DATA_POINT_CODE)
                 dataQueue.put(comm.readDataPoint())
+            elif command == DATA_POINT_WITH_BUTTON_STATE_CODE:
+                dataQueue.put(DATA_POINT_WITH_BUTTON_STATE_CODE)
+                
+                pass
+            elif command == DATA_POINT_WITH_VAS_CODE:
+                dataQueue.put(DATA_POINT_WITH_VAS_CODE)
+                
+                # TODO: implement me
+                
+                pass
             # split collected data
-            elif command == 'N':
-                dataQueue.put('N')
+            elif command == NEW_TEST_BEGIN_CODE:
+                dataQueue.put(NEW_TEST_BEGIN_CODE)
+                
+                # TODO: implement me
+                
             else:
                 print("Got unexpected command while performing measurement! Got command: " + command)
             command = comm.readCommand()
