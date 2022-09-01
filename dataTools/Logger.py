@@ -50,9 +50,9 @@ class Logger():
             count = 0
             for data in dataset:
                 if count == 0:
-                    data.filename += "-full"
+                    data.filename = filename + "-full"
                 else:
-                    data.filename += "-trial" + str(count)
+                    data.filename += filename + "-trial" + str(count)
                 count += 1
         else:
             dataset[0].filename = filename
