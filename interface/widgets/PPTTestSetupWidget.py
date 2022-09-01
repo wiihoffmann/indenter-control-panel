@@ -21,9 +21,7 @@ class PPTTestSetupWidget(QWidget):
 
         # the buttons to disable during a measurement
         self.toBlank = [self.backButton, self.startButton, self.positionButton, self.stepRateIncButton, self.stepRateDecButton, 
-                    self.preloadIncButton, self.preloadDecButton, self.preloadTimeIncButton, self.preloadTimeDecButton,
-                    self.maxLoadIncButton, self.maxLoadDecButton, self.maxLoadTimeIncButton, self.maxLoadTimeDecButton,
-                    self.repeatCountIncButton, self.repeatCountDecButton]
+                    self.maxLoadIncButton, self.maxLoadDecButton, self.repeatCountIncButton, self.repeatCountDecButton]
 
         # set up interface buttons
         self.backButton.clicked.connect(backButtonCallback)             # back button
@@ -31,25 +29,10 @@ class PPTTestSetupWidget(QWidget):
         self.stopButton.clicked.connect(self.indenter.emergencyStop)    # stop button
         self.positionButton.clicked.connect(self.__openPositionWindow)  # positioning button
 
-        # set up the preload buttons / readout
-        self.preloadDisplay.setText(str(Config.DEFAULT_PRELOAD) + " N")
-        self.preloadIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_PRELOAD, Config.MAX_PRELOAD, Config.PRELOAD_INCREMENT_SIZE, self.preloadDisplay))
-        self.preloadDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_PRELOAD, Config.MAX_PRELOAD, -1 * Config.PRELOAD_INCREMENT_SIZE, self.preloadDisplay))
-        
-        # set up the preload time buttons / readout
-        self.preloadTimeDisplay.setText(str(Config.DEFAULT_PRELOAD_TIME) + " s")
-        self.preloadTimeIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, Config.HOLD_TIME_INCREMENT_SIZE, self.preloadTimeDisplay))
-        self.preloadTimeDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, -1 * Config.HOLD_TIME_INCREMENT_SIZE, self.preloadTimeDisplay))
-
         # set up the max load buttons / readout
         self.maxLoadDisplay.setText(str(Config.DEFAULT_MAX_LOAD) + " N")
         self.maxLoadIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_LOAD, Config.MAX_LOAD, Config.MAX_LOAD_INCREMENT_SIZE, self.maxLoadDisplay))
         self.maxLoadDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_LOAD, Config.MAX_LOAD, -1 * Config.MAX_LOAD_INCREMENT_SIZE, self.maxLoadDisplay))
-        
-        # set up the max load time buttons / readout
-        self.maxLoadTimeDisplay.setText(str(Config.DEFAULT_MAX_LOAD_TIME) + " s")
-        self.maxLoadTimeIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, Config.HOLD_TIME_INCREMENT_SIZE, self.maxLoadTimeDisplay))
-        self.maxLoadTimeDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_HOLD_TIME, Config.MAX_HOLD_TIME, -1 * Config.HOLD_TIME_INCREMENT_SIZE, self.maxLoadTimeDisplay))
 
         # set up the step rate buttons / readout
         self.stepRateDisplay.setText(str(Config.DEFAULT_STEP_RATE))
@@ -106,30 +89,22 @@ class PPTTestSetupWidget(QWidget):
         """ Initiates a stiffness measurement. """
 
         # get the measurement parameters from the readouts
-        preload = int(self.preloadDisplay.text()[:-2])
+        preload = 0
         maxLoad = int(self.maxLoadDisplay.text()[:-2])
-        preloadTime = int(self.preloadTimeDisplay.text()[:-2])
-        maxLoadTime = int(self.maxLoadTimeDisplay.text()[:-2])
+        preloadTime = 0
+        maxLoadTime = 0
         stepRate = int(self.stepRateDisplay.text())
         repeatCount = int(self.repeatCountDisplay.text())
 
-        # if the preload is larger than the max load, issue a warning
-        if preload >= maxLoad:
-            dlg = WarningDialog(self)
-            dlg.exec()
-            dlg.raise_()
+        # set up the signal handler for the done signal
+        self.sigHandler.connect(self.enableButtons)
+        self.sigHandler.start()
 
-        # else start the measurement
-        else:
-            # set up the signal handler for the done signal
-            self.sigHandler.connect(self.enableButtons)
-            self.sigHandler.start()
+        # disable some buttons during the measurement
+        for i in self.toBlank:
+            i.setEnabled(False)
 
-            # disable some buttons during the measurement
-            for i in self.toBlank:
-                i.setEnabled(False)
-
-            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal(), repeatCount, PPT_TEST_CODE)
+        self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal(), repeatCount, PPT_TEST_CODE)
 
 
     def enableButtons(self):

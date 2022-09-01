@@ -13,27 +13,6 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QPushButton" name="preloadDecButton">
-   <property name="geometry">
-    <rect>
-     <x>510</x>
-     <y>20</y>
-     <width>41</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>18</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>↓</string>
-   </property>
-   <property name="autoRepeat">
-    <bool>true</bool>
-   </property>
-  </widget>
   <widget class="QPushButton" name="maxLoadTimeIncButton">
    <property name="geometry">
     <rect>
@@ -104,7 +83,7 @@
   <widget class="QLineEdit" name="stepRateDisplay">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>550</x>
      <y>90</y>
      <width>81</width>
      <height>41</height>
@@ -219,46 +198,6 @@
     <string>Back</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="preloadTimeIncButton">
-   <property name="geometry">
-    <rect>
-     <x>630</x>
-     <y>90</y>
-     <width>41</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>18</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>↑</string>
-   </property>
-   <property name="autoRepeat">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>510</x>
-     <y>70</y>
-     <width>151</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Roboto</family>
-     <pointsize>11</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Preload Hold Time:</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
@@ -275,52 +214,10 @@
     </font>
    </property>
    <property name="text">
-    <string>Max Load Hold Time:</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="preloadIncButton">
-   <property name="geometry">
-    <rect>
-     <x>630</x>
-     <y>20</y>
-     <width>41</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>18</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>↑</string>
-   </property>
-   <property name="autoRepeat">
-    <bool>true</bool>
+    <string>Load Hold Time:</string>
    </property>
   </widget>
   <widget class="QPushButton" name="stepRateDecButton">
-   <property name="geometry">
-    <rect>
-     <x>330</x>
-     <y>90</y>
-     <width>41</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>18</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>↓</string>
-   </property>
-   <property name="autoRepeat">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="preloadTimeDecButton">
    <property name="geometry">
     <rect>
      <x>510</x>
@@ -357,32 +254,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Max Load:</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="preloadTimeDisplay">
-   <property name="geometry">
-    <rect>
-     <x>550</x>
-     <y>90</y>
-     <width>81</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Roboto</family>
-     <pointsize>14</pointsize>
-    </font>
-   </property>
-   <property name="inputMethodHints">
-    <set>Qt::ImhDigitsOnly</set>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
+    <string>Load:</string>
    </property>
   </widget>
   <widget class="QPushButton" name="startButton">
@@ -407,7 +279,7 @@
   <widget class="QPushButton" name="stepRateIncButton">
    <property name="geometry">
     <rect>
-     <x>450</x>
+     <x>630</x>
      <y>90</y>
      <width>41</width>
      <height>41</height>
@@ -446,35 +318,10 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QLineEdit" name="preloadDisplay">
-   <property name="geometry">
-    <rect>
-     <x>550</x>
-     <y>20</y>
-     <width>81</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Roboto</family>
-     <pointsize>14</pointsize>
-    </font>
-   </property>
-   <property name="inputMethodHints">
-    <set>Qt::ImhDigitsOnly</set>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>330</x>
+     <x>510</x>
      <y>70</y>
      <width>151</width>
      <height>17</height>
@@ -488,25 +335,6 @@
    </property>
    <property name="text">
     <string>Step Rate:</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>510</x>
-     <y>0</y>
-     <width>151</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Roboto</family>
-     <pointsize>11</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Preload:</string>
    </property>
   </widget>
   <widget class="QPushButton" name="stopButton">
@@ -531,7 +359,7 @@
   <widget class="QLineEdit" name="repeatCountDisplay">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>550</x>
      <y>20</y>
      <width>81</width>
      <height>41</height>
@@ -556,7 +384,7 @@
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
-     <x>330</x>
+     <x>510</x>
      <y>0</y>
      <width>151</width>
      <height>17</height>
@@ -575,7 +403,7 @@
   <widget class="QPushButton" name="repeatCountIncButton">
    <property name="geometry">
     <rect>
-     <x>450</x>
+     <x>630</x>
      <y>20</y>
      <width>41</width>
      <height>41</height>
@@ -596,7 +424,7 @@
   <widget class="QPushButton" name="repeatCountDecButton">
    <property name="geometry">
     <rect>
-     <x>330</x>
+     <x>510</x>
      <y>20</y>
      <width>41</width>
      <height>41</height>
