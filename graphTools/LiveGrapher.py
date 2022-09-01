@@ -26,7 +26,7 @@ class LiveGrapher(Grapher):
         self.redPen = pg.mkPen('r', width=Config.GRAPH_LINE_WIDTH)
         self.bluePen = pg.mkPen('b', width=Config.GRAPH_LINE_WIDTH)
 
-        self.data = [MeasurementData([],[],[],[])]
+        self.data = [MakeBlankMeasurementData()]
         self.testIndex = 0
         # add the two data series for load and displacement data
         self.loadLines.append(self.graph.plot(self.data[self.testIndex].sample, self.data[self.testIndex].load, pen=self.redPen))
@@ -152,6 +152,24 @@ class LiveGrapher(Grapher):
         # default back to a time series
         self.setupTimeSeries()
         return
+    
+
+    def setMaxLoad(self, maxLoad):
+        self.data[0].maxLoad.append(uc.rawADCToNewton(maxLoad))
+        if self.testIndex > 0:
+            self.data[self.testIndex].maxLoad.append(uc.rawADCToNewton(maxLoad))
+        return
+
+
+    def setVASScore(self, VASScore):
+        self.data[0].VASScores.append(VASScore)
+        if self.testIndex > 0:
+            self.data[self.testIndex].VASScores.append(VASScore)
+        
+        print(self.data[0].VASScores)
+        print(self.data[self.testIndex].VASScores)
+        
+        return
 
 
     def getData(self):
@@ -171,7 +189,7 @@ class LiveGrapher(Grapher):
             self.data.append(copy.deepcopy(self.data[0]))
             self.testIndex += 1
 
-        self.data.append(MeasurementData([],[],[],[]))
+        self.data.append(MakeBlankMeasurementData())
         self.testIndex += 1
         return
 
@@ -181,7 +199,7 @@ class LiveGrapher(Grapher):
 
         self.lock.acquire()
         super().clear()
-        self.data = [MeasurementData([],[],[],[])]
+        self.data = [MakeBlankMeasurementData()]
         self.testIndex = 0
         self.loadLines.append(self.graph.plot(self.data[self.testIndex].sample, self.data[self.testIndex].load, pen=self.redPen))
         self.stepLines.append(self.graph.plot(self.data[self.testIndex].sample, self.data[self.testIndex].step, pen=self.bluePen))
@@ -208,11 +226,14 @@ class LiveGrapher(Grapher):
                     rawData[0] = rawData[0] / 100 # scale the displacement
                     rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
                     self.addDataPoint(rawData)
-                elif data == firmware.Communicator.DATA_POINT_WITH_BUTTON_STATE_CODE:
-                    # TODO: implement me
-                    pass
                 elif data == firmware.Communicator.DATA_POINT_WITH_VAS_CODE:
                     # TODO: implement me
+                    pass
+                elif data == firmware.Communicator.MAX_LOAD_CODE:
+                    self.setMaxLoad(dataQueue.get())
+                    pass
+                elif data == firmware.Communicator.SINGLE_VAS_SCORE_CODE:
+                    self.setVASScore(dataQueue.get())
                     pass
                 elif data == firmware.Communicator.NEW_TEST_BEGIN_CODE:
                     self.splitTestData()

@@ -135,22 +135,23 @@ def measurementLoop(params, comm, dataQueue, doneSignal):
             if command == REGULAR_DATA_POINT_CODE:
                 dataQueue.put(REGULAR_DATA_POINT_CODE)
                 dataQueue.put(comm.readDataPoint())
-            elif command == DATA_POINT_WITH_BUTTON_STATE_CODE:
-                dataQueue.put(DATA_POINT_WITH_BUTTON_STATE_CODE)
-                
-                pass
             elif command == DATA_POINT_WITH_VAS_CODE:
                 dataQueue.put(DATA_POINT_WITH_VAS_CODE)
                 
                 # TODO: implement me
                 
                 pass
+            elif command == SINGLE_VAS_SCORE_CODE:
+                dataQueue.put(SINGLE_VAS_SCORE_CODE)
+                dataQueue.put(comm.readInt())
+                pass
+            elif command == MAX_LOAD_CODE:
+                dataQueue.put(MAX_LOAD_CODE)
+                dataQueue.put(comm.readInt())
+                pass
             # split collected data
             elif command == NEW_TEST_BEGIN_CODE:
-                dataQueue.put(NEW_TEST_BEGIN_CODE)
-                
-                # TODO: implement me
-                
+                dataQueue.put(NEW_TEST_BEGIN_CODE)                
             else:
                 print("Got unexpected command while performing measurement! Got command: " + command)
             command = comm.readCommand()
