@@ -11,7 +11,7 @@ class WarningDialog(QDialog):
         self.dir = parent.dir
         
         super().__init__(parent)
-        loadUi(os.path.join(self.dir, "interface/dialogs/loadError.ui"), self)
+        loadUi(os.path.join(os.getcwd(), "interface/dialogs/loadError.ui"), self)
         self.setWindowTitle("ERROR!")
         return
 
