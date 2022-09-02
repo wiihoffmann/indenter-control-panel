@@ -8,7 +8,6 @@ class WarningDialog(QDialog):
 
     def __init__(self, parent):
         """ Make a new instance of the error window. """
-        self.dir = parent.dir
         
         super().__init__(parent)
         loadUi(os.path.join(os.getcwd(), "interface/dialogs/loadError.ui"), self)
