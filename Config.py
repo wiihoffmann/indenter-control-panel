@@ -41,7 +41,7 @@ HOLD_STEP_DOWN_RATE = 100       # steps/second (when holding, how fast can we mo
 GRAPH_COLORS = 10               # how many colors we can use on the graph comparison screen
 GRAPH_LINE_WIDTH = 3            # width of the graph line
 GRAPH_REFRESH_DELAY = 250       # milliseconds
-GRAPH_POINT_SKIP = 4            # graph 1 in X data points. (A value of 4 would graph a quarter of the collected data.)
+GRAPH_MAX_POINTS = 10000        # The max number of data points to show on the live graph at once.
 
 ######### misc. settings ##########
 EMERGENCY_STOP_STEP_RATE = 800     # steps/second (How fast to retract indenter during an emergency stop.)

@@ -99,10 +99,19 @@ class Communicator:
 
     def readDataPoint(self):
         # wait for the data point to arrive
-        while arduino.in_waiting < 9:
+        while arduino.in_waiting < 7:
             time.sleep(0)
 
         data = unpack("<ihB", arduino.read(7))
+        return data
+
+
+    def readDataPointWithVAS(self):
+        # wait for the data point with VAS score to arrive
+        while arduino.in_waiting < 9:
+            time.sleep(0)
+
+        data = unpack("<ihBh", arduino.read(9))
         return data
 
 

@@ -2,6 +2,7 @@
 from PyQt5 import QtCore
 import threading
 import copy
+import math
 
 import dataTools.UnitConverter as uc
 from graphTools.Grapher import *
@@ -68,13 +69,18 @@ class LiveGrapher(Grapher):
     def refreshPlot(self):
         """ Refreshes the graph display with any newly collected data. """
         self.lock.acquire()
+        pointSkip = math.ceil(len(self.data[0].sample) / Config.GRAPH_MAX_POINTS)
+        if pointSkip == 0:
+            pointSkip = 1
+
+
         # if we are showing a time series
         if(self.view == 0):
-            self.loadLines[0].setData(self.data[0].sample[::Config.GRAPH_POINT_SKIP], self.data[0].load[::Config.GRAPH_POINT_SKIP])
-            self.stepLines[0].setData(self.data[0].sample[::Config.GRAPH_POINT_SKIP], self.data[0].step[::Config.GRAPH_POINT_SKIP])
+            self.loadLines[0].setData(self.data[0].sample[::pointSkip], self.data[0].load[::pointSkip])
+            self.stepLines[0].setData(self.data[0].sample[::pointSkip], self.data[0].step[::pointSkip])
         # if we are showing the force as a function of displacement
         elif(self.view == 1):
-            self.loadStepLines[0].setData(self.data[0].step[::Config.GRAPH_POINT_SKIP], self.data[0].load[::Config.GRAPH_POINT_SKIP])
+            self.loadStepLines[0].setData(self.data[0].step[::pointSkip], self.data[0].load[::pointSkip])
         self.lock.release()
         return
 
@@ -161,14 +167,10 @@ class LiveGrapher(Grapher):
         return
 
 
-    def setVASScore(self, VASScore):
+    def addVASScore(self, VASScore):
         self.data[0].VASScores.append(VASScore)
         if self.testIndex > 0:
-            self.data[self.testIndex].VASScores.append(VASScore)
-        
-        print(self.data[0].VASScores)
-        print(self.data[self.testIndex].VASScores)
-        
+            self.data[self.testIndex].VASScores.append(VASScore)        
         return
 
 
@@ -221,20 +223,26 @@ class LiveGrapher(Grapher):
                 data = dataQueue.get()
                 if data == None: 
                     done = True
+                
                 elif data == firmware.Communicator.REGULAR_DATA_POINT_CODE:
                     rawData = list(dataQueue.get())
                     rawData[0] = rawData[0] / 100 # scale the displacement
                     rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
                     self.addDataPoint(rawData)
+                
                 elif data == firmware.Communicator.DATA_POINT_WITH_VAS_CODE:
-                    # TODO: implement me
-                    pass
+                    rawData = list(dataQueue.get())
+                    rawData[0] = rawData[0] / 100 # scale the displacement
+                    rawData[1] = uc.rawADCToNewton(rawData[1]) # convert load from adc reading to newtons
+                    self.addDataPoint(rawData[0:3])
+                    self.addVASScore(rawData[3])
+
                 elif data == firmware.Communicator.MAX_LOAD_CODE:
                     self.setMaxLoad(dataQueue.get())
-                    pass
+
                 elif data == firmware.Communicator.SINGLE_VAS_SCORE_CODE:
-                    self.setVASScore(dataQueue.get())
-                    pass
+                    self.addVASScore(dataQueue.get())
+
                 elif data == firmware.Communicator.NEW_TEST_BEGIN_CODE:
                     self.splitTestData()
 
