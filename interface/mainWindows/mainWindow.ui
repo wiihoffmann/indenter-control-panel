@@ -128,13 +128,13 @@
         </font>
        </property>
        <property name="text">
-        <string>Single pressure indentation (PPT)</string>
+        <string>Single pressure (PPT)</string>
        </property>
       </widget>
       <widget class="QRadioButton" name="regularTestRadioButton">
        <property name="geometry">
         <rect>
-         <x>280</x>
+         <x>270</x>
          <y>30</y>
          <width>181</width>
          <height>23</height>
@@ -166,7 +166,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Regular with VAS score (PPI)</string>
+        <string>VAS score (PPI)</string>
        </property>
       </widget>
       <widget class="QRadioButton" name="temporalSummationTestRadioButton">

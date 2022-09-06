@@ -50,6 +50,7 @@ JOG_SPEED_Y = 1200                 # steps/second (Manual move left/right speed.
 JOG_SPEED_Z = 1200                 # steps/second (Manual move forward/backward speed.)
 SHOW_KEYBOARD = True               # show the keyboard when saving?
 INVERT_DIR = True                  # Set to True if the indenter moves up when it should move down
+FULLSCREEN_MODE = False             # Should the program open in fullscreen?
 
 ####### hardware calibration ######
 """ To calibrate the device, we need to calculate △load / △V (N/V). To do this, apply

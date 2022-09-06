@@ -22,7 +22,7 @@ class CompareWindow(QMainWindow):
         QMainWindow.__init__(self)
         loadUi(os.path.join(os.getcwd(), "interface/mainWindows/compareWindow.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
-        # self.showFullScreen()
+        if Config.FULLSCREEN_MODE: self.showFullScreen()
 
         # initialize the grapher functionality
         self.grapher = ComparisonGrapher(self.plotWidget)
@@ -45,11 +45,10 @@ class CompareWindow(QMainWindow):
         if os.path.isdir("/media/pi"):
             dirs = os.listdir("/media/pi")
             if len(dirs) != 0:
-                directory = os.path.join("/media/pi", dirs[0]) + "/"
+                return os.path.join("/media/pi", dirs[0]) + "/"
         # else save locally
-        else:
-            directory = os.path.join(os.getcwd(), "Collected Data/")
-        return directory
+        return os.path.join(os.getcwd(), "Collected Data/")
+
 
     def loadFile(self):
         """ Start a dialog to load data from a CSV file. """

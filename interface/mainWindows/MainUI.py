@@ -30,7 +30,7 @@ class MainUI(QMainWindow):
         QMainWindow.__init__(self)
         loadUi(os.path.join(os.getcwd(), "interface/mainWindows/mainWindow.ui"), self)
         self.setWindowTitle("Indenter Control Panel")
-        # self.showFullScreen()
+        if Config.FULLSCREEN_MODE: self.showFullScreen()
 
         # initialize the firmware/back end functionality
         self.indenter = Indenter(self.plotWidget)
@@ -86,9 +86,9 @@ class MainUI(QMainWindow):
 
 
     def launchKeyboard(self):
-        self.showMaximized()
+        # if Config.FULLSCREEN_MODE: self.showMaximized()
         subprocess.run(["xvkbd", "-no-keypad", "-window", "Save measurement to file"])
-        self.showFullScreen()
+        # if Config.FULLSCREEN_MODE: self.showFullScreen()
         return
 
 
@@ -100,11 +100,9 @@ class MainUI(QMainWindow):
         if os.path.isdir("/media/pi"):
             dirs = os.listdir("/media/pi")
             if len(dirs) != 0:
-                directory = os.path.join("/media/pi", dirs[0]) + "/"
+                return os.path.join("/media/pi", dirs[0]) + "/"
         # else save locally
-        else:
-            directory = os.path.join(os.getcwd(), "Collected Data/")
-        return directory
+        return os.path.join(os.getcwd(), "Collected Data/")
 
 
     def buildFileName(self):
