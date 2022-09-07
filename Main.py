@@ -1,20 +1,21 @@
 #!/usr/bin/python3
 # line above lets us launch the program with ./Main.py instead of "python3 Main.py"
 
-from interface.MainUI import *
-from interface.CompareWindow import *
+from interface.mainWindows.MainUI import *
+from interface.mainWindows.CompareWindow import *
 import os
 
 
 # get the path the program was launched from
 dir = os.path.dirname(__file__)
+os.chdir(dir)
 window = None
 
 
 def openCompareWindow(self):
     global window
     window.close()
-    window = CompareWindow(dir, openMainWindow)
+    window = CompareWindow(openMainWindow)
     window.show()
     return
 
@@ -22,7 +23,7 @@ def openCompareWindow(self):
 def openMainWindow(self):
     global window
     window.close()
-    window = MainUI(dir, openCompareWindow)
+    window = MainUI(openCompareWindow)
     window.show()
     return
 
@@ -30,7 +31,7 @@ def openMainWindow(self):
 if __name__ == "__main__":
     # launch the main program
     app = QApplication([])
-    window = MainUI(dir, openCompareWindow)
+    window = MainUI(openCompareWindow)
     window.show()
     app.exec_()
 

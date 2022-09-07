@@ -1,5 +1,5 @@
 
-from multiprocessing import Process, Event, Queue
+from multiprocessing import Process, Queue
 
 #custom class imports
 from firmware.Communicator import *
@@ -27,11 +27,15 @@ class Indenter():
         self.comm = Communicator()
         self.Logger = Logger()
 
-        # used to kill a measurement in an emergency
-        self.emergencySignal = Event()
         # process handle for the measurement loop
         self.measurementHandle = None
+        
+        self.lastTestType = bytes("", 'utf-8')
         return
+
+
+    def getLastTestType(self):
+        return self.lastTestType
 
 
     def loadAndShowResults(self, filename):
@@ -50,11 +54,10 @@ class Indenter():
         """ Saves the measurement data to a file.
         Parameters:
             filename (str): the name of the file to save data to """
-
-        data = self.graph.getData()
-        self.Logger.saveFile(filename, data)
+        dataset = self.graph.getData()
+        self.Logger.saveFile(dataset, filename)
         return
-
+    
 
     def clearResults(self):
         """ Clears the graph area of the UI. """
@@ -69,12 +72,14 @@ class Indenter():
     def emergencyStop(self, *args):
         """ Defines the emergency stop procedure. """
         self.comm.emergencyStop(Config.EMERGENCY_STOP_STEP_RATE)
-        # terminate the process doing the stiffness measurement
-        self.emergencySignal.set()
         return
 
 
-    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal):
+    def measurementInProgress(self):
+        return self.measurementHandle != None and self.measurementHandle.is_alive()
+
+
+    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal, iterations, measurementType):
         """ Initiates the process of taking a new stffness measurement.
         Parameters:
             preload (int): how much preload to apply (newtons)
@@ -85,22 +90,23 @@ class Indenter():
 
         # only start a measurement if one is not currently running
         if self.measurementHandle == None or not self.measurementHandle.is_alive():
+            self.lastTestType = measurementType
+            
             self.graph.setupTimeSeries()
             self.graph.clear()
-            
-            # clear emergency stop state and establish a pipe to send data to the graph
-            self.emergencySignal.clear()
 
             dataQueue = Queue()
             self.graph.addDataFromPipe(dataQueue)
             
             # pack all of the measurement parameters
-            params = MeasurementParams(0,0,0,0,0)
+            params = MeasurementParams(0,0,0,0,0, firmware.Communicator.REGULAR_TEST_CODE)
             params.preload = int(uc.NewtonToRawADC(preload))
             params.preloadTime = int(preloadTime * 1000) # convert seconds to millis
             params.maxLoad = int(uc.NewtonToRawADC(maxLoad))
             params.maxLoadTime = int(maxLoadTime * 1000) # convert seconds to millis
             params.stepDelay = int(uc.stepRateToMicros(stepRate))
+            params.iterations = iterations
+            params.testType = measurementType
 
             # launch a process to handle taking the stiffness measurement
             self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(params, self.comm, dataQueue, doneSignal))
@@ -124,23 +130,36 @@ def measurementLoop(params, comm, dataQueue, doneSignal):
         comm.sendMeasurementBegin(params)
 
         command = comm.readCommand()
-        while(command != 'C'):
-            if(command == 'D'):
+        while command != MEASUREMENT_COMPLETE_CODE:
+            if command == REGULAR_DATA_POINT_CODE:
+                dataQueue.put(REGULAR_DATA_POINT_CODE)
                 dataQueue.put(comm.readDataPoint())
+            
+            elif command == DATA_POINT_WITH_VAS_CODE:
+                dataQueue.put(DATA_POINT_WITH_VAS_CODE)
+                dataQueue.put(comm.readDataPointWithVAS())
+            
+            elif command == SINGLE_VAS_SCORE_CODE:
+                dataQueue.put(SINGLE_VAS_SCORE_CODE)
+                dataQueue.put(comm.readInt())
+            
+            elif command == MAX_LOAD_CODE:
+                dataQueue.put(MAX_LOAD_CODE)
+                dataQueue.put(comm.readInt())
+            
+            elif command == NEW_TEST_BEGIN_CODE:
+                dataQueue.put(NEW_TEST_BEGIN_CODE)                
             else:
                 print("Got unexpected command while performing measurement! Got command: " + command)
             command = comm.readCommand()
 
     # stop the indenter if any exceptions occur
     except Exception as e:
-        # displacement += stepper.stopMoving()
-        # stepper.emergencyStop(displacement, Config.EMERGENCY_STOP_STEP_RATE)
         print(e)
     
     # close the pipe to the graph before quitting the process
     finally:
         dataQueue.put(None)
-        # dataQueue.join()
         doneSignal.set()
     return
 
