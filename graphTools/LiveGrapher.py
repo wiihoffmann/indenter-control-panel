@@ -168,6 +168,9 @@ class LiveGrapher(Grapher):
 
 
     def addVASScore(self, VASScore):
+        # scale VAS score from 0-1023 to 1-100
+        VASScore = math.ceil(VASScore / 1023 * 100) 
+
         self.data[0].VASScores.append(VASScore)
         if self.testIndex > 0:
             self.data[self.testIndex].VASScores.append(VASScore)        
