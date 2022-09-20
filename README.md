@@ -29,15 +29,7 @@ The codebase for the spinal stiffness indenter - a device for taking bulk stiffn
    ```
 
 # Setup instructions (full)
-1. Enable hardware PWM by adding the following line to the end of ```/boot/config.txt```
-   ```
-   dtoverlay=pwm-2chan
-   ```
-2. Enable hardware I2C by running the following command:
-   ```
-   sudo raspi-config nonint do_i2c 0
-   ```
-3. Enable the RTC module with the following commands:
+1. Enable the RTC module with the following commands:
    ```
    sudo modprobe rtc-ds1307
    sudo echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
@@ -49,23 +41,23 @@ The codebase for the spinal stiffness indenter - a device for taking bulk stiffn
    sudo hwclock -s
    date
    ```
-4. Make sure that everything is up to date and reboot:
+2. Make sure that everything is up to date and reboot:
    ```
    sudo apt update
    sudo apt full-upgrade
    sudo reboot
    ```
-5. Install all of the dependencies:
+3. Install all of the dependencies:
    ```
    sudo apt install git xvkbd python3 python3-pip python3-pyqt5 python3-numpy
-   sudo pip3 install rpi-hardware-pwm pyqtgraph Adafruit-Blinka adafruit-circuitpython-ads1x15
+   sudo pip3 install pyqtgraph
    ```
-6. Get the code from this repo:
+4. Get the code from this repo:
    ```
-   git clone https://github.com/ECE-492-capstone/spinal-stiffness-indenter
+   git clone https://github.com/wiihoffmann/indenter-3axis-arduino
    ```
-7. Make sure you are in the right directory and run the code:
+5. Make sure you are in the right directory and run the code:
    ```
-   cd spinal-stiffness-indenter
-   python3 main.py
+   cd indenter-3axis-arduino
+   ./main.py
    ```
