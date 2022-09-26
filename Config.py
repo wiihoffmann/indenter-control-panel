@@ -57,9 +57,9 @@ FULLSCREEN_MODE = False             # Should the program open in fullscreen?
 two different loads to the indenter and record the corresponding output voltage. The 
 calculation assumes that a larger load produces a larger output voltage. """
 # first load/voltage calibration pair
-CAL_READING_1 = 35.18847    # newtons
-CAL_VOLTAGE_1 = 10140       # raw ADC value
+CAL_READING_1 = 24.77025    # newtons
+CAL_VOLTAGE_1 = 7756.32643  # raw ADC value
 # second load/voltage calibration pair
-CAL_READING_2 = 92.214      # newtons
-CAL_VOLTAGE_2 = 17500       # raw ADC value
+CAL_READING_2 = 103.58379   # newtons
+CAL_VOLTAGE_2 = 15418.93992 # raw ADC value
 

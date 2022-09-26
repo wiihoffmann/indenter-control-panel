@@ -18,6 +18,7 @@ SINGLE_VAS_SCORE_CODE = 'v'
 MEASUREMENT_COMPLETE_CODE = 'C'
 NEW_TEST_BEGIN_CODE = 'N'
 RAW_MEASUREMENT_CODE = 'M'
+RAW_MEASUREMENT_VOLTS_CODE = 'm'
 CONTROLLER_READY_CODE = 'R'
 NO_COMMAND_CODE = 'K'
 
@@ -86,6 +87,18 @@ class Communicator:
         # make sure we get a raw adc reading
         command = self.readCommand()
         if command != 'M': return
+        reading = self.readInt()
+
+        return reading
+
+
+    def getADCVoltageReading(self):      
+        # request a voltage reading from the ADC and wait for reply
+        self.__sendCommand("*m", 1234)
+        
+        # make sure we get a raw adc reading
+        command = self.readCommand()
+        if command != 'm': return
         reading = self.readInt()
 
         return reading
