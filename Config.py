@@ -44,13 +44,15 @@ GRAPH_REFRESH_DELAY = 250       # milliseconds
 GRAPH_MAX_POINTS = 10000        # The max number of data points to show on the live graph at once.
 
 ######### misc. settings ##########
-EMERGENCY_STOP_STEP_RATE = 800     # steps/second (How fast to retract indenter during an emergency stop.)
-JOG_SPEED_X = 1200                 # steps/second (Manual move up/down speed.)
-JOG_SPEED_Y = 1200                 # steps/second (Manual move left/right speed.)
+EMERGENCY_STOP_STEP_RATE = 2000    # steps/second (How fast to retract indenter during an emergency stop.)
+JOG_SPEED_X = 1600                 # steps/second (Manual move up/down speed.)
+JOG_SPEED_Y = 1600                 # steps/second (Manual move left/right speed.)
 JOG_SPEED_Z = 1200                 # steps/second (Manual move forward/backward speed.)
-SHOW_KEYBOARD = True               # show the keyboard when saving?
-INVERT_DIR = True                  # Set to True if the indenter moves up when it should move down
+INVERT_X_DIR = True                # Set to True if the indenter moves closer when it should move farther away
+INVERT_Y_DIR = True                # Set to True if the indenter moves left when it should move right
+INVERT_Z_DIR = True                # Set to True if the indenter moves up when it should move down
 FULLSCREEN_MODE = True             # Should the program open in fullscreen?
+SHOW_KEYBOARD = True               # show the keyboard when saving?
 
 ####### hardware calibration ######
 """ To calibrate the device, we need to calculate △load / △V (N/V). To do this, apply

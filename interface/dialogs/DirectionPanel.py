@@ -29,47 +29,47 @@ class DirectionPanel(QDialog):
     def __moveLeft(self):
         """ Move the Y-axis in the left direction"""
 
-        if self.flipLeftRightCheck.isChecked():
-            self.comm.moveYAxisUp(Config.JOG_SPEED_X)
+        if self.flipLeftRightCheck.isChecked() != Config.INVERT_Y_DIR:
+            self.comm.moveYAxisUp(Config.JOG_SPEED_Y)
         else:
-            self.comm.moveYAxisDown(Config.JOG_SPEED_X)
+            self.comm.moveYAxisDown(Config.JOG_SPEED_Y)
         return
 
 
     def __moveRight(self):
         """ Move the Y-axis in the right direction"""
 
-        if self.flipLeftRightCheck.isChecked():
-            self.comm.moveYAxisDown(Config.JOG_SPEED_X)
+        if self.flipLeftRightCheck.isChecked() != Config.INVERT_Y_DIR:
+            self.comm.moveYAxisDown(Config.JOG_SPEED_Y)
         else:
-            self.comm.moveYAxisUp(Config.JOG_SPEED_X)
+            self.comm.moveYAxisUp(Config.JOG_SPEED_Y)
         return
 
 
     def __moveForward(self):
         """ Move the X-axis in the forward direction"""
 
-        if self.flipFrontBackCheck.isChecked():
-            self.comm.moveXAxisUp(Config.JOG_SPEED_Y)
+        if self.flipFrontBackCheck.isChecked() != Config.INVERT_X_DIR:
+            self.comm.moveXAxisUp(Config.JOG_SPEED_X)
         else:
-            self.comm.moveXAxisDown(Config.JOG_SPEED_Y)
+            self.comm.moveXAxisDown(Config.JOG_SPEED_X)
         return
 
 
     def __moveBackward(self):
         """ Move the X-axis in the backward direction"""
 
-        if self.flipFrontBackCheck.isChecked():
-            self.comm.moveXAxisDown(Config.JOG_SPEED_Y)
+        if self.flipFrontBackCheck.isChecked() != Config.INVERT_X_DIR:
+            self.comm.moveXAxisDown(Config.JOG_SPEED_X)
         else:
-            self.comm.moveXAxisUp(Config.JOG_SPEED_Y)
+            self.comm.moveXAxisUp(Config.JOG_SPEED_X)
         return
 
 
     def __moveDown(self):
         """ Move the Z-axis in the downward direction"""
 
-        if Config.INVERT_DIR:
+        if Config.INVERT_Z_DIR:
             self.comm.moveZAxisDown(Config.JOG_SPEED_Z)
         else:
             self.comm.moveZAxisUp(Config.JOG_SPEED_Z)
@@ -79,7 +79,7 @@ class DirectionPanel(QDialog):
     def __moveUp(self):
         """ Move the Z-axis in the upward direction"""
 
-        if Config.INVERT_DIR:
+        if Config.INVERT_Z_DIR:
             self.comm.moveZAxisUp(Config.JOG_SPEED_Z)
         else:
             self.comm.moveZAxisDown(Config.JOG_SPEED_Z)
