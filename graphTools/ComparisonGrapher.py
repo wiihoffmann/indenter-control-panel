@@ -1,4 +1,5 @@
 
+import math
 from graphTools.Grapher import *
 
 
@@ -36,10 +37,17 @@ class ComparisonGrapher(Grapher):
 
         # open the file if it is not already open
         if exists == False:
+            pointSkip = math.ceil(len(data.sample) / Config.GRAPH_MAX_POINTS)
+            if pointSkip == 0:
+                pointSkip = 1
+
             self.openFiles.append(data.filename)
-            self.loadLines.append(self.graph.plot(data.sample, data.load, pen=self.getPen()))
-            self.loadStepLines.append(self.graph.plot(data.step, data.load, pen=self.getPen()))
-            self.stepLines.append(self.graph.plot(data.sample, data.step, pen=self.getPen()))
+            self.loadLines.append(self.graph.plot(data.sample[::pointSkip], data.load[::pointSkip], pen=self.getPen()))
+            self.loadStepLines.append(self.graph.plot(data.step[::pointSkip], data.load[::pointSkip], pen=self.getPen()))
+            self.stepLines.append(self.graph.plot(data.sample[::pointSkip], data.step[::pointSkip], pen=self.getPen()))
+            # if len(self.data.sample) == len(self.data.VASScores):
+            #     self.VASLines.setData(self.data.sample[::pointSkip], self.data[0].VASScores[::pointSkip])
+            #     self.VASStepLines.setData(self.data.step[::pointSkip], self.data[0].VASScores[::pointSkip])
             self.setupTimeSeries()
         return
 
