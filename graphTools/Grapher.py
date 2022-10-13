@@ -49,11 +49,11 @@ class Grapher():
             for i in self.stepLines:
                 i.show()
 
-            # for i in self.VASLines:
-            #     i.show()
+            for i in self.VASLines:
+                i.show()
 
-            # for i in self.VASStepLines:
-            #     i.hide()
+            for i in self.VASStepLines:
+                i.hide()
 
             for i in self.loadStepLines:
                 i.hide()
@@ -68,7 +68,7 @@ class Grapher():
         # set up the graph area
         self.graph.setBackground('w')
         self.graph.setLabel('left', 'Force', units ='N')
-        self.graph.setLabel('right', 'VAS score', units ='')
+        self.graph.setLabel('right', '', units ='')
         self.graph.setLabel('bottom', 'Displacement (x100)', units ='steps')
 
         if self.loadLines != [] and self.stepLines != [] and self.loadStepLines != []:
@@ -78,11 +78,11 @@ class Grapher():
             for i in self.stepLines:
                 i.hide()
 
-            # for i in self.VASLines:
-            #     i.hide()
+            for i in self.VASLines:
+                i.hide()
 
-            # for i in self.VASStepLines:
-            #     i.show()
+            for i in self.VASStepLines:
+                i.show()
 
             for i in self.loadStepLines:
                 i.show()
