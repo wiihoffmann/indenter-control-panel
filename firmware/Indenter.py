@@ -38,6 +38,10 @@ class Indenter():
         return self.lastTestType
 
 
+    def getGrapher(self):
+        return self.graph
+
+
     def loadAndShowResults(self, filename):
         """ Given a file name, load the data in the file and show it in
         the graph area of the UI. 

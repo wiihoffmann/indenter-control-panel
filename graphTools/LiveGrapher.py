@@ -23,6 +23,11 @@ class LiveGrapher(Grapher):
             graphHandle: The pyqtplot widget used in the UI """
         super().__init__(graphHandle)
 
+        # an outside function that is called when a vas score is added/updated
+        self.VASCallback = None
+        # an outside function that is called when a max load value is added/updated
+        self.maxLoadCallback = None
+
         # set up line colors
         self.redPen = pg.mkPen('r', width=Config.GRAPH_LINE_WIDTH)
         self.bluePen = pg.mkPen('b', width=Config.GRAPH_LINE_WIDTH)
@@ -37,6 +42,16 @@ class LiveGrapher(Grapher):
 
         # default to time series when setting up the graph axes
         self.setupTimeSeries()
+        return
+
+
+    def setVASCallback(self, func):
+        self.VASCallback = func
+        return
+
+
+    def setMaxLoadCallback(self, func):
+        self.maxLoadCallback = func
         return
 
 
@@ -164,6 +179,9 @@ class LiveGrapher(Grapher):
         self.data[0].maxLoad.append(uc.rawADCToNewton(maxLoad))
         if self.testIndex > 0:
             self.data[self.testIndex].maxLoad.append(uc.rawADCToNewton(maxLoad))
+        
+        if self.maxLoadCallback != None:
+            self.maxLoadCallback(round(maxLoad/100))   
         return
 
 
@@ -174,6 +192,9 @@ class LiveGrapher(Grapher):
         self.data[0].VASScores.append(VASScore)
         if self.testIndex > 0:
             self.data[self.testIndex].VASScores.append(VASScore)        
+
+        if self.VASCallback != None:
+            self.VASCallback(VASScore)       
         return
 
 
@@ -251,5 +272,7 @@ class LiveGrapher(Grapher):
 
             except Exception as e:
                 print(e)
+        self.setVASCallback(None)
+        self.setMaxLoadCallback(None)
         pipeEndSignal.setAsyncSignal()
         return

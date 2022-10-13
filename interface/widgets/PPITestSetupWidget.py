@@ -18,6 +18,7 @@ class PPITestSetupWidget(QWidget):
         
         super().__init__()
         loadUi(os.path.join(os.getcwd(), "interface/widgets/PPITestControls.ui"), self)
+        self.VAS_LCD.hide()
 
         # the buttons to disable during a measurement
         self.toBlank = [self.backButton, self.startButton, self.positionButton, self.stepRateIncButton, self.stepRateDecButton, 
@@ -53,8 +54,6 @@ class PPITestSetupWidget(QWidget):
 
         # set up the signal handler for the "done" signal from the measurement loop
         self.sigHandler = SignalConnector()
-        
-        print("init basic test setup complete")
         return
 
 
@@ -91,6 +90,13 @@ class PPITestSetupWidget(QWidget):
         return
 
 
+    def updateVASReadout(self, VASScore):
+        self.waitMSG.hide()
+        self.VAS_LCD.show()
+        self.VAS_LCD.display(VASScore)
+        return
+
+
     def startMeasurement(self):
         """ Initiates a stiffness measurement. """
 
@@ -109,6 +115,9 @@ class PPITestSetupWidget(QWidget):
         # disable some buttons during the measurement
         for i in self.toBlank:
             i.setEnabled(False)
+        self.waitMSG.show()
+        self.VAS_LCD.hide()
+        self.indenter.getGrapher().setVASCallback(self.updateVASReadout)
 
         self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal(), repeatCount, PPI_TEST_CODE)
 

@@ -15,7 +15,7 @@ class TemporalSummationTestSetupWidget(QWidget):
 
     def __init__(self, indenter, backButtonCallback):
         self.indenter = indenter
-        
+
         super().__init__()
         loadUi(os.path.join(os.getcwd(), "interface/widgets/temporalSummationTestControls.ui"), self)
 
@@ -47,8 +47,6 @@ class TemporalSummationTestSetupWidget(QWidget):
 
         # set up the signal handler for the "done" signal from the measurement loop
         self.sigHandler = SignalConnector()
-        
-        print("init basic test setup complete")
         return
 
 

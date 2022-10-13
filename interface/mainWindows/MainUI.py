@@ -48,7 +48,7 @@ class MainUI(QMainWindow):
         self.buttonStack.addWidget(self.TemporalSummationTestSetupWidget)
 
         # set up bindings for the buttons
-        self.clearButton.clicked.connect(self.indenter.clearResults)    # clear button
+        self.clearButton.clicked.connect(self.clear)    # clear button
         self.viewButton.clicked.connect(self.indenter.changeView)       # view button
         self.loadButton.clicked.connect(self.loadFile)                  # load button
         self.saveButton.clicked.connect(self.saveFile)                  # save button
@@ -65,7 +65,25 @@ class MainUI(QMainWindow):
         return
 
 
+    def clearLCDreadouts(self, keepLast = False):
+        if(not keepLast or self.indenter.getLastTestType() != PPI_TEST_CODE):
+            self.PPITestSetupWidget.waitMSG.show()
+            self.PPITestSetupWidget.VAS_LCD.hide()
+        
+        if(not keepLast or self.indenter.getLastTestType() != PPT_TEST_CODE):
+            self.PPTTestSetupWidget.waitMSG.show()
+            self.PPTTestSetupWidget.loadLCD.hide()
+        return
+
+
+    def clear(self):
+        self.indenter.clearResults()
+        self.clearLCDreadouts(False)
+        return
+
+
     def goToSetup(self):
+        self.clearLCDreadouts(True)
         if self.regularTestRadioButton.isChecked():
             print("regular")
             self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.regularTestSetupWidget))

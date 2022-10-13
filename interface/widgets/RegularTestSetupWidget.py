@@ -65,7 +65,6 @@ class RegularTestSetupWidget(QWidget):
         # set up the signal handler for the "done" signal from the measurement loop
         self.sigHandler = SignalConnector()
         
-        print("init basic test setup complete")
         return
 
 
