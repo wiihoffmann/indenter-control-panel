@@ -45,9 +45,9 @@ class ComparisonGrapher(Grapher):
             self.loadLines.append(self.graph.plot(data.sample[::pointSkip], data.load[::pointSkip], pen=self.getPen()))
             self.loadStepLines.append(self.graph.plot(data.step[::pointSkip], data.load[::pointSkip], pen=self.getPen()))
             self.stepLines.append(self.graph.plot(data.sample[::pointSkip], data.step[::pointSkip], pen=self.getPen()))
-            # if len(self.data.sample) == len(self.data.VASScores):
-            #     self.VASLines.setData(self.data.sample[::pointSkip], self.data[0].VASScores[::pointSkip])
-            #     self.VASStepLines.setData(self.data.step[::pointSkip], self.data[0].VASScores[::pointSkip])
+            if len(data.sample) == len(data.VASScores):
+                self.VASLines.append(self.graph.plot(data.sample[::pointSkip], data.VASScores[::pointSkip], pen=self.getPen()))
+                self.VASStepLines.append(self.graph.plot(data.step[::pointSkip], data.VASScores[::pointSkip], pen=self.getPen()))
             self.setupTimeSeries()
         return
 
