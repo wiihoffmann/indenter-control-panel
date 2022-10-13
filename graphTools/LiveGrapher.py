@@ -23,9 +23,15 @@ class LiveGrapher(Grapher):
             graphHandle: The pyqtplot widget used in the UI """
         super().__init__(graphHandle)
 
+        # an outside function that is called when a vas score is added/updated
+        self.VASCallback = None
+        # an outside function that is called when a max load value is added/updated
+        self.maxLoadCallback = None
+
         # set up line colors
         self.redPen = pg.mkPen('r', width=Config.GRAPH_LINE_WIDTH)
         self.bluePen = pg.mkPen('b', width=Config.GRAPH_LINE_WIDTH)
+        self.greenPen = pg.mkPen('g', width=Config.GRAPH_LINE_WIDTH)
 
         self.data = [MakeBlankMeasurementData()]
         self.testIndex = 0
@@ -33,10 +39,22 @@ class LiveGrapher(Grapher):
         self.loadLines.append(self.graph.plot(self.data[self.testIndex].sample, self.data[self.testIndex].load, pen=self.redPen))
         self.stepLines.append(self.graph.plot(self.data[self.testIndex].sample, self.data[self.testIndex].step, pen=self.bluePen))
         self.loadStepLines.append(self.graph.plot(self.data[self.testIndex].step, self.data[self.testIndex].load, pen=self.redPen))
+        self.VASLines.append(self.graph.plot(range(len(self.data[self.testIndex].VASScores)), self.data[self.testIndex].VASScores, pen=self.greenPen))
+        self.VASStepLines.append(self.graph.plot(range(len(self.data[self.testIndex].VASScores)), self.data[self.testIndex].VASScores, pen=self.greenPen))
         self.lock = threading.Lock() # lock for controlling access to graph data
 
         # default to time series when setting up the graph axes
         self.setupTimeSeries()
+        return
+
+
+    def setVASCallback(self, func):
+        self.VASCallback = func
+        return
+
+
+    def setMaxLoadCallback(self, func):
+        self.maxLoadCallback = func
         return
 
 
@@ -73,14 +91,23 @@ class LiveGrapher(Grapher):
         if pointSkip == 0:
             pointSkip = 1
 
-
         # if we are showing a time series
         if(self.view == 0):
             self.loadLines[0].setData(self.data[0].sample[::pointSkip], self.data[0].load[::pointSkip])
             self.stepLines[0].setData(self.data[0].sample[::pointSkip], self.data[0].step[::pointSkip])
+
+            # add a VAS line if the test has it
+            if len(self.data[0].sample) == len(self.data[0].VASScores):
+                self.VASLines[0].setData(self.data[0].sample[::pointSkip], self.data[0].VASScores[::pointSkip])
+        
         # if we are showing the force as a function of displacement
         elif(self.view == 1):
             self.loadStepLines[0].setData(self.data[0].step[::pointSkip], self.data[0].load[::pointSkip])
+            
+            # add a VAS-step line if the test has it
+            if len(self.data[0].sample) == len(self.data[0].VASScores):
+                self.VASStepLines[0].setData(self.data[0].step[::pointSkip], self.data[0].VASScores[::pointSkip])
+
         self.lock.release()
         return
 
@@ -150,9 +177,18 @@ class LiveGrapher(Grapher):
 
         self.lock.acquire()
         self.data = [graphData]
-        self.loadLines[0].setData(self.data[0].sample, self.data[0].load)
-        self.stepLines[0].setData(self.data[0].sample, self.data[0].step)
-        self.loadStepLines[0].setData(self.data[0].step, self.data[0].load)
+
+        pointSkip = math.ceil(len(self.data[0].sample) / Config.GRAPH_MAX_POINTS)
+        if pointSkip == 0:
+            pointSkip = 1
+
+        self.loadLines[0].setData(self.data[0].sample[::pointSkip], self.data[0].load[::pointSkip])
+        self.stepLines[0].setData(self.data[0].sample[::pointSkip], self.data[0].step[::pointSkip])
+        self.loadStepLines[0].setData(self.data[0].step[::pointSkip], self.data[0].load[::pointSkip])
+        # add a VAS line if the test has it
+        if len(self.data[0].sample) == len(self.data[0].VASScores):
+            self.VASLines[0].setData(self.data[0].sample[::pointSkip], self.data[0].VASScores[::pointSkip])
+            self.VASStepLines[0].setData(self.data[0].step[::pointSkip], self.data[0].VASScores[::pointSkip])
         self.lock.release()
         
         # default back to a time series
@@ -164,6 +200,9 @@ class LiveGrapher(Grapher):
         self.data[0].maxLoad.append(uc.rawADCToNewton(maxLoad))
         if self.testIndex > 0:
             self.data[self.testIndex].maxLoad.append(uc.rawADCToNewton(maxLoad))
+        
+        if self.maxLoadCallback != None:
+            self.maxLoadCallback(round(maxLoad/100))   
         return
 
 
@@ -174,6 +213,9 @@ class LiveGrapher(Grapher):
         self.data[0].VASScores.append(VASScore)
         if self.testIndex > 0:
             self.data[self.testIndex].VASScores.append(VASScore)        
+
+        if self.VASCallback != None:
+            self.VASCallback(VASScore)       
         return
 
 
@@ -209,6 +251,8 @@ class LiveGrapher(Grapher):
         self.loadLines.append(self.graph.plot(self.data[self.testIndex].sample, self.data[self.testIndex].load, pen=self.redPen))
         self.stepLines.append(self.graph.plot(self.data[self.testIndex].sample, self.data[self.testIndex].step, pen=self.bluePen))
         self.loadStepLines.append(self.graph.plot(self.data[self.testIndex].step, self.data[self.testIndex].load, pen=self.redPen))
+        self.VASLines.append(self.graph.plot(range(len(self.data[self.testIndex].VASScores)), self.data[self.testIndex].VASScores, pen=self.greenPen))
+        self.VASStepLines.append(self.graph.plot(range(len(self.data[self.testIndex].VASScores)), self.data[self.testIndex].VASScores, pen=self.greenPen))
         self.lock.release()
         self.refreshPlot()
         return
@@ -251,5 +295,7 @@ class LiveGrapher(Grapher):
 
             except Exception as e:
                 print(e)
+        self.setVASCallback(None)
+        self.setMaxLoadCallback(None)
         pipeEndSignal.setAsyncSignal()
         return

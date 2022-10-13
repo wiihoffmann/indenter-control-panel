@@ -18,6 +18,7 @@ class PPTTestSetupWidget(QWidget):
         
         super().__init__()
         loadUi(os.path.join(os.getcwd(), "interface/widgets/PPTTestControls.ui"), self)
+        self.loadLCD.hide()
 
         # the buttons to disable during a measurement
         self.toBlank = [self.backButton, self.startButton, self.positionButton, self.stepRateIncButton, self.stepRateDecButton, 
@@ -47,8 +48,6 @@ class PPTTestSetupWidget(QWidget):
 
         # set up the signal handler for the "done" signal from the measurement loop
         self.sigHandler = SignalConnector()
-        
-        print("init basic test setup complete")
         return
 
 
@@ -85,6 +84,13 @@ class PPTTestSetupWidget(QWidget):
         return
 
 
+    def updateMaxLoadReadout(self, maxLoad):
+        self.waitMSG.hide()
+        self.loadLCD.show()
+        self.loadLCD.display(maxLoad)
+        return
+
+
     def startMeasurement(self):
         """ Initiates a stiffness measurement. """
 
@@ -103,6 +109,9 @@ class PPTTestSetupWidget(QWidget):
         # disable some buttons during the measurement
         for i in self.toBlank:
             i.setEnabled(False)
+        self.waitMSG.show()
+        self.loadLCD.hide()
+        self.indenter.getGrapher().setMaxLoadCallback(self.updateMaxLoadReadout)
 
         self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal(), repeatCount, PPT_TEST_CODE)
 
