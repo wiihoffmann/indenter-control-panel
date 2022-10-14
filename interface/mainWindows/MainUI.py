@@ -85,20 +85,16 @@ class MainUI(QMainWindow):
     def goToSetup(self):
         self.clearLCDreadouts(True)
         if self.regularTestRadioButton.isChecked():
-            print("regular")
             self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.regularTestSetupWidget))
 
         elif self.PPITestRadioButton.isChecked():
             self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.PPITestSetupWidget))
-            print("PPI test")
 
         elif self.PPTTestRadioButton.isChecked():
-            print("PPT test")
             self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.PPTTestSetupWidget))
 
         elif self.temporalSummationTestRadioButton.isChecked():
             self.buttonStack.setCurrentIndex(self.buttonStack.indexOf(self.TemporalSummationTestSetupWidget))
-            print("temporal summation test")
 
         return
 

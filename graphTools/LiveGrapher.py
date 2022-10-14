@@ -76,7 +76,6 @@ class LiveGrapher(Grapher):
         self.timer.setInterval(Config.GRAPH_REFRESH_DELAY)
         self.timer.timeout.connect(self.refreshPlot)
         self.timer.start()
-        print("timer started")
 
 
     def stopLiveUpdate(self):
@@ -230,7 +229,6 @@ class LiveGrapher(Grapher):
 
 
     def splitTestData(self):
-        print("live grapher got the N")
         # if this is the first split, copy the first trial before splitting
         if self.testIndex == 0:
             self.data.append(copy.deepcopy(self.data[0]))
