@@ -29,9 +29,11 @@ def openMainWindow(self):
 
 
 if __name__ == "__main__":
+    print("Starting control panel ... ", end = "")
     # launch the main program
     app = QApplication([])
     window = MainUI(openCompareWindow)
     window.show()
+    print("done!")
     app.exec_()
 
