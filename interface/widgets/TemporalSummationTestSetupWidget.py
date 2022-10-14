@@ -30,17 +30,17 @@ class TemporalSummationTestSetupWidget(QWidget):
         self.positionButton.clicked.connect(self.__openPositionWindow)  # positioning button
 
         # set up the max load buttons / readout
-        self.maxLoadDisplay.setText(str(Config.DEFAULT_MAX_LOAD) + " N")
+        self.maxLoadDisplay.setText(str(Config.TEMP_SUMM_DEFAULT_MAX_LOAD) + " N")
         self.maxLoadIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_LOAD, Config.MAX_LOAD, Config.MAX_LOAD_INCREMENT_SIZE, self.maxLoadDisplay))
         self.maxLoadDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_LOAD, Config.MAX_LOAD, -1 * Config.MAX_LOAD_INCREMENT_SIZE, self.maxLoadDisplay))
 
         # set up the step rate buttons / readout
-        self.stepRateDisplay.setText(str(Config.DEFAULT_STEP_RATE))
+        self.stepRateDisplay.setText(str(Config.TEMP_SUMM_DEFAULT_STEP_RATE))
         self.stepRateIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
         self.stepRateDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_STEP_RATE, Config.MAX_STEP_RATE, -1 * Config.STEP_RATE_INCREMENT_SIZE, self.stepRateDisplay))
 
         # set up repeat count buttons
-        self.repeatCountDisplay.setText(str(Config.DEFAULT_REPEAT_COUNT))
+        self.repeatCountDisplay.setText(str(Config.TEMP_SUMM_DEFAULT_REPEAT_COUNT))
         self.repeatCountIncButton.pressed.connect( lambda: self.updateReadout(Config.MIN_REPEAT_COUNT, Config.MAX_REPEAT_COUNT, Config.REPEAT_COUNT_INCREMENT_SIZE, self.repeatCountDisplay))
         self.repeatCountDecButton.pressed.connect( lambda: self.updateReadout(Config.MIN_REPEAT_COUNT, Config.MAX_REPEAT_COUNT, -1 * Config.REPEAT_COUNT_INCREMENT_SIZE, self.repeatCountDisplay))
  
