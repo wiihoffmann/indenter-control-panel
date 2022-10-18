@@ -134,7 +134,7 @@ def measurementLoop(params, comm, dataQueue, doneSignal):
         comm.sendMeasurementBegin(params)
 
         command = comm.readCommand()
-        while command != MEASUREMENT_COMPLETE_CODE:
+        while command != MEASUREMENT_COMPLETE_CODE and command != EMERGENCY_STOP_CODE:
             if command == REGULAR_DATA_POINT_CODE:
                 dataQueue.put(REGULAR_DATA_POINT_CODE)
                 dataQueue.put(comm.readDataPoint())
@@ -156,6 +156,11 @@ def measurementLoop(params, comm, dataQueue, doneSignal):
             else:
                 print("Got unexpected command while performing measurement! Got command: " + command)
             command = comm.readCommand()
+
+        if command == EMERGENCY_STOP_CODE:
+            print("got the e stop code")
+        else:
+            print ("regular stop")
 
     # stop the indenter if any exceptions occur
     except Exception as e:

@@ -6,7 +6,7 @@ import dataTools.MeasurementParams
 from struct import *
 
 ERROR_CODE = 'E'
-EMERGENCY_STOP_CODE = 'H'
+EMERGENCY_STOP_CODE = 'S'
 MOVE_X_AXIS_CODE = 'X'
 MOVE_Y_AXIS_CODE = 'Y'
 MOVE_Z_AXIS_CODE = 'Z'
