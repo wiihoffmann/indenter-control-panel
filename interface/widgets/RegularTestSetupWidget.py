@@ -131,7 +131,7 @@ class RegularTestSetupWidget(QWidget):
             for i in self.toBlank:
                 i.setEnabled(False)
 
-            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal(), repeatCount, REGULAR_TEST_CODE)
+            self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal(), repeatCount, REGULAR_TEST_CODE, self.vacuumCheck.isChecked())
 
 
     def postTest(self):
