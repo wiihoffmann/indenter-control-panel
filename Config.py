@@ -43,9 +43,10 @@ MAX_REPEAT_COUNT = 15                   # steps/second
 REPEAT_COUNT_INCREMENT_SIZE = 1         # steps/second
 
 ### misc. measurement settings ####
-TOLERANCE = 2.5                 # newtons (Max deviance from target load when holding.)
-HOLD_STEP_UP_RATE = 100         # steps/second (when holding, how fast can we move up to maintain the target load)
-HOLD_STEP_DOWN_RATE = 100       # steps/second (when holding, how fast can we move down to maintain the target load)
+TOLERANCE = 2.5                         # newtons (Max deviance from target load when holding.)
+HOLD_STEP_UP_RATE = 100                 # steps/second (when holding, how fast can we move up to maintain the target load)
+HOLD_STEP_DOWN_RATE = 100               # steps/second (when holding, how fast can we move down to maintain the target load)
+RUN_VACUUM_CONSTANT_DEFAULT = False     # default setting for if the vacuum should run constantly during a regular stiffness measurement
 
 ##### graph display settings #####
 GRAPH_COLORS = 10               # how many colors we can use on the graph comparison screen
@@ -57,7 +58,7 @@ GRAPH_MAX_POINTS = 8000         # The max number of data points to show on the l
 EMERGENCY_STOP_STEP_RATE = 2000    # steps/second (How fast to retract indenter during an emergency stop.)
 JOG_SPEED_X = 1600                 # steps/second (Manual move up/down speed.)
 JOG_SPEED_Y = 1600                 # steps/second (Manual move left/right speed.)
-JOG_SPEED_Z = 1200                 # steps/second (Manual move forward/backward speed.)
+JOG_SPEED_Z = 1600                 # steps/second (Manual move forward/backward speed.)
 INVERT_X_DIR = True                # Set to True if the indenter moves closer when it should move farther away
 INVERT_Y_DIR = True                # Set to True if the indenter moves left when it should move right
 INVERT_Z_DIR = True                # Set to True if the indenter moves up when it should move down

@@ -1,5 +1,6 @@
 
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Value
+from ctypes import *
 
 #custom class imports
 from firmware.Communicator import *
@@ -31,6 +32,7 @@ class Indenter():
         self.measurementHandle = None
         
         self.lastTestType = bytes("", 'utf-8')
+        self.lastMeasurementEStopped = Value(c_bool, False)
         return
 
 
@@ -40,6 +42,10 @@ class Indenter():
 
     def getGrapher(self):
         return self.graph
+
+
+    def wasMeasurementEStopped(self):
+        return self.lastMeasurementEStopped.value
 
 
     def loadAndShowResults(self, filename):
@@ -83,7 +89,7 @@ class Indenter():
         return self.measurementHandle != None and self.measurementHandle.is_alive()
 
 
-    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal, iterations, measurementType):
+    def takeStiffnessMeasurement(self, preload, preloadTime, maxLoad, maxLoadTime, stepRate, doneSignal, iterations, measurementType, constantVacuum = False):
         """ Initiates the process of taking a new stffness measurement.
         Parameters:
             preload (int): how much preload to apply (newtons)
@@ -111,15 +117,16 @@ class Indenter():
             params.stepDelay = int(uc.stepRateToMicros(stepRate))
             params.iterations = iterations
             params.testType = measurementType
+            params.constantVacuum = constantVacuum
 
             # launch a process to handle taking the stiffness measurement
-            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(params, self.comm, dataQueue, doneSignal))
+            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(params, self.comm, dataQueue, doneSignal, self.lastMeasurementEStopped))
             self.measurementHandle.start()
         return
 
 
 
-def measurementLoop(params, comm, dataQueue, doneSignal):
+def measurementLoop(params, comm, dataQueue, doneSignal, estopped):
     """ The process which performs the stiffness measurement.
     Parameters:
         preload (int): how much preload to apply (newtons)
@@ -131,10 +138,11 @@ def measurementLoop(params, comm, dataQueue, doneSignal):
         emergencySignal (Event): a signal used to start an emergency stop."""
     
     try:
+        estopped.value = False
         comm.sendMeasurementBegin(params)
 
         command = comm.readCommand()
-        while command != MEASUREMENT_COMPLETE_CODE:
+        while command != MEASUREMENT_COMPLETE_CODE and command != EMERGENCY_STOP_CODE:
             if command == REGULAR_DATA_POINT_CODE:
                 dataQueue.put(REGULAR_DATA_POINT_CODE)
                 dataQueue.put(comm.readDataPoint())
@@ -156,6 +164,9 @@ def measurementLoop(params, comm, dataQueue, doneSignal):
             else:
                 print("Got unexpected command while performing measurement! Got command: " + command)
             command = comm.readCommand()
+
+        if command == EMERGENCY_STOP_CODE:
+            estopped.value = True
 
     # stop the indenter if any exceptions occur
     except Exception as e:

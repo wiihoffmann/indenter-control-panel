@@ -116,7 +116,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>30</y>
+         <y>40</y>
          <width>251</width>
          <height>23</height>
         </rect>
@@ -134,8 +134,8 @@
       <widget class="QRadioButton" name="regularTestRadioButton">
        <property name="geometry">
         <rect>
-         <x>270</x>
-         <y>30</y>
+         <x>240</x>
+         <y>80</y>
          <width>181</width>
          <height>23</height>
         </rect>
@@ -154,7 +154,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>60</y>
+         <y>80</y>
          <width>221</width>
          <height>23</height>
         </rect>
@@ -172,8 +172,8 @@
       <widget class="QRadioButton" name="temporalSummationTestRadioButton">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>90</y>
+         <x>240</x>
+         <y>40</y>
          <width>251</width>
          <height>23</height>
         </rect>

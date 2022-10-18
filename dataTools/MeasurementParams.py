@@ -18,5 +18,5 @@ class MeasurementParams:
     eStopStepDelay = int(uc.stepRateToMicros(Config.EMERGENCY_STOP_STEP_RATE) ) #   uint16_t eStopStepDelay;
     tolerance = int(uc.NewtonToRawADC(Config.TOLERANCE))                        #   uint16_t targetTolerance;
     iterations = 1                                                              #   how many times to run the test
-    flipDirection = Config.INVERT_Z_DIR                                           #   bool flip indenter direction
-
+    flipDirection = Config.INVERT_Z_DIR                                         #   bool flip indenter direction
+    constantVacuum = False                                                      #   should the vacuum run constantly in a regular measurement?

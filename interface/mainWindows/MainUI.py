@@ -1,15 +1,12 @@
 
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import *
-from threading import Timer
-from datetime import datetime
-import subprocess
 import sys
 import os
 
 #custom class imports
 from firmware.Indenter import *
 from interface.dialogs.DirectionPanel import *
+from interface.dialogs.FileDialog import *
 from interface.widgets.RegularTestSetupWidget import *
 from interface.widgets.PPTTestSetupWidget import *
 from interface.widgets.PPITestSetupWidget import *
@@ -35,6 +32,9 @@ class MainUI(QMainWindow):
         # initialize the firmware/back end functionality
         self.indenter = Indenter(self.plotWidget)
 
+        # initialize widget for saving and loading files
+        self.fileDialog = FileDialog(self)
+
         # build the control widgets
         self.regularTestSetupWidget = RegularTestSetupWidget(self.indenter, lambda: self.buttonStack.setCurrentIndex(0))
         self.PPTTestSetupWidget = PPTTestSetupWidget(self.indenter, lambda: self.buttonStack.setCurrentIndex(0))
@@ -48,7 +48,7 @@ class MainUI(QMainWindow):
         self.buttonStack.addWidget(self.TemporalSummationTestSetupWidget)
 
         # set up bindings for the buttons
-        self.clearButton.clicked.connect(self.clear)    # clear button
+        self.clearButton.clicked.connect(self.clear)                    # clear button
         self.viewButton.clicked.connect(self.indenter.changeView)       # view button
         self.loadButton.clicked.connect(self.loadFile)                  # load button
         self.saveButton.clicked.connect(self.saveFile)                  # save button
@@ -99,55 +99,9 @@ class MainUI(QMainWindow):
         return
 
 
-    def launchKeyboard(self):
-        # if Config.FULLSCREEN_MODE: self.showMaximized()
-        subprocess.run(["xvkbd", "-no-keypad", "-window", "Save measurement to file"])
-        # if Config.FULLSCREEN_MODE: self.showFullScreen()
-        return
-
-
-    def getDirectory(self):
-        """Returns a string to the directory in which files should be stored.
-        Attempts to store to a USB stick before storing locally."""
-
-        # check if a USB stick is inserted and set default path to it
-        if os.path.isdir("/media/pi"):
-            dirs = os.listdir("/media/pi")
-            if len(dirs) != 0:
-                return os.path.join("/media/pi", dirs[0]) + "/"
-        # else save locally
-        return os.path.join(os.getcwd(), "Collected Data/")
-
-
-    def buildFileName(self):
-        # set default file name to the current date/time
-        now = datetime.now()
-        # dd-mm-YY H-M-S
-        dt_string = now.strftime("%Y-%m-%d %H-%M-%S")
-        print(self.indenter.getLastTestType())
-        if(self.indenter.getLastTestType() == REGULAR_TEST_CODE):
-            return dt_string + " regular"
-        elif(self.indenter.getLastTestType() == PPI_TEST_CODE):
-            return dt_string + " PPI"
-        elif(self.indenter.getLastTestType() == PPT_TEST_CODE):
-            return dt_string + " PPT"
-        elif(self.indenter.getLastTestType() == TEMPORAL_SUMMATION_TEST_CODE):
-            return dt_string + " Temporal Summation"
-        return dt_string
-
-
     def saveFile(self):
         """ Start a dialog to save the current graph data into a CSV file. """
-        
-        # open the on screen keyboard once the next window has had a chance to open
-        if Config.SHOW_KEYBOARD:
-            Timer(.25, self.launchKeyboard).start()
-
-        # start the dialog for picking a directory and file name
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        filename, _ = QFileDialog.getSaveFileName(
-            self, "Save measurement to file", self.getDirectory() + self.buildFileName(), "CSV File (*.csv)", options=options)
+        filename = self.fileDialog.showSaveDialog(self.indenter)
         
         # save data if the file name is valid
         if filename:
@@ -157,13 +111,8 @@ class MainUI(QMainWindow):
 
     def loadFile(self):
         """ Start a dialog to load data from a CSV file. """
+        filename = self.fileDialog.showLoadDialog()
 
-        # start the dialog for picking a directory and file name
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        filename, _ = QFileDialog.getOpenFileName(
-            self, "Load measurement from file", self.getDirectory(), "CSV Files (*.csv);;All Files (*)", options=options)
-       
         # load data if the file name is valid
         if filename:
             self.indenter.loadAndShowResults(filename)
