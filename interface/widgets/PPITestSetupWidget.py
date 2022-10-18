@@ -132,6 +132,7 @@ class PPITestSetupWidget(QWidget):
         for i in self.toBlank:
             i.setEnabled(True)
 
-        self.fileDialog.showSavePromptDialog(self.indenter)
+        if(not self.indenter.wasMeasurementEStopped()):
+            self.fileDialog.showSavePromptDialog(self.indenter)
         return
 
