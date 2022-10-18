@@ -7,6 +7,7 @@ import Config
 from dataTools.MeasurementParams import *
 from interface.dialogs.DirectionPanel import *
 from interface.dialogs.WarningDialog import *
+from interface.dialogs.FileDialog import*
 from interface.SignalConnector import *
 
 
@@ -64,6 +65,8 @@ class RegularTestSetupWidget(QWidget):
 
         # set up the signal handler for the "done" signal from the measurement loop
         self.sigHandler = SignalConnector()
+        # set up file dialog for save prompt
+        self.fileDialog = FileDialog(self)
         
         return
 
@@ -121,7 +124,7 @@ class RegularTestSetupWidget(QWidget):
         # else start the measurement
         else:
             # set up the signal handler for the done signal
-            self.sigHandler.connect(self.enableButtons)
+            self.sigHandler.connect(self.postTest)
             self.sigHandler.start()
 
             # disable some buttons during the measurement
@@ -131,10 +134,13 @@ class RegularTestSetupWidget(QWidget):
             self.indenter.takeStiffnessMeasurement(preload, preloadTime, maxLoad, maxLoadTime, stepRate, self.sigHandler.getAsyncSignal(), repeatCount, REGULAR_TEST_CODE)
 
 
-    def enableButtons(self):
-        """ Enables the buttons when the measurement completes. """
+    def postTest(self):
+        """ Enables the buttons when the measurement completes. Prompts to save file."""
+        self.sigHandler.disconnect()
 
         for i in self.toBlank:
             i.setEnabled(True)
+
+        self.fileDialog.showSavePromptDialog(self.indenter)
         return
 

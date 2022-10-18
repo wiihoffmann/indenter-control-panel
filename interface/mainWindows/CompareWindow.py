@@ -1,11 +1,11 @@
 
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import *
-import sys
 import os
 
 #custom class imports
 from graphTools.ComparisonGrapher import *
+from interface.dialogs.FileDialog import *
 from dataTools.Logger import *
 
 
@@ -28,6 +28,8 @@ class CompareWindow(QMainWindow):
         self.grapher = ComparisonGrapher(self.plotWidget)
         # initialize the logger for loading files
         self.logger = Logger()
+        # initialize widget for saving and loading files
+        self.fileDialog = FileDialog(self)
 
         # set up bindings for the buttons
         self.clearButton.clicked.connect(self.grapher.clear)        # clear button
@@ -37,39 +39,13 @@ class CompareWindow(QMainWindow):
         return
 
 
-    def getDirectory(self):
-        """Returns a string to the directory in which files should be stored.
-        Attempts to store to a USB stick before storing locally."""
-
-        # check if a USB stick is inserted and set default path to it
-        if os.path.isdir("/media/pi"):
-            dirs = os.listdir("/media/pi")
-            if len(dirs) != 0:
-                return os.path.join("/media/pi", dirs[0]) + "/"
-        # else save locally
-        return os.path.join(os.getcwd(), "Collected Data/")
-
-
     def loadFile(self):
         """ Start a dialog to load data from a CSV file. """
-
-        # start the dialog for picking a directory and file name
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        filename, _ = QFileDialog.getOpenFileName(
-            self, "Load measurement from file", self.getDirectory(), "CSV Files (*.csv);;All Files (*)", options=options)
-       
+        filename = self.fileDialog.showLoadDialog()
+    
         # load data if the file name is valid
         if filename:
             measurementData = self.logger.loadFile(filename)
             self.grapher.addDataSet(measurementData)            
-
-        return
-
-
-    def exitProgram(self):
-        """ Quits the program. """
-
-        sys.exit()
         return
 
