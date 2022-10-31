@@ -6,7 +6,7 @@ STEP_HEADER = "Step (steps)"
 LOAD_HEADER = "Load (N)"
 STAGE_HEADER = "Stage"
 VAS_HEADER = "VAS score (1-100)"
-THRESHOLD_HEADER = "Pain threshold (kg)"
+THRESHOLD_HEADER = "Pain threshold (N)"
 
 class Logger():
     """ Data logger for loading/saving CSV files
