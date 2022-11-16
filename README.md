@@ -4,8 +4,8 @@ The codebase for the spinal stiffness indenter - a device for taking bulk stiffn
 # Setup instructions (quick)
 1. Get the code from this repo and cd into the directory:
    ```
-   git clone https://github.com/wiihoffmann/spinal-stiffness-indenter
-   cd spinal-stiffness-indenter
+   git clone https://github.com/wiihoffmann/indenter-control-panel
+   cd indenter-control-panel
    ```
 2. Run the setup script:
    ```
@@ -54,10 +54,10 @@ The codebase for the spinal stiffness indenter - a device for taking bulk stiffn
    ```
 4. Get the code from this repo:
    ```
-   git clone https://github.com/wiihoffmann/indenter-3axis-arduino
+   git clone https://github.com/wiihoffmann/indenter-control-panel
    ```
 5. Make sure you are in the right directory and run the code:
    ```
-   cd indenter-3axis-arduino
+   cd indenter-control-panel
    ./main.py
    ```
