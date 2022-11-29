@@ -176,5 +176,8 @@ def measurementLoop(params, comm, dataQueue, doneSignal, estopped):
     finally:
         dataQueue.put(None)
         doneSignal.set()
+    
+    comm.flushSerial()
+
     return
 
