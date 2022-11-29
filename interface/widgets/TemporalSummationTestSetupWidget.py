@@ -7,6 +7,7 @@ import Config
 from dataTools.MeasurementParams import *
 from interface.dialogs.DirectionPanel import *
 from interface.dialogs.WarningDialog import *
+from interface.dialogs.ErrorDialog import *
 from interface.dialogs.FileDialog import*
 from interface.SignalConnector import *
 
@@ -123,7 +124,12 @@ class TemporalSummationTestSetupWidget(QWidget):
         for i in self.toBlank:
             i.setEnabled(True)
 
-        if(not self.indenter.wasMeasurementEStopped()):
+        if(not self.indenter.wasMeasurementEStopped() and self.indenter.wasMeasurementSuccessful()):
             self.fileDialog.showSavePromptDialog(self.indenter)
+        if(not self.indenter.wasMeasurementEStopped() and not self.indenter.wasMeasurementSuccessful()):
+            dlg = ErrorDialog(self)
+            dlg.exec()
+            dlg.raise_()
+
         return
 

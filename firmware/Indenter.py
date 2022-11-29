@@ -33,6 +33,7 @@ class Indenter():
         
         self.lastTestType = bytes("", 'utf-8')
         self.lastMeasurementEStopped = Value(c_bool, False)
+        self.lastMeasurementSuccess = Value(c_bool, False)
         return
 
 
@@ -46,6 +47,10 @@ class Indenter():
 
     def wasMeasurementEStopped(self):
         return self.lastMeasurementEStopped.value
+
+
+    def wasMeasurementSuccessful(self):
+        return self.lastMeasurementSuccess.value
 
 
     def loadAndShowResults(self, filename):
@@ -120,13 +125,13 @@ class Indenter():
             params.constantVacuum = constantVacuum
 
             # launch a process to handle taking the stiffness measurement
-            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(params, self.comm, dataQueue, doneSignal, self.lastMeasurementEStopped))
+            self.measurementHandle = Process(name = 'measurementLoop', target = measurementLoop, args=(params, self.comm, dataQueue, doneSignal, self.lastMeasurementEStopped, self.lastMeasurementSuccess))
             self.measurementHandle.start()
         return
 
 
 
-def measurementLoop(params, comm, dataQueue, doneSignal, estopped):
+def measurementLoop(params, comm, dataQueue, doneSignal, estopped, successful):
     """ The process which performs the stiffness measurement.
     Parameters:
         preload (int): how much preload to apply (newtons)
@@ -139,6 +144,7 @@ def measurementLoop(params, comm, dataQueue, doneSignal, estopped):
     
     try:
         estopped.value = False
+        successful.value = False
         comm.sendMeasurementBegin(params)
 
         command = comm.readCommand()
@@ -167,6 +173,11 @@ def measurementLoop(params, comm, dataQueue, doneSignal, estopped):
 
         if command == EMERGENCY_STOP_CODE:
             estopped.value = True
+            comm.readInt()
+
+        if command == MEASUREMENT_COMPLETE_CODE:
+            successful.value = True
+            comm.readInt()
 
     # stop the indenter if any exceptions occur
     except Exception as e:
@@ -178,6 +189,6 @@ def measurementLoop(params, comm, dataQueue, doneSignal, estopped):
         doneSignal.set()
     
     comm.flushSerial()
-
+    print("last command was " + command)
     return
 

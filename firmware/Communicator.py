@@ -50,13 +50,17 @@ class Communicator:
                         # wait for arduino to be ready
                         while(self.readCommand() != CONTROLLER_READY_CODE):
                             time.sleep(0)
+                        self.readInt()
                         return
             raise RuntimeError("Could not detect and connect to the Arduino. Is it connected?")
 
 
     def flushSerial(self):
+        bytesAvail = arduino.in_waiting
+        flushedData = arduino.read(bytesAvail) 
         arduino.flush()
-        print("flushed at " + str(datetime.now().strftime("%H:%M:%S")))
+        print("flushed " + str(bytesAvail) + " bytes at " + str(datetime.now().strftime("%H:%M:%S")))
+        print("flushed " + str(flushedData))
 
 
     def __sendCommand(self, preamble, num=0000):
@@ -139,6 +143,7 @@ class Communicator:
 
 
     def emergencyStop(self, stepRate):
+        print("sending an e-stop")
         self.__sendCommand('*S', uc.stepRateToMicros(stepRate))
 
 
