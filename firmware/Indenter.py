@@ -189,6 +189,5 @@ def measurementLoop(params, comm, dataQueue, doneSignal, estopped, successful):
         doneSignal.set()
     
     comm.flushSerial()
-    print("last command was " + command)
     return
 

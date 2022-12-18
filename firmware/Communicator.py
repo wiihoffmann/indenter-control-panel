@@ -4,8 +4,6 @@ import serial.tools.list_ports
 import dataTools.UnitConverter as uc
 import dataTools.MeasurementParams
 from struct import *
-
-
 from datetime import datetime
 
 
@@ -59,8 +57,9 @@ class Communicator:
         bytesAvail = arduino.in_waiting
         flushedData = arduino.read(bytesAvail) 
         arduino.flush()
-        print("flushed " + str(bytesAvail) + " bytes at " + str(datetime.now().strftime("%H:%M:%S")))
-        print("flushed " + str(flushedData))
+        if bytesAvail > 0:
+            print("flushed " + str(bytesAvail) + " bytes at " + str(datetime.now().strftime("%H:%M:%S")))
+            print("flushed bytes: " + str(flushedData))
 
 
     def __sendCommand(self, preamble, num=0000):
@@ -143,7 +142,6 @@ class Communicator:
 
 
     def emergencyStop(self, stepRate):
-        print("sending an e-stop")
         self.__sendCommand('*S', uc.stepRateToMicros(stepRate))
 
 

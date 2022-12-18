@@ -43,7 +43,6 @@ class FileDialog():
         now = datetime.now()
         # dd-mm-YY H-M-S
         dt_string = now.strftime("%Y-%m-%d %H-%M-%S")
-        print(indenter.getLastTestType())
         if(indenter.getLastTestType() == REGULAR_TEST_CODE):
             return dt_string + " regular"
         elif(indenter.getLastTestType() == PPI_TEST_CODE):
