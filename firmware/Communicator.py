@@ -4,6 +4,8 @@ import serial.tools.list_ports
 import dataTools.UnitConverter as uc
 import dataTools.MeasurementParams
 from struct import *
+from datetime import datetime
+
 
 ERROR_CODE = 'E'
 EMERGENCY_STOP_CODE = 'S'
@@ -46,8 +48,18 @@ class Communicator:
                         # wait for arduino to be ready
                         while(self.readCommand() != CONTROLLER_READY_CODE):
                             time.sleep(0)
+                        self.readInt()
                         return
             raise RuntimeError("Could not detect and connect to the Arduino. Is it connected?")
+
+
+    def flushSerial(self):
+        bytesAvail = arduino.in_waiting
+        flushedData = arduino.read(bytesAvail) 
+        arduino.flush()
+        if bytesAvail > 0:
+            print("flushed " + str(bytesAvail) + " bytes at " + str(datetime.now().strftime("%H:%M:%S")))
+            print("flushed bytes: " + str(flushedData))
 
 
     def __sendCommand(self, preamble, num=0000):
@@ -106,6 +118,7 @@ class Communicator:
 
     def sendMeasurementBegin(self, params: dataTools.MeasurementParams):
         # convert from steps/second to micros/step
+        self.flushSerial()
         dataToSend = pack("<%dshHhHHHHHHH?c?" % (len(params.preamble)), params.preamble, params.preload, params.preloadTime, params.maxLoad, params.maxLoadTime, params.stepDelay, params.holdDownDelay, params.holdUpDelay, params.eStopStepDelay, params.tolerance, params.iterations, params.flipDirection, params.testType, params.constantVacuum)
         arduino.write(dataToSend)
 
