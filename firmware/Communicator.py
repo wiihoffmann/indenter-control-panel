@@ -43,7 +43,7 @@ class Communicator:
             ports = list(serial.tools.list_ports.comports())
             if len(ports) != 0:
                 for p in ports:
-                    if (p.description is not None and "USB2.0-Ser!" in p.description) or (p.manufacturer is not None and "Arduino" in p.manufacturer):
+                    if (p.description is not None and "USB2.0-Ser!" in p.description) or (p.manufacturer is not None and "Arduino" in p.manufacturer) or (p.description is not None and "USB Serial" in p.description):
                         arduino = serial.Serial(port=p.device, baudrate=1000000, timeout=None)
                         arduino.flush()
 
