@@ -71,8 +71,20 @@ two different loads to the indenter and record the corresponding output voltage.
 calculation assumes that a larger load produces a larger output voltage. """
 # first load/voltage calibration pair
 CAL_READING_1 = 24.77025    # newtons
-CAL_VOLTAGE_1 = 7756.32643  # raw ADC value
+CAL_VOLTAGE_1 = 7283.01907  # raw ADC value
 # second load/voltage calibration pair
-CAL_READING_2 = 103.58379   # newtons
-CAL_VOLTAGE_2 = 15418.93992 # raw ADC value
+CAL_READING_2 = 92.64564    # newtons
+CAL_VOLTAGE_2 = 14931.96064 # raw ADC value
+# calibrating the VAS slider
+VAS_RAW_MIN = 286           # min raw value read from VAS ADC
+VAS_RAW_MAX = 793           # max raw value read from VAS ADC
 
+### Denmark indenter configs ###
+# # first load/voltage calibration pair
+# CAL_READING_1 = 24.77025    # newtons
+# CAL_VOLTAGE_1 = 7756.32643  # raw ADC value
+# # second load/voltage calibration pair
+# CAL_READING_2 = 103.58379   # newtons
+# CAL_VOLTAGE_2 = 15418.93992 # raw ADC value
+# VAS_RAW_MIN = 0             # min raw value read from VAS ADC
+# VAS_RAW_MAX = 1023          # max raw value read from VAS ADC
