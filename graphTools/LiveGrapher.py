@@ -207,7 +207,7 @@ class LiveGrapher(Grapher):
 
     def addVASScore(self, VASScore):
         # scale VAS score from 0-1023 to 1-100
-        VASScore = int((VASScore - VAS_RAW_MIN)/(VAS_RAW_MAX-VAS_RAW_MIN)*(100-1)+1)
+        VASScore = int((VASScore - Config.VAS_RAW_MIN)/(Config.VAS_RAW_MAX-Config.VAS_RAW_MIN)*(100-1)+1)
         if VASScore > 100:
             VASScore = 100
         elif VASScore < 1:
