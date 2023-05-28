@@ -76,7 +76,7 @@ CAL_VOLTAGE_1 = 7283.01907  # raw ADC value
 CAL_READING_2 = 92.64564    # newtons
 CAL_VOLTAGE_2 = 14931.96064 # raw ADC value
 # calibrating the VAS slider
-VAS_RAW_MIN = 300           # min raw value read from VAS ADC
+VAS_RAW_MIN = 60            # min raw value read from VAS ADC
 VAS_RAW_MAX = 880           # max raw value read from VAS ADC
 
 ### Denmark indenter configs ###
