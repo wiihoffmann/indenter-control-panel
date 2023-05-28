@@ -43,9 +43,9 @@ MAX_REPEAT_COUNT = 15                   # steps/second
 REPEAT_COUNT_INCREMENT_SIZE = 1         # steps/second
 
 ### misc. measurement settings ####
-TOLERANCE = 2.5                         # newtons (Max deviance from target load when holding.)
-HOLD_STEP_UP_RATE = 100                 # steps/second (when holding, how fast can we move up to maintain the target load)
-HOLD_STEP_DOWN_RATE = 100               # steps/second (when holding, how fast can we move down to maintain the target load)
+TOLERANCE = 1.5                         # newtons (Max deviance from target load when holding.)
+HOLD_KP = 200                        # PID proportional gain constant for maintaining load. (PI control only)
+HOLD_KI = 0.01                             # PID integral gain constant for maintaining load. (PI control only)
 RUN_VACUUM_CONSTANT_DEFAULT = False     # default setting for if the vacuum should run constantly during a regular stiffness measurement
 
 ##### graph display settings #####
