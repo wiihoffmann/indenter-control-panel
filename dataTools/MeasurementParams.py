@@ -13,8 +13,8 @@ class MeasurementParams:
     maxLoadTime: int                                                            #   uint16_t maxLoadTime;
     stepDelay: int                                                              #   uint16_t stepDelay;
     testType: bytes                                                             #   which type of test to run
-    holdDownDelay = int(uc.stepRateToMicros(Config.HOLD_STEP_DOWN_RATE))        #   uint16_t holdDownDelay;
-    holdUpDelay = int(uc.stepRateToMicros(Config.HOLD_STEP_UP_RATE))            #   uint16_t holdUpDelay;
+    holdKp = float(Config.HOLD_KP)                                              #   float32 holdKp;
+    holdKi = float(Config.HOLD_KI)                                              #   float32 holdKi;
     eStopStepDelay = int(uc.stepRateToMicros(Config.EMERGENCY_STOP_STEP_RATE) ) #   uint16_t eStopStepDelay;
     tolerance = int(uc.NewtonToRawADC(Config.TOLERANCE))                        #   uint16_t targetTolerance;
     iterations = 1                                                              #   how many times to run the test
