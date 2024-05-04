@@ -60,8 +60,10 @@ class MainUI(QMainWindow):
 
 
     def __openPositionWindow(self):
+        if Config.FULLSCREEN_MODE: self.showMaximized()
         window = DirectionPanel()
         window.exec_()
+        if Config.FULLSCREEN_MODE: self.showFullScreen()
         return
 
 
