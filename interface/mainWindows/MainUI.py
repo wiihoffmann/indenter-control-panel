@@ -107,13 +107,17 @@ class MainUI(QMainWindow):
         
         # save data if the file name is valid
         if filename:
+            if Config.FULLSCREEN_MODE: self.showMaximized()
             self.indenter.saveResults(filename)
+            if Config.FULLSCREEN_MODE: self.showFullScreen()
         return
 
 
     def loadFile(self):
         """ Start a dialog to load data from a CSV file. """
+        if Config.FULLSCREEN_MODE: self.showMaximized()
         filename = self.fileDialog.showLoadDialog()
+        if Config.FULLSCREEN_MODE: self.showFullScreen()
 
         # load data if the file name is valid
         if filename:
