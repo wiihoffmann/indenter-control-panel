@@ -13,7 +13,4 @@ apt full-upgrade -y
 # install dependencies 
 apt install git xvkbd python3 python3-pip python3-pyqt5 python3-numpy python3-pyqtgraph -y
 
-# get the code from the repo
-git clone https://github.com/ECE-492-capstone/spinal-stiffness-indenter
-
 echo "Please reboot with \"sudo reboot\" to finish setup!"
