@@ -20,7 +20,7 @@ class FileDialog():
 
     def launchKeyboard(self):
         # if Config.FULLSCREEN_MODE: self.showMaximized()
-        subprocess.run(["xvkbd", "-no-keypad", "-window", "Save measurement to file"])
+        #subprocess.run(["xvkbd", "-no-keypad", "-window", "Save measurement to file"])
         # if Config.FULLSCREEN_MODE: self.showFullScreen()
         return
 

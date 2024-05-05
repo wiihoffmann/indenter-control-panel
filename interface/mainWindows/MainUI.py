@@ -60,8 +60,10 @@ class MainUI(QMainWindow):
 
 
     def __openPositionWindow(self):
+        if Config.FULLSCREEN_MODE: self.showMaximized()
         window = DirectionPanel()
         window.exec_()
+        if Config.FULLSCREEN_MODE: self.showFullScreen()
         return
 
 
@@ -101,17 +103,21 @@ class MainUI(QMainWindow):
 
     def saveFile(self):
         """ Start a dialog to save the current graph data into a CSV file. """
+        if Config.FULLSCREEN_MODE: self.showMaximized()
         filename = self.fileDialog.showSaveDialog(self.indenter)
-        
+        if Config.FULLSCREEN_MODE: self.showFullScreen()
+
         # save data if the file name is valid
-        if filename:
+        if filename:    
             self.indenter.saveResults(filename)
         return
 
 
     def loadFile(self):
         """ Start a dialog to load data from a CSV file. """
+        if Config.FULLSCREEN_MODE: self.showMaximized()
         filename = self.fileDialog.showLoadDialog()
+        if Config.FULLSCREEN_MODE: self.showFullScreen()
 
         # load data if the file name is valid
         if filename:
