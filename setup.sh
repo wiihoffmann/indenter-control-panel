@@ -16,7 +16,7 @@ sudo apt install git onboard python3 python3-pip python3-pyqt5 python3-numpy pyt
 # auto launch onboard
 mkdir ~/.config/autostart
 echo "[Desktop Entry]" > ~/.config/autostart/keyboard.desktop
-echo "Type=Application" > ~/.config/autostart/keyboard.desktop
+echo "Type=Application" >> ~/.config/autostart/keyboard.desktop
 echo "Name=onboard" >> ~/.config/autostart/keyboard.desktop
 echo "Exec=onboard" >> ~/.config/autostart/keyboard.desktop
 
