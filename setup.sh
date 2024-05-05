@@ -20,4 +20,9 @@ echo "Type=Application" >> ~/.config/autostart/keyboard.desktop
 echo "Name=onboard" >> ~/.config/autostart/keyboard.desktop
 echo "Exec=onboard" >> ~/.config/autostart/keyboard.desktop
 
+echo "[Desktop Entry]" > ~/.config/autostart/xpresso.desktop
+echo "Type=Application" >> ~/.config/autostart/xpresso.desktop
+echo "Name=Xpresso Controls" >> ~/.config/autostart/xpresso.desktop
+echo "Exec=~/indenter-control-panel/Main.py" >> ~/.config/autostart/xpresso.desktop
+
 echo "Please reboot with \"sudo reboot\" to finish setup!"
