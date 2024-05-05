@@ -103,13 +103,13 @@ class MainUI(QMainWindow):
 
     def saveFile(self):
         """ Start a dialog to save the current graph data into a CSV file. """
+        if Config.FULLSCREEN_MODE: self.showMaximized()
         filename = self.fileDialog.showSaveDialog(self.indenter)
-        
+        if Config.FULLSCREEN_MODE: self.showFullScreen()
+
         # save data if the file name is valid
-        if filename:
-            if Config.FULLSCREEN_MODE: self.showMaximized()
+        if filename:    
             self.indenter.saveResults(filename)
-            if Config.FULLSCREEN_MODE: self.showFullScreen()
         return
 
 
